@@ -22,10 +22,10 @@ export const AdminOverviewPage = () => {
     const blocked = users.filter((u) => u.status === "blocked").length;
 
     const stats = [
-        { label: "Total users", value: users.length, icon: Users, color: "text-blue-400", bg: "bg-blue-400/10" },
-        { label: "Total therapists", value: therapists.length, icon: Stethoscope, color: "text-purple-400", bg: "bg-purple-400/10" },
-        { label: "Pending approval", value: pending, icon: Clock, color: "text-yellow-400", bg: "bg-yellow-400/10" },
-        { label: "Active therapists", value: approved, icon: CheckCircle2, color: "text-green-400", bg: "bg-green-400/10" },
+        { label: "Total users", value: users.length, icon: Users, color: "text-accent-500", bg: "bg-accent-500/10" },
+        { label: "Total therapists", value: therapists.length, icon: Stethoscope, color: "text-primary-700", bg: "bg-primary-800/8" },
+        { label: "Pending approval", value: 'PENDING', icon: Clock, color: "text-accent-600", bg: "bg-accent-500/10" },
+        { label: "Active therapists", value: 'APPROVED', icon: CheckCircle2, color: "text-primary-800", bg: "bg-primary-800/8" },
     ];
 
     return (
