@@ -1,9 +1,9 @@
-const App = () => {
+function App() {
   return (
-    <div>
-      <h3>Hey there</h3>
-    </div>
-  )
+    <>
+      <h2 className="text-red-500">heythere</h2>
+    </>
+  );
 }
 
-export default App
+export default App;
