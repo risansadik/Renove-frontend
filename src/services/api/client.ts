@@ -7,6 +7,18 @@ export interface ApiError {
   errors?: unknown;
 }
 
+export class ApiClientError extends Error implements ApiError {
+  statusCode?: number;
+  errors?: unknown;
+
+  constructor({ message, statusCode, errors }: ApiError) {
+    super(message);
+    this.name = "ApiClientError";
+    this.statusCode = statusCode;
+    this.errors = errors;
+  }
+}
+
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? "",
   withCredentials: true,
@@ -20,7 +32,7 @@ apiClient.interceptors.response.use(
       statusCode: error.response?.data?.statusCode ?? error.response?.status,
     };
 
-    return Promise.reject(apiError);
+    return Promise.reject(new ApiClientError(apiError));
   }
 );
 
