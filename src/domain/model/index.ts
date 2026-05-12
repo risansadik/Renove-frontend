@@ -1,0 +1,56 @@
+export type IsoDateString = string;
+export type AuthRole = "user" | "therapist" | "admin";
+export type UserStatus = "active" | "blocked";
+export type TherapistStatus = "pending" | "approved" | "rejected";
+export type Gender = "male" | "female" | "other";
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  isVerified: boolean;
+  status: UserStatus;
+  createdAt: IsoDateString;
+}
+
+export interface Therapist {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  gender: Gender;
+  qualification: string;
+  specialization: string[];
+  experience: number;
+  consultationFee: number;
+  bio: string;
+  certifications?: string[];
+  profileImage?: string;
+  status: TherapistStatus;
+  isVerified: boolean;
+  createdAt: IsoDateString;
+}
+
+export interface Admin {
+  id: string;
+  email: string;
+}
+
+export interface ApiResponse<T = null> {
+  success: boolean;
+  message: string;
+  data: T | null;
+  statusCode: number;
+}
+
+export interface AuthUserData {
+  user: User;
+}
+
+export interface AuthTherapistData {
+  therapist: Therapist;
+}
+
+export interface AuthAdminData {
+  admin: Admin;
+}
