@@ -11,6 +11,7 @@ import {
     registerTherapistSchema,
     toRegisterTherapistPayload,
     type RegisterTherapistForm,
+    type RegisterTherapistFormInput,
 } from "../../core/utils/form-schemas.js";
 import { therapistAuthService } from "../../services/api/auth.service.js";
 import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
@@ -56,11 +57,13 @@ export const TherapistRegisterPage = () => {
         handleSubmit,
         trigger,
         formState: { errors },
-    } = useForm<RegisterTherapistForm>({ resolver: zodResolver(registerTherapistSchema) });
+    } = useForm<RegisterTherapistFormInput, unknown, RegisterTherapistForm>({
+        resolver: zodResolver(registerTherapistSchema),
+    });
 
-    const step0Fields: (keyof RegisterTherapistForm)[] = ["name", "email", "password", "phone", "gender"];
-    const step1Fields: (keyof RegisterTherapistForm)[] = ["qualification", "specialization", "experience", "consultationFee"];
-    const step2Fields: (keyof RegisterTherapistForm)[] = ["bio"];
+    const step0Fields: (keyof RegisterTherapistFormInput)[] = ["name", "email", "password", "phone", "gender"];
+    const step1Fields: (keyof RegisterTherapistFormInput)[] = ["qualification", "specialization", "experience", "consultationFee"];
+    const step2Fields: (keyof RegisterTherapistFormInput)[] = ["bio"];
 
     const nextStep = async () => {
         const fields = [step0Fields, step1Fields, step2Fields][step];

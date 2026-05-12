@@ -62,7 +62,7 @@ export const registerTherapistSchema = z.object({
   password: passwordSchema,
   phone: z.string().min(10, "Enter a valid phone number").max(15),
   gender: z.enum(["male", "female", "other"], {
-    errorMap: () => ({ message: "Select gender" }),
+    message: "Select gender",
   }),
   qualification: z.string().min(2, "Enter your qualification"),
   specialization: z.string().min(2, "Enter at least one specialization"),
@@ -79,6 +79,7 @@ export type LoginForm = z.infer<typeof loginSchema>;
 export type VerifyOtpForm = z.infer<typeof verifyOtpSchema>;
 export type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+export type RegisterTherapistFormInput = z.input<typeof registerTherapistSchema>;
 export type RegisterTherapistForm = z.infer<typeof registerTherapistSchema>;
 export type AdminLoginForm = z.infer<typeof adminLoginSchema>;
 
