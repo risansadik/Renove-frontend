@@ -1,0 +1,142 @@
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { adminService } from "../../services/api/auth.service.js";
+import type { User } from "../../domain/model/index.js";
+import { Search, ShieldOff, ShieldCheck, Loader2 } from "lucide-react";
+
+export const AdminUsersPage = () => {
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
+    const [actionId, setActionId] = useState<string | null>(null);
+
+    useEffect(() => {
+        adminService
+            .getUsers()
+            .then((res) => {
+                setUsers(res.data.data ?? []);
+            })
+            .catch((err) => {
+                toast.error(err instanceof Error ? err.message : "Failed to load users");
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+    const filtered = useMemo(() => {
+        const q = search.toLowerCase();
+        return users.filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+    }, [search, users]);
+
+    const toggleStatus = async (user: User) => {
+        const newStatus = user.status === "active" ? "blocked" : "active";
+        try {
+            setActionId(user.id);
+            await adminService.updateUserStatus(user.id, newStatus);
+            setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, status: newStatus } : u)));
+            toast.success(`User ${newStatus === "blocked" ? "blocked" : "unblocked"}`);
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Action failed");
+        } finally {
+            setActionId(null);
+        }
+    };
+
+    return (
+        <div>
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div>
+                    <h1 className="font-display text-2xl font-bold text-white mb-1">User management</h1>
+                    <p className="text-white/35 text-sm">{users.length} total users</p>
+                </div>
+
+                <div className="sm:ml-auto relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                    <input
+                        type="text"
+                        placeholder="Search by name or email..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="input-field pl-9 w-full sm:w-64 text-sm py-2"
+                    />
+                </div>
+            </div>
+
+            <div className="bg-surface-50 border border-white/5 rounded-2xl overflow-hidden">
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 size={24} className="animate-spin text-brand-400" />
+                    </div>
+                ) : filtered.length === 0 ? (
+                    <div className="text-center py-16 text-white/25 text-sm">
+                        {search ? "No users match your search." : "No users found."}
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-white/5">
+                                    <th className="text-left px-6 py-4 text-xs text-white/30 font-medium uppercase tracking-wider">User</th>
+                                    <th className="text-left px-6 py-4 text-xs text-white/30 font-medium uppercase tracking-wider">Status</th>
+                                    <th className="text-left px-6 py-4 text-xs text-white/30 font-medium uppercase tracking-wider">Verified</th>
+                                    <th className="text-left px-6 py-4 text-xs text-white/30 font-medium uppercase tracking-wider">Joined</th>
+                                    <th className="px-6 py-4" />
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {filtered.map((user) => (
+                                    <tr key={user.id} className="hover:bg-white/2 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div>
+                                                <p className="text-white text-sm font-medium">{user.name}</p>
+                                                <p className="text-white/35 text-xs font-mono mt-0.5">{user.email}</p>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span
+                                                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${user.status === "active"
+                                                    ? "bg-green-400/10 text-green-400 border border-green-400/20"
+                                                    : "bg-red-400/10 text-red-400 border border-red-400/20"
+                                                    }`}
+                                            >
+                                                {user.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`text-xs ${user.isVerified ? "text-green-400" : "text-yellow-400"}`}>
+                                                {user.isVerified ? "Verified" : "Pending"}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="text-white/30 text-xs font-mono">
+                                                {new Date(user.createdAt).toLocaleDateString()}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <button
+                                                onClick={() => toggleStatus(user)}
+                                                disabled={actionId === user.id}
+                                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${user.status === "active"
+                                                    ? "bg-red-400/10 text-red-400 hover:bg-red-400/20 border border-red-400/20"
+                                                    : "bg-green-400/10 text-green-400 hover:bg-green-400/20 border border-green-400/20"
+                                                    } disabled:opacity-50`}
+                                            >
+                                                {actionId === user.id ? (
+                                                    <Loader2 size={11} className="animate-spin" />
+                                                ) : user.status === "active" ? (
+                                                    <ShieldOff size={11} />
+                                                ) : (
+                                                    <ShieldCheck size={11} />
+                                                )}
+                                                {user.status === "active" ? "Block" : "Unblock"}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
