@@ -9,18 +9,21 @@ import { OtpInput } from "../../components/common/Otp-input.js";
 import { Button } from "../../components/common/Button.js";
 import { resetPasswordSchema, type ResetPasswordForm } from "../../core/utils/form-schemas.js";
 import { userAuthService } from "../../services/api/auth.service.js";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ShieldCheck, CheckCircle2 } from "lucide-react";
 
 export const ResetPasswordPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const email = (location.state as { email?: string })?.email ?? "";
     const [loading, setLoading] = useState(false);
+    const [step, setStep] = useState<"otp" | "password">("otp");
 
     const {
         control,
         register,
         handleSubmit,
+        trigger,
+        getValues,
         formState: { errors },
     } = useForm<ResetPasswordForm>({
         resolver: zodResolver(resetPasswordSchema),
@@ -37,6 +40,23 @@ export const ResetPasswordPage = () => {
             navigate("/user/forgot-password", { replace: true });
         }
     }, [email, navigate]);
+
+    const handleVerifyOtp = async () => {
+        const isValid = await trigger("otp");
+        if (!isValid) return;
+
+        try {
+            setLoading(true);
+            const otp = getValues("otp");
+            await userAuthService.verifyResetOtp({ email, otp });
+            setStep("password");
+            toast.success("Code verified! Set your new password.");
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Invalid or expired code");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const onSubmit = async (data: ResetPasswordForm) => {
         try {
@@ -65,46 +85,64 @@ export const ResetPasswordPage = () => {
                     <ShieldCheck size={24} className="text-brand-600" />
                 </div>
 
-                <h1 className="font-display text-3xl font-bold text-brand-900 mb-2">Reset password</h1>
-                <p className="text-brand-900/60 text-sm mb-8">
-                    Enter the OTP sent to{" "}
-                    <span className="text-brand-600 font-mono text-xs">{email}</span>{" "}
-                    and your new password.
-                </p>
+                <div className="mb-8">
+                    <h1 className="font-display text-3xl font-bold text-brand-900 mb-2">
+                        {step === "otp" ? "Verify Code" : "New Password"}
+                    </h1>
+                    <p className="text-brand-900/60 text-sm">
+                        {step === "otp" ? (
+                            <>Enter the 6-digit code sent to <span className="text-brand-600 font-mono text-xs">{email}</span></>
+                        ) : (
+                            "Create a strong new password for your account."
+                        )}
+                    </p>
+                </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-                    <div>
-                        <p className="label mb-3 text-brand-900/60">Verification code</p>
-                        <Controller
-                            name="otp"
-                            control={control}
-                            render={({ field }) => (
-                                <OtpInput
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    error={errors.otp?.message}
-                                />
-                            )}
-                        />
+                {step === "otp" ? (
+                    <div className="flex flex-col gap-6">
+                        <div>
+                            <p className="label mb-3 text-brand-900/60">Verification code</p>
+                            <Controller
+                                name="otp"
+                                control={control}
+                                render={({ field }) => (
+                                    <OtpInput
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        error={errors.otp?.message}
+                                    />
+                                )}
+                            />
+                        </div>
+                        <Button type="button" onClick={handleVerifyOtp} loading={loading}>
+                            Verify Code
+                        </Button>
                     </div>
+                ) : (
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+                        <div className="p-3 bg-sage-50 border border-sage-200 rounded-xl flex items-center gap-3 mb-2">
+                            <CheckCircle2 size={18} className="text-sage-600" />
+                            <span className="text-xs text-sage-800 font-medium">Email verified successfully</span>
+                        </div>
 
-                    <PasswordInput
-                        label="New password"
-                        placeholder="Min 8 chars, uppercase & number"
-                        error={errors.newPassword?.message}
-                        {...register("newPassword")}
-                    />
-                    <PasswordInput
-                        label="Confirm new password"
-                        placeholder="Repeat your new password"
-                        error={errors.confirmPassword?.message}
-                        {...register("confirmPassword")}
-                    />
+                        <PasswordInput
+                            label="New password"
+                            placeholder="Min 8 chars, uppercase & number"
+                            error={errors.newPassword?.message}
+                            {...register("newPassword")}
+                        />
+                        <PasswordInput
+                            label="Confirm new password"
+                            placeholder="Repeat your new password"
+                            error={errors.confirmPassword?.message}
+                            {...register("confirmPassword")}
+                        />
 
-                    <Button type="submit" loading={loading} className="mt-2">
-                        Reset password
-                    </Button>
-                </form>
+                        <Button type="submit" loading={loading} className="mt-2">
+                            Reset password
+                        </Button>
+                    </form>
+                )}
             </div>
         </AuthLayout>
     );

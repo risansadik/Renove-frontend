@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "react-hot-toast";
 import { ProtectedRoute, GuestRoute } from "./components/common/Protected-route.js";
 import { AdminLoginPage } from "./features/admin-auth/Admin-login-page.js";
@@ -28,68 +29,73 @@ const NotFoundPage = () => (
 );
 
 export const AppRouter = () => {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
   return (
-    <BrowserRouter>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: "#fdfaf6",
-            color: "#26182c",
-            border: "1px solid rgba(196,168,208,0.3)",
-            borderRadius: "12px",
-            fontSize: "14px",
-            boxShadow: "0 4px 20px rgba(107,76,122,0.1)",
-          },
-          success: { iconTheme: { primary: "#4a6b52", secondary: "#fff" } },
-        }}
-      />
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <BrowserRouter>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: "#fdfaf6",
+              color: "#26182c",
+              border: "1px solid rgba(196,168,208,0.3)",
+              borderRadius: "12px",
+              fontSize: "14px",
+              boxShadow: "0 4px 20px rgba(107,76,122,0.1)",
+            },
+            success: { iconTheme: { primary: "#4a6b52", secondary: "#fff" } },
+          }}
+        />
 
-      <Routes>
-        <Route path="/" element={<Navigate to="/user/login" replace />} />
+        <Routes>
+          {/* ... existing routes ... */}
+          <Route path="/" element={<Navigate to="/user/login" replace />} />
 
-        {/* ── User auth ────────────────────────────── */}
-        <Route path="/user/register" element={<GuestRoute role="user"><UserRegisterPage /></GuestRoute>} />
-        <Route path="/user/login" element={<GuestRoute role="user"><UserLoginPage /></GuestRoute>} />
-        <Route path="/user/verify-otp" element={<VerifyOtpPage role="user" />} />
-        <Route path="/user/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/user/reset-password" element={<ResetPasswordPage />} />
+          {/* ── User auth ────────────────────────────── */}
+          <Route path="/user/register" element={<GuestRoute role="user"><UserRegisterPage /></GuestRoute>} />
+          <Route path="/user/login" element={<GuestRoute role="user"><UserLoginPage /></GuestRoute>} />
+          <Route path="/user/verify-otp" element={<VerifyOtpPage role="user" />} />
+          <Route path="/user/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/user/reset-password" element={<ResetPasswordPage />} />
 
-        {/* ── User dashboard (layout with sidebar + logout) ─ */}
-        <Route path="/dashboard" element={<ProtectedRoute role="user"><UserLayout /></ProtectedRoute>}>
-          <Route index element={<UserDashboardPage />} />
-          <Route path="progress" element={<UserDashboardPage />} />
-          <Route path="ai-companion" element={<UserDashboardPage />} />
-          <Route path="therapists" element={<UserDashboardPage />} />
-          <Route path="sessions" element={<UserDashboardPage />} />
-        </Route>
+          {/* ── User dashboard (layout with sidebar + logout) ─ */}
+          <Route path="/dashboard" element={<ProtectedRoute role="user"><UserLayout /></ProtectedRoute>}>
+            <Route index element={<UserDashboardPage />} />
+            <Route path="progress" element={<UserDashboardPage />} />
+            <Route path="ai-companion" element={<UserDashboardPage />} />
+            <Route path="therapists" element={<UserDashboardPage />} />
+            <Route path="sessions" element={<UserDashboardPage />} />
+          </Route>
 
-        {/* ── Therapist auth ───────────────────────── */}
-        <Route path="/therapist/register" element={<GuestRoute role="therapist"><TherapistRegisterPage /></GuestRoute>} />
-        <Route path="/therapist/login" element={<GuestRoute role="therapist"><TherapistLoginPage /></GuestRoute>} />
-        <Route path="/therapist/verify-otp" element={<VerifyOtpPage role="therapist" />} />
+          {/* ── Therapist auth ───────────────────────── */}
+          <Route path="/therapist/register" element={<GuestRoute role="therapist"><TherapistRegisterPage /></GuestRoute>} />
+          <Route path="/therapist/login" element={<GuestRoute role="therapist"><TherapistLoginPage /></GuestRoute>} />
+          <Route path="/therapist/verify-otp" element={<VerifyOtpPage role="therapist" />} />
 
-        {/* ── Therapist dashboard (layout with sidebar + logout) ─ */}
-        <Route path="/therapist" element={<ProtectedRoute role="therapist"><TherapistLayout /></ProtectedRoute>}>
-          <Route index element={<Navigate to="/therapist/dashboard" replace />} />
-          <Route path="dashboard" element={<TherapistDashboardPage />} />
-          <Route path="sessions" element={<TherapistDashboardPage />} />
-          <Route path="clients" element={<TherapistDashboardPage />} />
-          <Route path="messages" element={<TherapistDashboardPage />} />
-          <Route path="settings" element={<TherapistDashboardPage />} />
-        </Route>
+          {/* ── Therapist dashboard (layout with sidebar + logout) ─ */}
+          <Route path="/therapist" element={<ProtectedRoute role="therapist"><TherapistLayout /></ProtectedRoute>}>
+            <Route index element={<Navigate to="/therapist/dashboard" replace />} />
+            <Route path="dashboard" element={<TherapistDashboardPage />} />
+            <Route path="sessions" element={<TherapistDashboardPage />} />
+            <Route path="clients" element={<TherapistDashboardPage />} />
+            <Route path="messages" element={<TherapistDashboardPage />} />
+            <Route path="settings" element={<TherapistDashboardPage />} />
+          </Route>
 
-        {/* ── Admin ────────────────────────────────── */}
-        <Route path="/admin/login" element={<GuestRoute role="admin"><AdminLoginPage /></GuestRoute>} />
-        <Route path="/admin" element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}>
-          <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<AdminOverviewPage />} />
-          <Route path="users" element={<AdminUsersPage />} />
-          <Route path="therapists" element={<AdminTherapistsPage />} />
-        </Route>
+          {/* ── Admin ────────────────────────────────── */}
+          <Route path="/admin/login" element={<GuestRoute role="admin"><AdminLoginPage /></GuestRoute>} />
+          <Route path="/admin" element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}>
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<AdminOverviewPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="therapists" element={<AdminTherapistsPage />} />
+          </Route>
 
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 };
