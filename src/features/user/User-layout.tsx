@@ -3,6 +3,7 @@ import { NavLink, useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore, selectAuthUser } from "../../store/use-auth-store.js";
 import { userAuthService } from "../../services/api/auth.service.js";
+import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
 import {
   LayoutDashboard,
   Brain,
@@ -29,6 +30,7 @@ export const UserLayout = () => {
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore(selectAuthUser);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -43,64 +45,57 @@ export const UserLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "#0d0b14" }}>
+    <div className="flex h-screen overflow-hidden bg-surface" style={{ background: "#fdfaf6" }}>
+      <ConfirmationModal
+        isOpen={logoutModalOpen}
+        onClose={() => setLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+        title="Sign Out"
+        description="Are you sure you want to sign out of your account?"
+        confirmText="Sign Out"
+        isDestructive={true}
+      />
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-20 lg:hidden"
+          className="fixed inset-0 bg-black/30 z-20 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 flex flex-col z-30 transition-transform duration-300
+        className={`fixed top-0 left-0 h-full w-64 bg-surface-50 flex flex-col z-30 transition-transform duration-300
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0 lg:static lg:z-auto`}
-        style={{
-          background: "rgba(13, 11, 20, 0.98)",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
-        }}
+        style={{ borderRight: "1px solid rgba(196,168,208,0.2)" }}
       >
         {/* Logo */}
-        <div className="p-6" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #6b4c7a, #b89bbe)" }}
-            >
+        <div className="p-6" style={{ borderBottom: "1px solid rgba(196,168,208,0.15)" }}>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-brand-500">
               <Sparkles size={16} className="text-white" />
             </div>
-            <span className="font-display font-bold text-lg" style={{ color: "#e8e6f0" }}>
+            <span className="font-display font-bold text-lg text-brand-900">
               reNove
             </span>
-            <span
-              className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded-full"
-              style={{
-                color: "#b89bbe",
-                background: "rgba(107,76,122,0.2)",
-                border: "1px solid rgba(184,155,190,0.2)",
-              }}
-            >
+            <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded-full text-brand-600 bg-brand-500/10 border border-brand-500/20">
               Beta
             </span>
           </div>
         </div>
 
         {/* User info */}
-        <div className="px-4 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="px-4 py-4" style={{ borderBottom: "1px solid rgba(196,168,208,0.1)" }}>
           <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm"
-              style={{ background: "linear-gradient(135deg, #6b4c7a40, #b89bbe40)", border: "1px solid rgba(184,155,190,0.3)", color: "#b89bbe" }}
-            >
+            <div className="w-9 h-9 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-600 font-bold text-sm">
               {user?.name?.charAt(0).toUpperCase() ?? "U"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium truncate" style={{ color: "#e8e6f0" }}>
+              <p className="text-sm font-medium text-brand-900 truncate">
                 {user?.name ?? "User"}
               </p>
-              <p className="text-xs truncate" style={{ color: "rgba(232,230,240,0.4)" }}>
+              <p className="text-xs text-brand-900/40 truncate">
                 Recovery Journey
               </p>
             </div>
@@ -116,7 +111,11 @@ export const UserLayout = () => {
               end={to === "/dashboard"}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `dark-nav-link${isActive ? " active" : ""}`
+                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+                  isActive
+                    ? "bg-brand-500/15 text-brand-700 border border-brand-500/20"
+                    : "text-brand-900/60 hover:text-brand-900 hover:bg-brand-900/5"
+                }`
               }
             >
               <Icon size={16} />
@@ -126,31 +125,17 @@ export const UserLayout = () => {
         </nav>
 
         {/* Emergency & Logout */}
-        <div className="p-4 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="p-4 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(196,168,208,0.15)" }}>
           <a
             href="tel:iCall"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all"
-            style={{
-              color: "#f87171",
-              background: "rgba(239,68,68,0.08)",
-              border: "1px solid rgba(239,68,68,0.15)",
-            }}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all text-red-600 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20"
           >
             <PhoneCall size={14} />
             Emergency Help
           </a>
           <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm transition-all"
-            style={{ color: "rgba(232,230,240,0.4)" }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.color = "rgba(232,230,240,0.85)";
-              (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.color = "rgba(232,230,240,0.4)";
-              (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-            }}
+            onClick={() => setLogoutModalOpen(true)}
+            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm text-brand-900/60 hover:text-red-600 hover:bg-red-500/10 transition-all duration-150"
           >
             <LogOut size={16} />
             Sign out
@@ -161,40 +146,24 @@ export const UserLayout = () => {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar */}
-        <header
-          className="h-14 flex items-center px-6 gap-4 sticky top-0 z-10"
-          style={{
-            background: "rgba(13,11,20,0.85)",
-            backdropFilter: "blur(12px)",
-            borderBottom: "1px solid rgba(255,255,255,0.05)",
-          }}
-        >
+        <header className="h-14 bg-surface-50/80 backdrop-blur border-b border-brand-900/10 flex items-center px-6 gap-4 sticky top-0 z-10">
           <button
             type="button"
             aria-label="Open navigation"
-            className="lg:hidden"
-            style={{ color: "rgba(232,230,240,0.5)" }}
+            className="text-brand-900/60 hover:text-brand-900 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu size={20} />
           </button>
           <div className="flex items-center gap-2 ml-auto">
-            <div
-              className="text-xs font-mono px-3 py-1 rounded-full"
-              style={{
-                color: "#4a6b52",
-                background: "rgba(74,107,82,0.15)",
-                border: "1px solid rgba(74,107,82,0.25)",
-              }}
-            >
+            <div className="text-xs font-mono px-3 py-1 rounded-full text-sage-600 bg-sage-500/10 border border-sage-500/20">
               🔥 Day 24
             </div>
           </div>
           <button
             type="button"
             aria-label="Close navigation"
-            className="lg:hidden"
-            style={{ color: "rgba(232,230,240,0.5)" }}
+            className="text-brand-900/60 hover:text-brand-900 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           >
             <X size={20} className={sidebarOpen ? "block" : "hidden"} />
