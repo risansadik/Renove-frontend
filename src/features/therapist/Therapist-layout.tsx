@@ -6,6 +6,7 @@ import { therapistAuthService } from "../../services/api/auth.service.js";
 import {
   LayoutDashboard, CalendarDays, Users, MessageCircle, Settings, LogOut, Menu, X, Stethoscope,
 } from "lucide-react";
+import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
 
 const navItems = [
   { to: "/therapist/dashboard", icon: LayoutDashboard, label: "Overview" },
@@ -20,6 +21,7 @@ export const TherapistLayout = () => {
   const logout = useAuthStore((s) => s.logout);
   const therapist = useAuthStore(selectAuthTherapist);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -35,6 +37,15 @@ export const TherapistLayout = () => {
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "#fdfaf6" }}>
+      <ConfirmationModal
+        isOpen={logoutModalOpen}
+        onClose={() => setLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+        title="Sign Out"
+        description="Are you sure you want to sign out of your Therapist account?"
+        confirmText="Sign Out"
+        isDestructive={true}
+      />
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/30 z-20 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
@@ -92,7 +103,7 @@ export const TherapistLayout = () => {
 
         <div className="p-4" style={{ borderTop: "1px solid rgba(196,168,208,0.15)" }}>
           <button
-            onClick={handleLogout}
+            onClick={() => setLogoutModalOpen(true)}
             className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm text-brand-900/60 hover:text-red-600 hover:bg-red-500/10 transition-all duration-150"
           >
             <LogOut size={16} />
