@@ -53,28 +53,28 @@ export const ResetPasswordPage = () => {
 
     return (
         <AuthLayout>
-            <div className="auth-card p-8">
+            <div className="auth-card p-8 stagger-2">
                 <Link
                     to="/user/forgot-password"
-                    className="inline-flex items-center gap-2 text-white/40 hover:text-white/70 text-sm mb-8 transition-colors"
+                    className="inline-flex items-center gap-2 text-brand-900/60 hover:text-brand-900/80 text-sm mb-8 transition-colors"
                 >
                     <ArrowLeft size={14} /> Back
                 </Link>
 
                 <div className="w-14 h-14 rounded-2xl bg-brand-500/15 border border-brand-500/20 flex items-center justify-center mb-6">
-                    <ShieldCheck size={24} className="text-brand-400" />
+                    <ShieldCheck size={24} className="text-brand-600" />
                 </div>
 
-                <h1 className="font-display text-3xl font-bold text-white mb-2">Reset password</h1>
-                <p className="text-white/40 text-sm mb-8">
+                <h1 className="font-display text-3xl font-bold text-brand-900 mb-2">Reset password</h1>
+                <p className="text-brand-900/60 text-sm mb-8">
                     Enter the OTP sent to{" "}
-                    <span className="text-brand-400 font-mono text-xs">{email}</span>{" "}
+                    <span className="text-brand-600 font-mono text-xs">{email}</span>{" "}
                     and your new password.
                 </p>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
                     <div>
-                        <p className="label mb-3">Verification code</p>
+                        <p className="label mb-3 text-brand-900/60">Verification code</p>
                         <Controller
                             name="otp"
                             control={control}

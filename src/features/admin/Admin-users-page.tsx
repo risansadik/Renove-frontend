@@ -43,14 +43,14 @@ export const AdminUsersPage = () => {
 
     return (
         <div>
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4 stagger-1">
                 <div>
-                    <h1 className="font-display text-2xl font-bold text-white mb-1">User management</h1>
-                    <p className="text-white/35 text-sm">{users.length} total users</p>
+                    <h1 className="font-display text-2xl font-bold text-brand-900 mb-1">User management</h1>
+                    <p className="text-brand-900/60 text-sm">{users.length} total users</p>
                 </div>
 
                 <div className="sm:ml-auto relative">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-900/40" />
                     <input
                         type="text"
                         placeholder="Search by name or email..."
@@ -61,53 +61,53 @@ export const AdminUsersPage = () => {
                 </div>
             </div>
 
-            <div className="bg-surface-50 border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-surface-50 border border-brand-900/10 rounded-2xl overflow-hidden stagger-2">
                 {loading ? (
                     <div className="flex items-center justify-center py-16">
-                        <Loader2 size={24} className="animate-spin text-brand-400" />
+                        <Loader2 size={24} className="animate-spin text-brand-600" />
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="text-center py-16 text-white/25 text-sm">
+                    <div className="text-center py-16 text-brand-900/40 text-sm">
                         {search ? "No users match your search." : "No users found."}
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-white/5">
-                                    <th className="text-left px-6 py-4 text-xs text-white/30 font-medium uppercase tracking-wider">User</th>
-                                    <th className="text-left px-6 py-4 text-xs text-white/30 font-medium uppercase tracking-wider">Status</th>
-                                    <th className="text-left px-6 py-4 text-xs text-white/30 font-medium uppercase tracking-wider">Verified</th>
-                                    <th className="text-left px-6 py-4 text-xs text-white/30 font-medium uppercase tracking-wider">Joined</th>
+                                <tr className="border-b border-brand-900/10">
+                                    <th className="text-left px-6 py-4 text-xs text-brand-900/60 font-medium uppercase tracking-wider">User</th>
+                                    <th className="text-left px-6 py-4 text-xs text-brand-900/60 font-medium uppercase tracking-wider">Status</th>
+                                    <th className="text-left px-6 py-4 text-xs text-brand-900/60 font-medium uppercase tracking-wider">Verified</th>
+                                    <th className="text-left px-6 py-4 text-xs text-brand-900/60 font-medium uppercase tracking-wider">Joined</th>
                                     <th className="px-6 py-4" />
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-brand-900/10">
                                 {filtered.map((user) => (
-                                    <tr key={user.id} className="hover:bg-white/2 transition-colors">
+                                    <tr key={user.id} className="hover:bg-brand-900/5 transition-colors">
                                         <td className="px-6 py-4">
                                             <div>
-                                                <p className="text-white text-sm font-medium">{user.name}</p>
-                                                <p className="text-white/35 text-xs font-mono mt-0.5">{user.email}</p>
+                                                <p className="text-brand-900 text-sm font-medium">{user.name}</p>
+                                                <p className="text-brand-900/60 text-xs font-mono mt-0.5">{user.email}</p>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <span
                                                 className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${user.status === "active"
-                                                    ? "bg-green-400/10 text-green-400 border border-green-400/20"
-                                                    : "bg-red-400/10 text-red-400 border border-red-400/20"
+                                                    ? "bg-sage-500/10 text-sage-600 border border-sage-500/20"
+                                                    : "bg-red-500/10 text-red-600 border border-red-500/20"
                                                     }`}
                                             >
                                                 {user.status}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`text-xs ${user.isVerified ? "text-green-400" : "text-yellow-400"}`}>
+                                            <span className={`text-xs ${user.isVerified ? "text-sage-600" : "text-yellow-600"}`}>
                                                 {user.isVerified ? "Verified" : "Pending"}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="text-white/30 text-xs font-mono">
+                                            <span className="text-brand-900/40 text-xs font-mono">
                                                 {new Date(user.createdAt).toLocaleDateString()}
                                             </span>
                                         </td>
@@ -116,8 +116,8 @@ export const AdminUsersPage = () => {
                                                 onClick={() => toggleStatus(user)}
                                                 disabled={actionId === user.id}
                                                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${user.status === "active"
-                                                    ? "bg-red-400/10 text-red-400 hover:bg-red-400/20 border border-red-400/20"
-                                                    : "bg-green-400/10 text-green-400 hover:bg-green-400/20 border border-green-400/20"
+                                                    ? "bg-red-500/10 text-red-600 hover:bg-red-500/20 border border-red-500/20"
+                                                    : "bg-sage-500/10 text-sage-600 hover:bg-sage-500/20 border border-sage-500/20"
                                                     } disabled:opacity-50`}
                                             >
                                                 {actionId === user.id ? (

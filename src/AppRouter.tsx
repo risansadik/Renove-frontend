@@ -8,37 +8,21 @@ import { AdminTherapistsPage } from "./features/admin/Admin-therapists-page.js";
 import { AdminUsersPage } from "./features/admin/Admin-users-page.js";
 import { TherapistLoginPage } from "./features/therapist-auth/Therapist-login-page.js";
 import { TherapistRegisterPage } from "./features/therapist-auth/Therapist-register-page.js";
+import { TherapistLayout } from "./features/therapist/Therapist-layout.js";
+import { TherapistDashboardPage } from "./features/therapist/Therapist-dashboard-page.js";
 import { ForgotPasswordPage } from "./features/user-auth/Forgot-password-page.js";
 import { ResetPasswordPage } from "./features/user-auth/Reset-password-page.js";
 import { UserLoginPage } from "./features/user-auth/User-login-page.js";
 import { UserRegisterPage } from "./features/user-auth/User-register-page.js";
 import { VerifyOtpPage } from "./features/user-auth/Verify-otp-page.js";
-
-const UserDashboard = () => (
-  <div className="min-h-screen bg-surface flex items-center justify-center">
-    <div className="text-center">
-      <p className="text-brand-400 text-sm font-mono mb-2">reNove</p>
-      <h1 className="font-display text-3xl font-bold text-white">User Dashboard</h1>
-      <p className="text-white/40 mt-2">Coming soon - your recovery journey awaits.</p>
-    </div>
-  </div>
-);
-
-const TherapistDashboard = () => (
-  <div className="min-h-screen bg-surface flex items-center justify-center">
-    <div className="text-center">
-      <p className="text-brand-400 text-sm font-mono mb-2">reNove</p>
-      <h1 className="font-display text-3xl font-bold text-white">Therapist Dashboard</h1>
-      <p className="text-white/40 mt-2">Coming soon - your session management area.</p>
-    </div>
-  </div>
-);
+import { UserLayout } from "./features/user/User-layout.js";
+import { UserDashboardPage } from "./features/user/User-dashboard-page.js";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
     <div className="text-center">
       <p className="font-mono text-brand-400 text-6xl font-bold mb-4">404</p>
-      <p className="text-white/40">This page does not exist.</p>
+      <p className="text-brand-900/60">This page does not exist.</p>
     </div>
   </div>
 );
@@ -50,89 +34,54 @@ export const AppRouter = () => {
         position="top-right"
         toastOptions={{
           style: {
-            background: "#1a1927",
-            color: "#e8e6f0",
-            border: "1px solid rgba(255,255,255,0.08)",
+            background: "#fdfaf6",
+            color: "#26182c",
+            border: "1px solid rgba(196,168,208,0.3)",
             borderRadius: "12px",
             fontSize: "14px",
+            boxShadow: "0 4px 20px rgba(107,76,122,0.1)",
           },
-          success: { iconTheme: { primary: "#6c47ff", secondary: "#fff" } },
+          success: { iconTheme: { primary: "#4a6b52", secondary: "#fff" } },
         }}
       />
 
       <Routes>
         <Route path="/" element={<Navigate to="/user/login" replace />} />
 
-        <Route
-          path="/user/register"
-          element={
-            <GuestRoute role="user">
-              <UserRegisterPage />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/user/login"
-          element={
-            <GuestRoute role="user">
-              <UserLoginPage />
-            </GuestRoute>
-          }
-        />
+        {/* ── User auth ────────────────────────────── */}
+        <Route path="/user/register" element={<GuestRoute role="user"><UserRegisterPage /></GuestRoute>} />
+        <Route path="/user/login" element={<GuestRoute role="user"><UserLoginPage /></GuestRoute>} />
         <Route path="/user/verify-otp" element={<VerifyOtpPage role="user" />} />
         <Route path="/user/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/user/reset-password" element={<ResetPasswordPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute role="user">
-              <UserDashboard />
-            </ProtectedRoute>
-          }
-        />
 
-        <Route
-          path="/therapist/register"
-          element={
-            <GuestRoute role="therapist">
-              <TherapistRegisterPage />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/therapist/login"
-          element={
-            <GuestRoute role="therapist">
-              <TherapistLoginPage />
-            </GuestRoute>
-          }
-        />
+        {/* ── User dashboard (layout with sidebar + logout) ─ */}
+        <Route path="/dashboard" element={<ProtectedRoute role="user"><UserLayout /></ProtectedRoute>}>
+          <Route index element={<UserDashboardPage />} />
+          <Route path="progress" element={<UserDashboardPage />} />
+          <Route path="ai-companion" element={<UserDashboardPage />} />
+          <Route path="therapists" element={<UserDashboardPage />} />
+          <Route path="sessions" element={<UserDashboardPage />} />
+        </Route>
+
+        {/* ── Therapist auth ───────────────────────── */}
+        <Route path="/therapist/register" element={<GuestRoute role="therapist"><TherapistRegisterPage /></GuestRoute>} />
+        <Route path="/therapist/login" element={<GuestRoute role="therapist"><TherapistLoginPage /></GuestRoute>} />
         <Route path="/therapist/verify-otp" element={<VerifyOtpPage role="therapist" />} />
-        <Route
-          path="/therapist/dashboard"
-          element={
-            <ProtectedRoute role="therapist">
-              <TherapistDashboard />
-            </ProtectedRoute>
-          }
-        />
 
-        <Route
-          path="/admin/login"
-          element={
-            <GuestRoute role="admin">
-              <AdminLoginPage />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute role="admin">
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
+        {/* ── Therapist dashboard (layout with sidebar + logout) ─ */}
+        <Route path="/therapist" element={<ProtectedRoute role="therapist"><TherapistLayout /></ProtectedRoute>}>
+          <Route index element={<Navigate to="/therapist/dashboard" replace />} />
+          <Route path="dashboard" element={<TherapistDashboardPage />} />
+          <Route path="sessions" element={<TherapistDashboardPage />} />
+          <Route path="clients" element={<TherapistDashboardPage />} />
+          <Route path="messages" element={<TherapistDashboardPage />} />
+          <Route path="settings" element={<TherapistDashboardPage />} />
+        </Route>
+
+        {/* ── Admin ────────────────────────────────── */}
+        <Route path="/admin/login" element={<GuestRoute role="admin"><AdminLoginPage /></GuestRoute>} />
+        <Route path="/admin" element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminOverviewPage />} />
           <Route path="users" element={<AdminUsersPage />} />

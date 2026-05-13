@@ -41,22 +41,22 @@ export const ForgotPasswordPage = () => {
 
     return (
         <AuthLayout>
-            <div className="auth-card p-8">
+            <div className="auth-card p-8 stagger-2">
                 <Link
                     to="/user/login"
-                    className="inline-flex items-center gap-2 text-white/40 hover:text-white/70 text-sm mb-8 transition-colors"
+                    className="inline-flex items-center gap-2 text-brand-900/60 hover:text-brand-900/80 text-sm mb-8 transition-colors"
                 >
                     <ArrowLeft size={14} /> Back to login
                 </Link>
 
                 <div className="w-14 h-14 rounded-2xl bg-brand-500/15 border border-brand-500/20 flex items-center justify-center mb-6">
-                    <KeyRound size={24} className="text-brand-400" />
+                    <KeyRound size={24} className="text-brand-600" />
                 </div>
 
                 {!sent ? (
                     <>
-                        <h1 className="font-display text-3xl font-bold text-white mb-2">Forgot password?</h1>
-                        <p className="text-white/40 text-sm mb-8">
+                        <h1 className="font-display text-3xl font-bold text-brand-900 mb-2">Forgot password?</h1>
+                        <p className="text-brand-900/60 text-sm mb-8">
                             Enter your email and we'll send you a reset code.
                         </p>
 
@@ -75,10 +75,10 @@ export const ForgotPasswordPage = () => {
                     </>
                 ) : (
                     <>
-                        <h1 className="font-display text-3xl font-bold text-white mb-2">Code sent!</h1>
-                        <p className="text-white/40 text-sm mb-8">
+                        <h1 className="font-display text-3xl font-bold text-brand-900 mb-2">Code sent!</h1>
+                        <p className="text-brand-900/60 text-sm mb-8">
                             We've sent a 6-digit OTP to{" "}
-                            <span className="text-brand-400 font-mono">{getValues("email")}</span>.
+                            <span className="text-brand-600 font-mono">{getValues("email")}</span>.
                             Enter it on the next screen to reset your password.
                         </p>
                         <Button type="button" onClick={handleContinue}>

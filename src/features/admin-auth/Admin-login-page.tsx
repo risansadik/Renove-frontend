@@ -45,23 +45,23 @@ export const AdminLoginPage = () => {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-brand-600/10 rounded-full blur-3xl" />
             </div>
 
-            <div className="w-full max-w-sm animate-fade-up relative z-10">
+            <div className="w-full max-w-sm animate-fade-up relative z-10 stagger-1">
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-500/15 border border-brand-500/20 mb-4">
-                        <ShieldCheck size={22} className="text-brand-400" />
+                        <ShieldCheck size={22} className="text-brand-600" />
                     </div>
                     <div className="flex items-center justify-center gap-2 mb-1">
                         <div className="w-6 h-6 rounded-lg bg-brand-500 flex items-center justify-center">
                             <span className="text-white font-display font-bold text-xs">r</span>
                         </div>
-                        <span className="font-display font-bold text-lg text-white">reNove</span>
+                        <span className="font-display font-bold text-lg text-brand-900">reNove</span>
                     </div>
-                    <p className="text-white/30 text-xs tracking-widest uppercase font-mono">Admin Portal</p>
+                    <p className="text-brand-900/60 text-xs tracking-widest uppercase font-mono">Admin Portal</p>
                 </div>
 
-                <div className="auth-card p-8">
-                    <h1 className="font-display text-2xl font-bold text-white mb-1">Admin sign in</h1>
-                    <p className="text-white/35 text-sm mb-7">Restricted access - authorized personnel only.</p>
+                <div className="auth-card p-8 stagger-2">
+                    <h1 className="font-display text-2xl font-bold text-brand-900 mb-1">Admin sign in</h1>
+                    <p className="text-brand-900/60 text-sm mb-7">Restricted access - authorized personnel only.</p>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                         <Input
@@ -84,7 +84,7 @@ export const AdminLoginPage = () => {
                     </form>
                 </div>
 
-                <p className="text-center text-white/15 text-xs mt-6">
+                <p className="text-center text-brand-900/40 text-xs mt-6 stagger-3">
                     This portal is restricted to platform administrators only.
                 </p>
             </div>

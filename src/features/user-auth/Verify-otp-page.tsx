@@ -70,16 +70,16 @@ export const VerifyOtpPage = ({ role }: VerifyOtpPageProps) => {
 
     return (
         <AuthLayout>
-            <div className="auth-card p-8 text-center">
+            <div className="auth-card p-8 text-center stagger-2">
                 <div className="w-14 h-14 rounded-2xl bg-brand-500/15 border border-brand-500/20 flex items-center justify-center mx-auto mb-6">
-                    <Mail size={24} className="text-brand-400" />
+                    <Mail size={24} className="text-brand-600" />
                 </div>
 
-                <h1 className="font-display text-3xl font-bold text-white mb-2">Check your email</h1>
-                <p className="text-white/40 text-sm mb-2">
+                <h1 className="font-display text-3xl font-bold text-brand-900 mb-2">Check your email</h1>
+                <p className="text-brand-900/60 text-sm mb-2">
                     We sent a 6-digit code to
                 </p>
-                <p className="text-brand-400 font-medium text-sm mb-8 font-mono">{email}</p>
+                <p className="text-brand-600 font-medium text-sm mb-8 font-mono">{email}</p>
 
                 <OtpInput value={otp} onChange={setOtp} error={otpError} />
 
@@ -98,21 +98,21 @@ export const VerifyOtpPage = ({ role }: VerifyOtpPageProps) => {
                         <button
                             onClick={handleResend}
                             disabled={resending}
-                            className="text-brand-400 hover:text-brand-300 font-medium transition-colors disabled:opacity-50"
+                            className="text-brand-600 hover:text-brand-800 font-medium transition-colors disabled:opacity-50"
                         >
                             {resending ? "Resending..." : "Resend OTP"}
                         </button>
                     ) : (
-                        <span className="text-white/30">
+                        <span className="text-brand-900/40">
                             Resend code in{" "}
-                            <span className="text-white/50 font-mono">{String(countdown).padStart(2, "0")}s</span>
+                            <span className="text-brand-900/60 font-mono">{String(countdown).padStart(2, "0")}s</span>
                         </span>
                     )}
                 </div>
 
                 {role === "therapist" && (
                     <div className="mt-6 p-4 bg-brand-500/5 border border-brand-500/10 rounded-xl">
-                        <p className="text-white/40 text-xs leading-relaxed">
+                        <p className="text-brand-900/60 text-xs leading-relaxed">
                             After verification, your profile will be reviewed by our admin team.
                             You'll receive an email once approved.
                         </p>

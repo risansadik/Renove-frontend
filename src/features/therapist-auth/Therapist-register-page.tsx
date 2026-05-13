@@ -86,7 +86,7 @@ export const TherapistRegisterPage = () => {
 
     return (
         <AuthLayout panel={<TherapistPanel />}>
-            <div className="auth-card p-8">
+            <div className="auth-card p-8 stagger-2">
                 {/* Step indicator */}
                 <div className="flex items-center gap-2 mb-8">
                     {STEPS.map((label, i) => (
@@ -96,28 +96,28 @@ export const TherapistRegisterPage = () => {
                                     className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${i < step
                                             ? "bg-brand-500 text-white"
                                             : i === step
-                                                ? "bg-brand-500/20 border-2 border-brand-500 text-brand-400"
-                                                : "bg-white/5 border border-white/10 text-white/30"
+                                                ? "bg-brand-500/20 border-2 border-brand-500 text-brand-600"
+                                                : "bg-brand-900/5 border border-brand-900/10 text-brand-900/30"
                                         }`}
                                 >
                                     {i < step ? <CheckCircle2 size={14} /> : i + 1}
                                 </div>
-                                <span className={`text-xs hidden sm:block ${i === step ? "text-white/70" : "text-white/25"}`}>
+                                <span className={`text-xs hidden sm:block ${i === step ? "text-brand-900/80" : "text-brand-900/40"}`}>
                                     {label}
                                 </span>
                             </div>
                             {i < STEPS.length - 1 && (
-                                <div className={`h-px flex-1 mx-1 ${i < step ? "bg-brand-500/50" : "bg-white/10"}`} />
+                                <div className={`h-px flex-1 mx-1 ${i < step ? "bg-brand-500/50" : "bg-brand-900/10"}`} />
                             )}
                         </div>
                     ))}
                 </div>
 
                 <div className="mb-6">
-                    <h1 className="font-display text-2xl font-bold text-white mb-1">
+                    <h1 className="font-display text-2xl font-bold text-brand-900 mb-1">
                         {["Personal information", "Professional details", "About you"][step]}
                     </h1>
-                    <p className="text-white/35 text-sm">
+                    <p className="text-brand-900/60 text-sm">
                         {["Step 1 of 3 - Basic info", "Step 2 of 3 - Credentials", "Step 3 of 3 - Final details"][step]}
                     </p>
                 </div>
@@ -203,7 +203,7 @@ export const TherapistRegisterPage = () => {
                             </div>
 
                             <div className="p-4 bg-yellow-500/5 border border-yellow-500/15 rounded-xl">
-                                <p className="text-yellow-400/70 text-xs leading-relaxed">
+                                <p className="text-yellow-600/90 text-xs leading-relaxed">
                                     After submitting, your profile will be reviewed by our admin team.
                                     This process may take 1-2 business days. You'll be notified via email.
                                 </p>
@@ -235,9 +235,9 @@ export const TherapistRegisterPage = () => {
                     </div>
                 </form>
 
-                <p className="text-center text-white/25 text-xs mt-6">
+                <p className="text-center text-brand-900/40 text-xs mt-6">
                     Already registered?{" "}
-                    <Link to="/therapist/login" className="text-white/45 hover:text-white/65 transition-colors">
+                    <Link to="/therapist/login" className="text-brand-900/60 hover:text-brand-900/80 transition-colors">
                         Sign in here
                     </Link>
                 </p>

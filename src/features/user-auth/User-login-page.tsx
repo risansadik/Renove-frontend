@@ -45,10 +45,10 @@ export const UserLoginPage = () => {
 
   return (
     <AuthLayout>
-      <div className="auth-card p-8">
+      <div className="auth-card p-8 stagger-2">
         <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold text-white mb-2">Welcome back</h1>
-          <p className="text-white/40 text-sm">Sign in to continue your journey.</p>
+          <h1 className="font-display text-3xl font-bold text-brand-900 mb-2">Welcome back</h1>
+          <p className="text-brand-900/60 text-sm">Sign in to continue your journey.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -70,7 +70,7 @@ export const UserLoginPage = () => {
             <div className="text-right mt-2">
               <Link
                 to="/user/forgot-password"
-                className="text-brand-400 hover:text-brand-300 text-xs transition-colors"
+                className="text-brand-600 hover:text-brand-800 text-xs transition-colors"
               >
                 Forgot password?
               </Link>
@@ -94,9 +94,9 @@ export const UserLoginPage = () => {
           Continue with Google
         </Button>
 
-        <p className="text-center text-white/40 text-sm mt-6">
+        <p className="text-center text-brand-900/60 text-sm mt-6">
           Don't have an account?{" "}
-          <Link to="/user/register" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
+          <Link to="/user/register" className="text-brand-600 hover:text-brand-800 font-medium transition-colors">
             Sign up free
           </Link>
         </p>
