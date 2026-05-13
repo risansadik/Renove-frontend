@@ -72,6 +72,9 @@ export const userAuthService = {
   forgotPassword: (email: string) =>
     apiClient.post<EmptyResponse>(API_ROUTES.USER.FORGOT_PASSWORD, { email }),
 
+  verifyResetOtp: (data: VerifyOtpPayload) =>
+    apiClient.post<EmptyResponse>(API_ROUTES.USER.VERIFY_RESET_OTP, data),
+
   resetPassword: (data: ResetPasswordPayload) =>
     apiClient.post<EmptyResponse>(API_ROUTES.USER.RESET_PASSWORD, data),
 
