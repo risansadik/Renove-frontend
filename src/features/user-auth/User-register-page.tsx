@@ -39,10 +39,10 @@ export const UserRegisterPage = () => {
 
   return (
     <AuthLayout>
-      <div className="auth-card p-8">
+      <div className="auth-card p-8 stagger-2">
         <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold text-white mb-2">Create account</h1>
-          <p className="text-white/40 text-sm">Start your recovery journey today.</p>
+          <h1 className="font-display text-3xl font-bold text-brand-900 mb-2">Create account</h1>
+          <p className="text-brand-900/60 text-sm">Start your recovery journey today.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -89,16 +89,16 @@ export const UserRegisterPage = () => {
           Continue with Google
         </Button>
 
-        <p className="text-center text-white/40 text-sm mt-6">
+        <p className="text-center text-brand-900/60 text-sm mt-6">
           Already have an account?{" "}
-          <Link to="/user/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
+          <Link to="/user/login" className="text-brand-600 hover:text-brand-800 font-medium transition-colors">
             Sign in
           </Link>
         </p>
 
-        <p className="text-center text-white/20 text-xs mt-4">
+        <p className="text-center text-brand-900/40 text-xs mt-4">
           Are you a therapist?{" "}
-          <Link to="/therapist/register" className="text-white/40 hover:text-white/60 transition-colors">
+          <Link to="/therapist/register" className="text-brand-900/60 hover:text-brand-900 transition-colors">
             Register here
           </Link>
         </p>

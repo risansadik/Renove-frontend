@@ -66,20 +66,20 @@ export const AdminTherapistsPage = () => {
 
     return (
         <div>
-            <div className="mb-6">
-                <h1 className="font-display text-2xl font-bold text-white mb-1">Therapist management</h1>
-                <p className="text-white/35 text-sm">{therapists.length} total applications</p>
+            <div className="mb-6 stagger-1">
+                <h1 className="font-display text-2xl font-bold text-brand-900 mb-1">Therapist management</h1>
+                <p className="text-brand-900/60 text-sm">{therapists.length} total applications</p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6 stagger-2">
                 <div className="flex gap-2 flex-wrap">
                     {filterTabs.map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setStatusFilter(tab)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all border ${statusFilter === tab
-                                    ? "bg-brand-500/15 text-brand-400 border-brand-500/25"
-                                    : "text-white/35 border-white/10 hover:border-white/20 hover:text-white/55"
+                                    ? "bg-brand-500/15 text-brand-600 border-brand-500/25"
+                                    : "text-brand-900/60 border-brand-900/10 hover:border-brand-900/20 hover:text-brand-900/80"
                                 }`}
                         >
                             {tab} <span className="ml-1 opacity-60">({counts[tab]})</span>
@@ -88,7 +88,7 @@ export const AdminTherapistsPage = () => {
                 </div>
 
                 <div className="sm:ml-auto relative">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-900/40" />
                     <input
                         type="text"
                         placeholder="Search therapists..."
@@ -99,36 +99,36 @@ export const AdminTherapistsPage = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 stagger-3">
                 {loading ? (
                     <div className="flex items-center justify-center py-16">
-                        <Loader2 size={24} className="animate-spin text-brand-400" />
+                        <Loader2 size={24} className="animate-spin text-brand-600" />
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="text-center py-16 text-white/25 text-sm bg-surface-50 border border-white/5 rounded-2xl">
+                    <div className="text-center py-16 text-brand-900/40 text-sm bg-surface-50 border border-brand-900/10 rounded-2xl">
                         No therapists found.
                     </div>
                 ) : (
                     filtered.map((therapist) => (
                         <div
                             key={therapist.id}
-                            className="bg-surface-50 border border-white/5 rounded-2xl overflow-hidden"
+                            className="bg-surface-50 border border-brand-900/10 rounded-2xl overflow-hidden"
                         >
                             <div className="flex items-center gap-4 px-6 py-4">
-                                <div className="w-10 h-10 rounded-full bg-brand-500/20 border border-brand-500/20 flex items-center justify-center shrink-0">
-                                    <span className="text-brand-400 font-display font-bold text-sm">
+                                <div className="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center shrink-0">
+                                    <span className="text-brand-600 font-display font-bold text-sm">
                                         {therapist.name.charAt(0).toUpperCase()}
                                     </span>
                                 </div>
 
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <p className="text-white text-sm font-medium truncate">{therapist.name}</p>
+                                        <p className="text-brand-900 text-sm font-medium truncate">{therapist.name}</p>
                                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs border ${statusColors[therapist.status]}`}>
                                             {therapist.status}
                                         </span>
                                     </div>
-                                    <p className="text-white/35 text-xs font-mono mt-0.5 truncate">{therapist.email}</p>
+                                    <p className="text-brand-900/60 text-xs font-mono mt-0.5 truncate">{therapist.email}</p>
                                 </div>
 
                                 <div className="flex items-center gap-2 shrink-0">
@@ -137,7 +137,7 @@ export const AdminTherapistsPage = () => {
                                             <button
                                                 onClick={() => updateStatus(therapist, "approved")}
                                                 disabled={!!actionId}
-                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-400/10 text-green-400 hover:bg-green-400/20 border border-green-400/20 transition-all disabled:opacity-50"
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-sage-500/10 text-sage-600 hover:bg-sage-500/20 border border-sage-500/20 transition-all disabled:opacity-50"
                                             >
                                                 {actionId === therapist.id + "approved" ? (
                                                     <Loader2 size={11} className="animate-spin" />
@@ -149,7 +149,7 @@ export const AdminTherapistsPage = () => {
                                             <button
                                                 onClick={() => updateStatus(therapist, "rejected")}
                                                 disabled={!!actionId}
-                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-400/10 text-red-400 hover:bg-red-400/20 border border-red-400/20 transition-all disabled:opacity-50"
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-600 hover:bg-red-500/20 border border-red-500/20 transition-all disabled:opacity-50"
                                             >
                                                 {actionId === therapist.id + "rejected" ? (
                                                     <Loader2 size={11} className="animate-spin" />
@@ -165,7 +165,7 @@ export const AdminTherapistsPage = () => {
                                         type="button"
                                         aria-label={expandedId === therapist.id ? "Collapse therapist details" : "Expand therapist details"}
                                         onClick={() => setExpandedId(expandedId === therapist.id ? null : therapist.id)}
-                                        className="text-white/30 hover:text-white/60 transition-colors p-1"
+                                        className="text-brand-900/40 hover:text-brand-900/80 transition-colors p-1"
                                     >
                                         {expandedId === therapist.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                                     </button>
@@ -173,7 +173,7 @@ export const AdminTherapistsPage = () => {
                             </div>
 
                             {expandedId === therapist.id && (
-                                <div className="border-t border-white/5 px-6 py-5 grid sm:grid-cols-2 gap-x-8 gap-y-4 animate-fade-in">
+                                <div className="border-t border-brand-900/10 px-6 py-5 grid sm:grid-cols-2 gap-x-8 gap-y-4 animate-fade-in">
                                     {[
                                         { label: "Phone", value: therapist.phone },
                                         { label: "Gender", value: therapist.gender },
@@ -183,18 +183,18 @@ export const AdminTherapistsPage = () => {
                                         { label: "Joined", value: new Date(therapist.createdAt).toLocaleDateString() },
                                     ].map(({ label, value }) => (
                                         <div key={label}>
-                                            <p className="text-white/30 text-xs uppercase tracking-wider mb-1">{label}</p>
-                                            <p className="text-white/70 text-sm">{value}</p>
+                                            <p className="text-brand-900/40 text-xs uppercase tracking-wider mb-1">{label}</p>
+                                            <p className="text-brand-900/80 text-sm">{value}</p>
                                         </div>
                                     ))}
 
                                     <div className="sm:col-span-2">
-                                        <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Specializations</p>
+                                        <p className="text-brand-900/40 text-xs uppercase tracking-wider mb-1">Specializations</p>
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {therapist.specialization.map((s) => (
                                                 <span
                                                     key={s}
-                                                    className="px-2.5 py-1 bg-brand-500/10 border border-brand-500/15 rounded-full text-brand-400 text-xs"
+                                                    className="px-2.5 py-1 bg-brand-500/10 border border-brand-500/15 rounded-full text-brand-600 text-xs"
                                                 >
                                                     {s}
                                                 </span>
@@ -204,17 +204,17 @@ export const AdminTherapistsPage = () => {
 
                                     {therapist.bio && (
                                         <div className="sm:col-span-2">
-                                            <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Bio</p>
-                                            <p className="text-white/55 text-sm leading-relaxed">{therapist.bio}</p>
+                                            <p className="text-brand-900/40 text-xs uppercase tracking-wider mb-1">Bio</p>
+                                            <p className="text-brand-900/60 text-sm leading-relaxed">{therapist.bio}</p>
                                         </div>
                                     )}
 
                                     {therapist.certifications && therapist.certifications.length > 0 && (
                                         <div className="sm:col-span-2">
-                                            <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Certifications</p>
+                                            <p className="text-brand-900/40 text-xs uppercase tracking-wider mb-1">Certifications</p>
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {therapist.certifications.map((c) => (
-                                                    <span key={c} className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-white/50 text-xs">
+                                                    <span key={c} className="px-2.5 py-1 bg-brand-900/5 border border-brand-900/10 rounded-full text-brand-900/60 text-xs">
                                                         {c}
                                                     </span>
                                                 ))}
@@ -228,7 +228,7 @@ export const AdminTherapistsPage = () => {
                                                 <button
                                                     onClick={() => updateStatus(therapist, "rejected")}
                                                     disabled={!!actionId}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-400/10 text-red-400 hover:bg-red-400/20 border border-red-400/20 transition-all disabled:opacity-50"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-600 hover:bg-red-500/20 border border-red-500/20 transition-all disabled:opacity-50"
                                                 >
                                                     <XCircle size={11} /> Revoke approval
                                                 </button>
@@ -236,7 +236,7 @@ export const AdminTherapistsPage = () => {
                                                 <button
                                                     onClick={() => updateStatus(therapist, "approved")}
                                                     disabled={!!actionId}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-400/10 text-green-400 hover:bg-green-400/20 border border-green-400/20 transition-all disabled:opacity-50"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-sage-500/10 text-sage-600 hover:bg-sage-500/20 border border-sage-500/20 transition-all disabled:opacity-50"
                                                 >
                                                     <CheckCircle2 size={11} /> Approve
                                                 </button>

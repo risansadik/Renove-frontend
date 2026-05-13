@@ -8,6 +8,10 @@ export const API_ROUTES = {
     FORGOT_PASSWORD: "/api/user/auth/forgot-password",
     RESET_PASSWORD: "/api/user/auth/reset-password",
     LOGOUT: "/api/user/auth/logout",
+    DASHBOARD: "/api/user/auth/dashboard",
+    MOOD: "/api/user/auth/mood",
+    MISSION: (id: string) => `/api/user/auth/missions/${id}`,
+    THERAPISTS: "/api/user/auth/therapists",
   },
   THERAPIST: {
     REGISTER: "/api/therapist/auth/register",
@@ -15,6 +19,7 @@ export const API_ROUTES = {
     RESEND_OTP: "/api/therapist/auth/resend-otp",
     LOGIN: "/api/therapist/auth/login",
     LOGOUT: "/api/therapist/auth/logout",
+    DASHBOARD: "/api/therapist/auth/dashboard",
   },
   ADMIN: {
     LOGIN: "/api/admin/login",
@@ -24,4 +29,4 @@ export const API_ROUTES = {
     THERAPISTS: "/api/admin/therapists",
     THERAPIST_STATUS: (id: string) => `/api/admin/therapists/${id}/status`,
   },
-} as const;
+} as const;

@@ -113,3 +113,75 @@ export const adminService = {
       status,
     }),
 };
+
+/* ── User Dashboard ────────────────────────────────────── */
+export interface DashboardMission {
+  id: string;
+  label: string;
+  xp: number;
+  done: boolean;
+}
+
+export interface DashboardHabit {
+  label: string;
+  color: string;
+  streak: number;
+  done: boolean[];
+}
+
+export interface DashboardData {
+  xp: number;
+  level: number;
+  xpPercent: number;
+  streakDays: number;
+  totalSessionsDone: number;
+  missions: DashboardMission[];
+  recentMoods: { mood: string; loggedAt: string }[];
+  habits: DashboardHabit[];
+  weekDays: string[];
+}
+
+export interface ApprovedTherapist {
+  id: string;
+  name: string;
+  specialization: string[];
+  experience: number;
+  consultationFee: number;
+  bio: string;
+  avatar: string;
+}
+
+export const userDashboardService = {
+  getDashboard: () =>
+    apiClient.get<ApiResponse<DashboardData>>(API_ROUTES.USER.DASHBOARD),
+
+  logMood: (mood: string) =>
+    apiClient.post<EmptyResponse>(API_ROUTES.USER.MOOD, { mood }),
+
+  toggleMission: (missionId: string) =>
+    apiClient.patch<ApiResponse<{ missions: DashboardMission[] }>>(
+      API_ROUTES.USER.MISSION(missionId)
+    ),
+
+  getTherapists: () =>
+    apiClient.get<ApiResponse<ApprovedTherapist[]>>(API_ROUTES.USER.THERAPISTS),
+};
+
+/* ── Therapist Dashboard ───────────────────────────────── */
+export interface TherapistDashboardData {
+  therapistName: string;
+  specialization: string[];
+  experience: number;
+  consultationFee: number;
+  status: string;
+  platformUsers: number;
+  joinedDaysAgo: number;
+  sessionsToday: number;
+  upcomingSessionsThisWeek: number;
+}
+
+export const therapistDashboardService = {
+  getDashboard: () =>
+    apiClient.get<ApiResponse<TherapistDashboardData>>(API_ROUTES.THERAPIST.DASHBOARD),
+};
+
