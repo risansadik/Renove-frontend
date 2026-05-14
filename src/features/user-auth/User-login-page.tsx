@@ -10,11 +10,14 @@ import { PasswordInput } from "../../components/common/Password-input.js";
 import { Button } from "../../components/common/Button.js";
 import { loginSchema, type LoginForm } from "../../core/utils/form-schemas.js";
 import { userAuthService } from "../../services/api/auth.service.js";
+import { handleError } from "../../core/utils/error-handler.js";
 import { useAuthStore } from "../../store/use-auth-store.js";
+import { useThemeStore } from "../../store/use-theme-store.js";
 
 export const UserLoginPage = () => {
   const navigate = useNavigate();
   const setUser = useAuthStore((s) => s.setUser);
+  const { theme } = useThemeStore();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -34,7 +37,7 @@ export const UserLoginPage = () => {
         navigate("/dashboard");
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Login failed");
+      handleError(err, "Login failed");
     } finally {
       setLoading(false);
     }
@@ -101,14 +104,14 @@ export const UserLoginPage = () => {
 
         <div className="divider mt-5">or continue with</div>
 
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-4 w-full">
           <GoogleLogin
             onSuccess={onGoogleSuccess}
             onError={() => toast.error("Google login failed")}
             useOneTap
-            theme="outline"
+            theme={theme === "dark" ? "filled_black" : "outline"}
             shape="pill"
-            width="100%"
+            width="320"
           />
         </div>
 

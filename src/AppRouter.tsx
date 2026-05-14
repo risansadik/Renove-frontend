@@ -9,6 +9,8 @@ import { AdminTherapistsPage } from "./features/admin/Admin-therapists-page.js";
 import { AdminUsersPage } from "./features/admin/Admin-users-page.js";
 import { TherapistLoginPage } from "./features/therapist-auth/Therapist-login-page.js";
 import { TherapistRegisterPage } from "./features/therapist-auth/Therapist-register-page.js";
+import { TherapistForgotPasswordPage } from "./features/therapist-auth/Therapist-forgot-password-page.js";
+import { TherapistResetPasswordPage } from "./features/therapist-auth/Therapist-reset-password-page.js";
 import { TherapistLayout } from "./features/therapist/Therapist-layout.js";
 import { TherapistDashboardPage } from "./features/therapist/Therapist-dashboard-page.js";
 import { ForgotPasswordPage } from "./features/user-auth/Forgot-password-page.js";
@@ -18,6 +20,7 @@ import { UserRegisterPage } from "./features/user-auth/User-register-page.js";
 import { VerifyOtpPage } from "./features/user-auth/Verify-otp-page.js";
 import { UserLayout } from "./features/user/User-layout.js";
 import { UserDashboardPage } from "./features/user/User-dashboard-page.js";
+import { useThemeStore } from "./store/use-theme-store.js";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -30,6 +33,8 @@ const NotFoundPage = () => (
 
 export const AppRouter = () => {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const { theme } = useThemeStore();
+  const isDark = theme === "dark";
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
@@ -37,20 +42,38 @@ export const AppRouter = () => {
         <Toaster
           position="top-right"
           toastOptions={{
+            duration: 4000,
             style: {
-              background: "#fdfaf6",
-              color: "#26182c",
-              border: "1px solid rgba(196,168,208,0.3)",
-              borderRadius: "12px",
+              background: isDark ? "rgba(26, 17, 30, 0.95)" : "rgba(253, 250, 246, 0.95)",
+              color: isDark ? "#ece3f0" : "#26182c",
+              border: isDark
+                ? "1px solid rgba(184,155,190,0.2)"
+                : "1px solid rgba(196,168,208,0.3)",
+              borderRadius: "16px",
+              padding: "12px 16px",
               fontSize: "14px",
-              boxShadow: "0 4px 20px rgba(107,76,122,0.1)",
+              fontWeight: "500",
+              boxShadow: isDark
+                ? "0 8px 32px rgba(0,0,0,0.5)"
+                : "0 8px 32px rgba(107,76,122,0.12)",
+              backdropFilter: "blur(12px)",
             },
-            success: { iconTheme: { primary: "#4a6b52", secondary: "#fff" } },
+            success: {
+              iconTheme: { primary: "#4a6b52", secondary: "#fff" },
+              style: {
+                borderLeft: "4px solid #4a6b52",
+              }
+            },
+            error: {
+              iconTheme: { primary: "#ef4444", secondary: "#fff" },
+              style: {
+                borderLeft: "4px solid #ef4444",
+              }
+            }
           }}
         />
 
         <Routes>
-          {/* ... existing routes ... */}
           <Route path="/" element={<Navigate to="/user/login" replace />} />
 
           {/* ── User auth ────────────────────────────── */}
@@ -73,6 +96,8 @@ export const AppRouter = () => {
           <Route path="/therapist/register" element={<GuestRoute role="therapist"><TherapistRegisterPage /></GuestRoute>} />
           <Route path="/therapist/login" element={<GuestRoute role="therapist"><TherapistLoginPage /></GuestRoute>} />
           <Route path="/therapist/verify-otp" element={<VerifyOtpPage role="therapist" />} />
+          <Route path="/therapist/forgot-password" element={<TherapistForgotPasswordPage />} />
+          <Route path="/therapist/reset-password" element={<TherapistResetPasswordPage />} />
 
           {/* ── Therapist dashboard (layout with sidebar + logout) ─ */}
           <Route path="/therapist" element={<ProtectedRoute role="therapist"><TherapistLayout /></ProtectedRoute>}>

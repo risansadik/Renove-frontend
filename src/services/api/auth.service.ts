@@ -82,7 +82,7 @@ export const userAuthService = {
 };
 
 export const therapistAuthService = {
-  register: (data: RegisterTherapistPayload) =>
+  register: (data: FormData) =>
     apiClient.post<RegisterResponse>(API_ROUTES.THERAPIST.REGISTER, data),
 
   verifyOtp: (data: VerifyOtpPayload) =>
@@ -93,6 +93,15 @@ export const therapistAuthService = {
 
   login: (data: LoginPayload) =>
     apiClient.post<ApiResponse<AuthTherapistData>>(API_ROUTES.THERAPIST.LOGIN, data),
+
+  forgotPassword: (email: string) =>
+    apiClient.post<EmptyResponse>(API_ROUTES.THERAPIST.FORGOT_PASSWORD, { email }),
+
+  verifyResetOtp: (data: VerifyOtpPayload) =>
+    apiClient.post<EmptyResponse>(API_ROUTES.THERAPIST.VERIFY_RESET_OTP, data),
+
+  resetPassword: (data: ResetPasswordPayload) =>
+    apiClient.post<EmptyResponse>(API_ROUTES.THERAPIST.RESET_PASSWORD, data),
 
   logout: () => apiClient.post<EmptyResponse>(API_ROUTES.THERAPIST.LOGOUT),
 };

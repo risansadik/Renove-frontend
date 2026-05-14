@@ -11,9 +11,12 @@ import { Button } from "../../components/common/Button.js";
 import { registerUserSchema, type RegisterUserForm } from "../../core/utils/form-schemas.js";
 import { userAuthService } from "../../services/api/auth.service.js";
 import { useAuthStore } from "../../store/use-auth-store.js";
+import { useThemeStore } from "../../store/use-theme-store.js";
+import { handleError } from "../../core/utils/error-handler.js";
 
 export const UserRegisterPage = () => {
   const navigate = useNavigate();
+  const { theme } = useThemeStore();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -29,7 +32,7 @@ export const UserRegisterPage = () => {
       toast.success("OTP sent to your email!");
       navigate("/user/verify-otp", { state: { email: res.data.data?.email } });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Registration failed");
+      handleError(err, "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -51,7 +54,7 @@ export const UserRegisterPage = () => {
         navigate("/dashboard");
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Google registration failed");
+      handleError(err, "Google registration failed");
     } finally {
       setLoading(false);
     }
@@ -104,7 +107,7 @@ export const UserRegisterPage = () => {
             onSuccess={onGoogleSuccess}
             onError={() => toast.error("Google login failed")}
             useOneTap
-            theme="outline"
+            theme={theme === "dark" ? "filled_black" : "outline"}
             shape="pill"
             width="100%"
           />

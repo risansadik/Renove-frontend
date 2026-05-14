@@ -6,6 +6,7 @@ import { OtpInput } from "../../components/common/Otp-input.js";
 import { Button } from "../../components/common/Button.js";
 import { userAuthService, therapistAuthService } from "../../services/api/auth.service.js";
 import { Mail } from "lucide-react";
+import { handleError } from "../../core/utils/error-handler.js";
 
 interface VerifyOtpPageProps {
     role: "user" | "therapist";
@@ -36,7 +37,7 @@ export const VerifyOtpPage = ({ role }: VerifyOtpPageProps) => {
         if (canResend) return;
         const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
         return () => clearTimeout(timer);
-    }, [canResend]);
+    }, [canResend, countdown]);
 
     const handleVerify = async () => {
         if (otp.length !== 6) { setOtpError("Enter the 6-digit OTP"); return; }
@@ -62,7 +63,7 @@ export const VerifyOtpPage = ({ role }: VerifyOtpPageProps) => {
             setOtp("");
             setOtpError("");
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to resend OTP");
+            handleError(err, "Failed to resend OTP");
         } finally {
             setResending(false);
         }

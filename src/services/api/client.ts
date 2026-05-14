@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import type { ApiResponse } from "../../domain/model";
+import { useAuthStore } from "../../store/use-auth-store.js";
 
 export interface ApiError {
   message: string;
@@ -31,6 +32,16 @@ apiClient.interceptors.response.use(
       message: error.response?.data?.message ?? error.message ?? "Something went wrong",
       statusCode: error.response?.data?.statusCode ?? error.response?.status,
     };
+
+    // Auto logout on unauthorized
+    if (apiError.statusCode === 401 || apiError.statusCode === 403) {
+      useAuthStore.getState().logout();
+      // Only redirect if we are not on login/register pages
+      const path = window.location.pathname;
+      if (!path.includes("/login") && !path.includes("/register") && !path.includes("/verify-otp")) {
+        window.location.href = "/user/login";
+      }
+    }
 
     return Promise.reject(new ApiClientError(apiError));
   }

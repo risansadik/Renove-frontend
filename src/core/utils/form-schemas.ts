@@ -60,7 +60,7 @@ export const registerTherapistSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(50),
   email: emailSchema,
   password: passwordSchema,
-  phone: z.string().min(10, "Enter a valid phone number").max(15),
+  confirmPassword: z.string(),
   gender: z.enum(["male", "female", "other"], {
     message: "Select gender",
   }),
@@ -70,6 +70,12 @@ export const registerTherapistSchema = z.object({
   consultationFee: z.coerce.number().min(0, "Invalid fee"),
   bio: z.string().min(50, "Bio must be at least 50 characters").max(1000),
   certifications: z.string().optional(),
+  profileImage: z.any().refine((file) => file instanceof File, "Profile image is required"),
+  certificationFiles: z.array(z.any()).min(1, "At least one certification document is required"),
+})
+.refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 export const adminLoginSchema = loginSchema;
@@ -83,8 +89,30 @@ export type RegisterTherapistFormInput = z.input<typeof registerTherapistSchema>
 export type RegisterTherapistForm = z.infer<typeof registerTherapistSchema>;
 export type AdminLoginForm = z.infer<typeof adminLoginSchema>;
 
-export const toRegisterTherapistPayload = (form: RegisterTherapistForm) => ({
-  ...form,
-  specialization: splitCsv(form.specialization) ?? [],
-  certifications: splitCsv(form.certifications),
-});
+export const toRegisterTherapistPayload = (form: RegisterTherapistForm) => {
+  const fd = new FormData();
+  Object.entries(form).forEach(([key, value]) => {
+    if (key === "certificationFiles") {
+      if (value instanceof FileList) {
+        Array.from(value).forEach((file) => fd.append("certificationFiles", file));
+      } else if (Array.isArray(value)) {
+        value.forEach((file) => {
+          if (file instanceof File) fd.append("certificationFiles", file);
+        });
+      }
+    } else if (key === "profileImage") {
+      if (value instanceof FileList && value.length > 0) {
+        fd.append("profileImage", value[0]);
+      } else if (value instanceof File) {
+        fd.append("profileImage", value);
+      }
+    } else if (key === "specialization") {
+      fd.append(key, JSON.stringify(splitCsv(value as string) ?? []));
+    } else if (key === "certifications" && typeof value === "string") {
+      fd.append(key, JSON.stringify(splitCsv(value) ?? []));
+    } else if (value !== undefined && value !== null) {
+      fd.append(key, value.toString());
+    }
+  });
+  return fd;
+};
