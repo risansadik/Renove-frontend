@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { adminService } from "../../services/api/auth.service.js";
 import type { User } from "../../domain/model/index.js";
 import { Search, ShieldOff, ShieldCheck, Loader2 } from "lucide-react";
+import { handleError } from "../../core/utils/error-handler.js";
 
 export const AdminUsersPage = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -17,7 +18,7 @@ export const AdminUsersPage = () => {
                 setUsers(res.data.data ?? []);
             })
             .catch((err) => {
-                toast.error(err instanceof Error ? err.message : "Failed to load users");
+                handleError(err, "Failed to load users");
             })
             .finally(() => setLoading(false));
     }, []);
@@ -35,7 +36,7 @@ export const AdminUsersPage = () => {
             setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, status: newStatus } : u)));
             toast.success(`User ${newStatus === "blocked" ? "blocked" : "unblocked"}`);
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Action failed");
+            handleError(err, "Action failed");
         } finally {
             setActionId(null);
         }

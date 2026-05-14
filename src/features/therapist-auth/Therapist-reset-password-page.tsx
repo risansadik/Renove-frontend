@@ -8,11 +8,23 @@ import { PasswordInput } from "../../components/common/Password-input.js";
 import { OtpInput } from "../../components/common/Otp-input.js";
 import { Button } from "../../components/common/Button.js";
 import { resetPasswordSchema, type ResetPasswordForm } from "../../core/utils/form-schemas.js";
-import { userAuthService } from "../../services/api/auth.service.js";
+import { therapistAuthService } from "../../services/api/auth.service.js";
 import { ArrowLeft, ShieldCheck, CheckCircle2 } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.js";
 
-export const ResetPasswordPage = () => {
+const TherapistPanel = () => (
+    <div>
+        <p className="text-brand-400 text-sm font-mono mb-4 tracking-widest uppercase">Therapist portal</p>
+        <h2 className="font-display text-4xl font-bold text-white leading-tight mb-6">
+            Secure<br />
+            <span className="text-brand-400">Reset.</span>
+        </h2>
+        <p className="text-white/50 text-base leading-relaxed">
+            Verify your identity with the OTP sent to your email and set a new password.
+        </p>
+    </div>
+);
+
+export const TherapistResetPasswordPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const email = (location.state as { email?: string })?.email ?? "";
@@ -41,7 +53,7 @@ export const ResetPasswordPage = () => {
 
     useEffect(() => {
         if (!email) {
-            navigate("/user/forgot-password", { replace: true });
+            navigate("/therapist/forgot-password", { replace: true });
         }
     }, [email, navigate]);
 
@@ -54,11 +66,11 @@ export const ResetPasswordPage = () => {
     const handleResendOtp = async () => {
         try {
             setResending(true);
-            await userAuthService.forgotPassword(email);
+            await therapistAuthService.forgotPassword(email);
             toast.success("New code sent to your email");
             setCountdown(60);
         } catch (err) {
-            handleError(err, "Failed to resend code");
+            toast.error(err instanceof Error ? err.message : "Failed to resend code");
         } finally {
             setResending(false);
         }
@@ -71,11 +83,11 @@ export const ResetPasswordPage = () => {
         try {
             setLoading(true);
             const otp = getValues("otp");
-            await userAuthService.verifyResetOtp({ email, otp });
+            await therapistAuthService.verifyResetOtp({ email, otp });
             setStep("password");
             toast.success("Code verified! Set your new password.");
         } catch (err) {
-            handleError(err, "Invalid or expired code");
+            toast.error(err instanceof Error ? err.message : "Invalid or expired code");
         } finally {
             setLoading(false);
         }
@@ -84,21 +96,21 @@ export const ResetPasswordPage = () => {
     const onSubmit = async (data: ResetPasswordForm) => {
         try {
             setLoading(true);
-            await userAuthService.resetPassword(data);
+            await therapistAuthService.resetPassword(data);
             toast.success("Password reset successfully!");
-            navigate("/user/login");
+            navigate("/therapist/login");
         } catch (err) {
-            handleError(err, "Reset failed");
+            toast.error(err instanceof Error ? err.message : "Reset failed");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <AuthLayout>
+        <AuthLayout panel={<TherapistPanel />}>
             <div className="auth-card p-8 stagger-2">
                 <Link
-                    to="/user/forgot-password"
+                    to="/therapist/forgot-password"
                     className="inline-flex items-center gap-2 text-brand-900/60 hover:text-brand-900/80 text-sm mb-8 transition-colors"
                 >
                     <ArrowLeft size={14} /> Back
@@ -116,7 +128,7 @@ export const ResetPasswordPage = () => {
                         {step === "otp" ? (
                             <>Enter the 6-digit code sent to <span className="text-brand-600 font-mono text-xs">{email}</span></>
                         ) : (
-                            "Create a strong new password for your account."
+                            "Create a strong new password for your professional account."
                         )}
                     </p>
                 </div>
@@ -140,7 +152,7 @@ export const ResetPasswordPage = () => {
                         <Button type="button" onClick={handleVerifyOtp} loading={loading}>
                             Verify Code
                         </Button>
-                        
+
                         <div className="text-center">
                             {canResend ? (
                                 <button

@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { adminService } from "../../services/api/auth.service.js";
 import type { Therapist } from "../../domain/model/index.js";
-import { Search, CheckCircle2, XCircle, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, CheckCircle2, XCircle, Loader2, ChevronDown, ChevronUp, FileText, ImageIcon, X } from "lucide-react";
+import { handleError } from "../../core/utils/error-handler.js";
 
 type StatusFilter = "all" | "pending" | "approved" | "rejected";
 
@@ -19,6 +20,7 @@ export const AdminTherapistsPage = () => {
     const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
     const [actionId, setActionId] = useState<string | null>(null);
     const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<{ url: string, type: 'image' | 'pdf' } | null>(null);
 
     useEffect(() => {
         adminService
@@ -27,7 +29,7 @@ export const AdminTherapistsPage = () => {
                 setTherapists(res.data.data ?? []);
             })
             .catch((err) => {
-                toast.error(err instanceof Error ? err.message : "Failed to load therapists");
+                handleError(err, "Failed to load therapists");
             })
             .finally(() => setLoading(false));
     }, []);
@@ -50,7 +52,7 @@ export const AdminTherapistsPage = () => {
             );
             toast.success(`Therapist ${status}`);
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Action failed");
+            handleError(err, "Action failed");
         } finally {
             setActionId(null);
         }
@@ -115,10 +117,18 @@ export const AdminTherapistsPage = () => {
                             className="bg-surface-50 border border-brand-900/10 rounded-2xl overflow-hidden"
                         >
                             <div className="flex items-center gap-4 px-6 py-4">
-                                <div className="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center shrink-0">
-                                    <span className="text-brand-600 font-display font-bold text-sm">
-                                        {therapist.name.charAt(0).toUpperCase()}
-                                    </span>
+                                <div className="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center shrink-0 overflow-hidden">
+                                    {therapist.profileImage ? (
+                                        <img 
+                                            src={`${import.meta.env.VITE_API_BASE_URL}/${therapist.profileImage}`} 
+                                            className="w-full h-full object-cover" 
+                                            alt={therapist.name} 
+                                        />
+                                    ) : (
+                                        <span className="text-brand-600 font-display font-bold text-sm">
+                                            {therapist.name.charAt(0).toUpperCase()}
+                                        </span>
+                                    )}
                                 </div>
 
                                 <div className="flex-1 min-w-0">
@@ -211,13 +221,44 @@ export const AdminTherapistsPage = () => {
 
                                     {therapist.certifications && therapist.certifications.length > 0 && (
                                         <div className="sm:col-span-2">
-                                            <p className="text-brand-900/40 text-xs uppercase tracking-wider mb-1">Certifications</p>
+                                            <p className="text-brand-900/40 text-xs uppercase tracking-wider mb-2">Certification Labels</p>
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {therapist.certifications.map((c) => (
                                                     <span key={c} className="px-2.5 py-1 bg-brand-900/5 border border-brand-900/10 rounded-full text-brand-900/60 text-xs">
                                                         {c}
                                                     </span>
                                                 ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {(therapist as any).certificationFiles?.length > 0 && (
+                                        <div className="sm:col-span-2 mt-4 p-4 bg-brand-500/5 rounded-2xl border border-brand-500/10">
+                                            <p className="text-brand-900/40 text-[10px] uppercase tracking-[0.2em] font-bold mb-4">Review Certifications</p>
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                                {(therapist as any).certificationFiles?.map((file: string, idx: number) => {
+                                                    const isPdf = file.toLowerCase().endsWith('.pdf');
+                                                    return (
+                                                        <button 
+                                                            key={idx}
+                                                            onClick={() => setPreviewUrl({ 
+                                                                url: `${import.meta.env.VITE_API_BASE_URL}/${file}`, 
+                                                                type: isPdf ? 'pdf' : 'image' 
+                                                            })}
+                                                            className="group relative flex flex-col items-center justify-center gap-3 aspect-square rounded-xl bg-white border border-brand-500/10 hover:border-brand-500/30 transition-all shadow-sm p-4 text-center overflow-hidden"
+                                                        >
+                                                            {isPdf ? (
+                                                                <FileText size={24} className="text-red-500/60 group-hover:scale-110 transition-transform" />
+                                                            ) : (
+                                                                <ImageIcon size={24} className="text-brand-500/60 group-hover:scale-110 transition-transform" />
+                                                            )}
+                                                            <span className="text-[10px] text-brand-900/40 font-medium truncate w-full">
+                                                                {isPdf ? 'PDF Cert' : 'Image Cert'}
+                                                            </span>
+                                                            <div className="absolute inset-0 bg-brand-900/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     )}
@@ -249,6 +290,44 @@ export const AdminTherapistsPage = () => {
                     ))
                 )}
             </div>
+
+            {/* Document Preview Modal */}
+            {previewUrl && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10">
+                    <div 
+                        className="absolute inset-0 bg-brand-900/90 backdrop-blur-sm" 
+                        onClick={() => setPreviewUrl(null)} 
+                    />
+                    
+                    <div className="relative w-full max-w-4xl max-h-full bg-white rounded-3xl overflow-hidden shadow-2xl animate-fade-up flex flex-col">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-brand-500/10 bg-white shrink-0">
+                            <h3 className="font-display font-bold text-brand-900">Document Preview</h3>
+                            <button 
+                                onClick={() => setPreviewUrl(null)}
+                                className="w-8 h-8 rounded-full bg-brand-500/5 hover:bg-brand-500/10 flex items-center justify-center text-brand-900/40 hover:text-brand-900 transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        
+                        <div className="flex-1 overflow-auto bg-brand-900/5 p-4 flex items-center justify-center min-h-0">
+                            {previewUrl.type === 'image' ? (
+                                <img 
+                                    src={previewUrl.url} 
+                                    alt="Preview" 
+                                    className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                                />
+                            ) : (
+                                <iframe 
+                                    src={previewUrl.url} 
+                                    className="w-full h-full min-h-[70vh] rounded-lg bg-white"
+                                    title="PDF Preview"
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

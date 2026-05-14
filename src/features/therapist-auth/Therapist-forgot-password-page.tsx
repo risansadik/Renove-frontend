@@ -7,11 +7,23 @@ import { AuthLayout } from "../../components/layout/Auth-layout.js";
 import { Input } from "../../components/common/Input.js";
 import { Button } from "../../components/common/Button.js";
 import { forgotPasswordSchema, type ForgotPasswordForm } from "../../core/utils/form-schemas.js";
-import { userAuthService } from "../../services/api/auth.service.js";
+import { therapistAuthService } from "../../services/api/auth.service.js";
 import { ArrowLeft, KeyRound } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.js";
 
-export const ForgotPasswordPage = () => {
+const TherapistPanel = () => (
+    <div>
+        <p className="text-brand-400 text-sm font-mono mb-4 tracking-widest uppercase">Therapist portal</p>
+        <h2 className="font-display text-4xl font-bold text-white leading-tight mb-6">
+            Account<br />
+            <span className="text-brand-400">Recovery.</span>
+        </h2>
+        <p className="text-white/50 text-base leading-relaxed">
+            Follow the steps to securely reset your professional account password.
+        </p>
+    </div>
+);
+
+export const TherapistForgotPasswordPage = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [sent, setSent] = useState(false);
@@ -26,25 +38,25 @@ export const ForgotPasswordPage = () => {
     const onSubmit = async (data: ForgotPasswordForm) => {
         try {
             setLoading(true);
-            await userAuthService.forgotPassword(data.email);
+            await therapistAuthService.forgotPassword(data.email);
             setSent(true);
             toast.success("Reset OTP sent to your email");
         } catch (err) {
-            handleError(err, "Failed to send OTP");
+            toast.error(err instanceof Error ? err.message : "Failed to send OTP");
         } finally {
             setLoading(false);
         }
     };
 
     const handleContinue = () => {
-        navigate("/user/reset-password", { state: { email: getValues("email") } });
+        navigate("/therapist/reset-password", { state: { email: getValues("email") } });
     };
 
     return (
-        <AuthLayout>
+        <AuthLayout panel={<TherapistPanel />}>
             <div className="auth-card p-8 stagger-2">
                 <Link
-                    to="/user/login"
+                    to="/therapist/login"
                     className="inline-flex items-center gap-2 text-brand-900/60 hover:text-brand-900/80 text-sm mb-8 transition-colors"
                 >
                     <ArrowLeft size={14} /> Back to login
@@ -65,7 +77,7 @@ export const ForgotPasswordPage = () => {
                             <Input
                                 label="Email address"
                                 type="email"
-                                placeholder="you@example.com"
+                                placeholder="doctor@clinic.com"
                                 error={errors.email?.message}
                                 {...register("email")}
                             />

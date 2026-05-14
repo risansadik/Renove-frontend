@@ -38,14 +38,14 @@ export const OtpInput = ({
   const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, length);
-    onChange(pasted.padEnd(length, "").slice(0, length));
+    onChange(pasted);
     const nextIndex = Math.min(pasted.length, length - 1);
     inputRefs.current[nextIndex]?.focus();
   };
 
   return (
-    <div>
-      <div className="flex gap-2 justify-center">
+    <div className="w-full max-w-full overflow-hidden">
+      <div className="flex gap-2 sm:gap-3 justify-center py-2">
         {digits.map((digit, i) => (
           <input
             key={i}
@@ -57,14 +57,14 @@ export const OtpInput = ({
             aria-invalid={error ? true : undefined}
             maxLength={1}
             value={digit}
-            onChange={(e) => handleChange(i, e.target.value)}
+            onChange={(e) => handleChange(i, e.target.value.slice(-1))}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={handlePaste}
-            className={`otp-input ${error ? "border-red-500/50" : ""}`}
+            className={`otp-input shrink-0 ${error ? "border-red-500/50" : ""}`}
           />
         ))}
       </div>
-      {error && <p className="error-text justify-center mt-3">{error}</p>}
+      {error && <p className="error-text justify-center mt-3 text-center">{error}</p>}
     </div>
   );
 };

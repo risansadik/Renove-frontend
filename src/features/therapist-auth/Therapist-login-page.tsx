@@ -10,6 +10,7 @@ import { Button } from "../../components/common/Button.js";
 import { loginSchema, type LoginForm } from "../../core/utils/form-schemas.js";
 import { therapistAuthService } from "../../services/api/auth.service.js";
 import { useAuthStore } from "../../store/use-auth-store.js";
+import { handleError } from "../../core/utils/error-handler.js";
 
 const TherapistLoginPanel = () => (
     <div>
@@ -52,7 +53,7 @@ export const TherapistLoginPage = () => {
                 navigate("/therapist/dashboard");
             }
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Login failed");
+            handleError(err, "Login failed");
         } finally {
             setLoading(false);
         }
@@ -80,6 +81,15 @@ export const TherapistLoginPage = () => {
                         error={errors.password?.message}
                         {...register("password")}
                     />
+
+                    <div className="flex justify-end">
+                        <Link
+                            to="/therapist/forgot-password"
+                            className="text-brand-600 hover:text-brand-800 text-sm font-medium transition-colors"
+                        >
+                            Forgot password?
+                        </Link>
+                    </div>
 
                     <Button type="submit" loading={loading} className="mt-2">
                         Sign in to dashboard
