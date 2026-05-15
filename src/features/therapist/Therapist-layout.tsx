@@ -3,13 +3,14 @@ import { NavLink, useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore, selectAuthTherapist } from "../../store/use-auth-store.js";
 import { therapistAuthService } from "../../services/api/auth.service.js";
-import { LayoutDashboard, CalendarDays, Users, MessageCircle, Settings, LogOut, Menu, X, Stethoscope } from "lucide-react";
+import { LayoutDashboard, CalendarDays, Clock, Users, MessageCircle, Settings, LogOut, Menu, X, Stethoscope } from "lucide-react";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
 import { ThemeToggle } from "../../components/common/ThemeToggle.js";
 
 const navItems = [
   { to: "/therapist/dashboard", icon: LayoutDashboard, label: "Overview" },
   { to: "/therapist/sessions", icon: CalendarDays, label: "Sessions" },
+  { to: "/therapist/availability", icon: Clock, label: "Availability" },
   { to: "/therapist/clients", icon: Users, label: "Clients" },
   { to: "/therapist/messages", icon: MessageCircle, label: "Messages" },
   { to: "/therapist/settings", icon: Settings, label: "Settings" },
