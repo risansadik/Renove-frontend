@@ -9,6 +9,7 @@ export const API_ROUTES = {
     VERIFY_RESET_OTP: "/api/user/auth/verify-reset-otp",
     RESET_PASSWORD: "/api/user/auth/reset-password",
     LOGOUT: "/api/user/auth/logout",
+    REFRESH_TOKEN: "/api/user/auth/refresh-token",
     DASHBOARD: "/api/user/auth/dashboard",
     MOOD: "/api/user/auth/mood",
     MISSION: (id: string) => `/api/user/auth/missions/${id}`,
