@@ -1,0 +1,134 @@
+﻿
+> frontend@0.0.0 lint
+> eslint . --max-warnings 0
+
+
+C:\Users\acer\Desktop\Renove\frontend\src\components\common\ImageCropper.tsx
+   8:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  44:19  error  Unnecessary escape character: \/                                                                                                no-useless-escape
+
+C:\Users\acer\Desktop\Renove\frontend\src\components\common\Select.tsx
+  35:20  error  'className' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\acer\Desktop\Renove\frontend\src\core\utils\error-handler.ts
+   7:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\admin\Admin-therapists-page.tsx
+  235:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  239:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\booking\Therapist-sessions-page.tsx
+  24:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\booking\Therapist-sessions-page.tsx:24:5
+  22 |
+  23 |   useEffect(() => {
+> 24 |     fetchBookings();
+     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  25 |   }, []);
+  26 |
+  27 |   const [rejectionId, setRejectionId] = useState<string | null>(null);  react-hooks/set-state-in-effect
+  37:21  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\booking\components\BookingCalendar.tsx
+   3:10  error    'ChevronLeft' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   3:23  error    'ChevronRight' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  23:5   error    Error: Cannot access variable before it is declared
+
+`fetchSlots` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\booking\components\BookingCalendar.tsx:23:5
+  21 |
+  22 |   useEffect(() => {
+> 23 |     fetchSlots();
+     |     ^^^^^^^^^^ `fetchSlots` accessed before it is declared
+  24 |   }, [selectedDate, therapistId]);
+  25 |
+  26 |   const fetchSlots = async () => {
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\booking\components\BookingCalendar.tsx:26:3
+  24 |   }, [selectedDate, therapistId]);
+  25 |
+> 26 |   const fetchSlots = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 27 |     setLoadingSlots(true);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 28 |     try {
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 38 |     }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 39 |   };
+     | ^^^^^ `fetchSlots` is declared here
+  40 |
+  41 |   const handleBooking = () => {
+  42 |     if (selectedSlotId) {  react-hooks/immutability
+  24:6   warning  React Hook useEffect has a missing dependency: 'fetchSlots'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/exhaustive-deps
+  34:14  error    'error' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\booking\components\TherapistList.tsx
+   2:16  error  'MapPin' is defined but never used            @typescript-eslint/no-unused-vars
+   2:24  error  'Video' is defined but never used             @typescript-eslint/no-unused-vars
+   2:31  error  'MessageCircle' is defined but never used     @typescript-eslint/no-unused-vars
+  26:10  error  'loading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  32:64  error  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  43:16  error  'error' is defined but never used             @typescript-eslint/no-unused-vars
+  65:21  error  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\therapist-auth\Therapist-register-page.tsx
+   1:20  error  'useEffect' is defined but never used       @typescript-eslint/no-unused-vars
+  66:9   error  'watch' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\therapist\components\AvailabilityManager.tsx
+   2:41  error  'CheckCircle2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+   2:55  error  'AlertCircle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+  33:5   error  Error: Cannot access variable before it is declared
+
+`fetchRules` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\therapist\components\AvailabilityManager.tsx:33:5
+  31 |
+  32 |   useEffect(() => {
+> 33 |     fetchRules();
+     |     ^^^^^^^^^^ `fetchRules` accessed before it is declared
+  34 |   }, []);
+  35 |
+  36 |   const fetchRules = async () => {
+
+C:\Users\acer\Desktop\Renove\frontend\src\features\therapist\components\AvailabilityManager.tsx:36:3
+  34 |   }, []);
+  35 |
+> 36 |   const fetchRules = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |     try {
+     | ^^^^^^^^^
+> 38 |       const res = await availabilityService.getMyAvailabilityRules();
+     | ^^^^^^^^^
+> 39 |       setRules(res.data);
+     | ^^^^^^^^^
+> 40 |     } catch (error) {
+     | ^^^^^^^^^
+> 41 |       toast.error("Failed to load availability rules");
+     | ^^^^^^^^^
+> 42 |     } finally {
+     | ^^^^^^^^^
+> 43 |       setLoading(false);
+     | ^^^^^^^^^
+> 44 |     }
+     | ^^^^^^^^^
+> 45 |   };
+     | ^^^^^ `fetchRules` is declared here
+  46 |
+  47 |   const toggleDay = (day: string) => {
+  48 |     setSelectedDays(prev =>   react-hooks/immutability
+  40:14  error  'error' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+
+Γ£û 27 problems (26 errors, 1 warning)
+

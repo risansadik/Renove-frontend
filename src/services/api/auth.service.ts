@@ -79,6 +79,7 @@ export const userAuthService = {
     apiClient.post<EmptyResponse>(API_ROUTES.USER.RESET_PASSWORD, data),
 
   logout: () => apiClient.post<EmptyResponse>(API_ROUTES.USER.LOGOUT),
+  refreshToken: () => apiClient.post<EmptyResponse>(API_ROUTES.USER.REFRESH_TOKEN),
 };
 
 export const therapistAuthService = {

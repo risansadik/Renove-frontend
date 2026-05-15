@@ -27,16 +27,40 @@ const apiClient = axios.create({
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<ApiResponse>) => {
+  async (error: AxiosError<ApiResponse>) => {
+    const originalRequest = error.config;
     const apiError: ApiError = {
       message: error.response?.data?.message ?? error.message ?? "Something went wrong",
       statusCode: error.response?.data?.statusCode ?? error.response?.status,
     };
 
-    // Auto logout on unauthorized
+    // If 401 and we haven't retried yet
+    if (apiError.statusCode === 401 && originalRequest && !(originalRequest as any)._retry) {
+      (originalRequest as any)._retry = true;
+
+      try {
+        // Attempt to refresh the token
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL ?? ""}/api/user/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
+        // Retry the original request
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed -> logout
+        useAuthStore.getState().logout();
+        const path = window.location.pathname;
+        if (!path.includes("/login") && !path.includes("/register") && !path.includes("/verify-otp")) {
+          window.location.href = "/user/login";
+        }
+        return Promise.reject(refreshError);
+      }
+    }
+
+    // For 403 or failed refresh
     if (apiError.statusCode === 401 || apiError.statusCode === 403) {
       useAuthStore.getState().logout();
-      // Only redirect if we are not on login/register pages
       const path = window.location.pathname;
       if (!path.includes("/login") && !path.includes("/register") && !path.includes("/verify-otp")) {
         window.location.href = "/user/login";
