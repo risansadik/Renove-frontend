@@ -1,3 +1,4 @@
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, AlertTriangle } from "lucide-react";
 
@@ -10,11 +11,13 @@ interface ConfirmationModalProps {
   confirmText?: string;
   cancelText?: string;
   isDestructive?: boolean;
+  children?: React.ReactNode;
 }
 
 export const ConfirmationModal = ({
   isOpen, onClose, onConfirm, title, description,
   confirmText = "Confirm", cancelText = "Cancel", isDestructive = false,
+  children
 }: ConfirmationModalProps) => (
   <AnimatePresence>
     {isOpen && (
@@ -55,6 +58,7 @@ export const ConfirmationModal = ({
           {/* Body */}
           <div className="p-6">
             <p className="text-sm leading-relaxed" style={{ color: "var(--fg-secondary)" }}>{description}</p>
+            {children}
           </div>
 
           {/* Actions */}

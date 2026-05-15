@@ -4,8 +4,13 @@ import { therapistDashboardService, type TherapistDashboardData } from "../../se
 import { CalendarDays, Users, Briefcase, Clock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
+import { useLocation } from "react-router-dom";
+import { TherapistSessionsPage } from "../booking/Therapist-sessions-page.js";
+import { AvailabilityManager } from "./components/AvailabilityManager";
+
 export const TherapistDashboardPage = () => {
   const therapist = useAuthStore(selectAuthTherapist);
+  const location = useLocation();
   const [data, setData] = useState<TherapistDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,6 +30,25 @@ export const TherapistDashboardPage = () => {
     );
   }
 
+  const isSessionsView = location.pathname.endsWith("/sessions");
+  const isAvailabilityView = location.pathname.endsWith("/availability");
+
+  if (isSessionsView) {
+    return (
+      <div className="p-6 md:p-8">
+        <TherapistSessionsPage />
+      </div>
+    );
+  }
+
+  if (isAvailabilityView) {
+    return (
+      <div className="p-6 md:p-8">
+        <AvailabilityManager />
+      </div>
+    );
+  }
+
   const stats = [
     {
       label: "Sessions Today",
@@ -32,7 +56,7 @@ export const TherapistDashboardPage = () => {
       icon: CalendarDays,
       color: "text-brand-600",
       bg: "bg-brand-500/10",
-      note: "Booking system coming soon",
+      note: "Live dashboard active",
     },
     {
       label: "Platform Users",
@@ -40,7 +64,7 @@ export const TherapistDashboardPage = () => {
       icon: Users,
       color: "text-sage-500",
       bg: "bg-sage-500/10",
-      note: "Active users on reNove",
+      note: "Potential clients",
     },
     {
       label: "Experience",
@@ -48,7 +72,7 @@ export const TherapistDashboardPage = () => {
       icon: Briefcase,
       color: "text-brand-600",
       bg: "bg-brand-500/10",
-      note: "Years of practice",
+      note: "Verified expertise",
     },
     {
       label: "Days on Platform",
@@ -56,18 +80,18 @@ export const TherapistDashboardPage = () => {
       icon: Clock,
       color: "text-yellow-600",
       bg: "bg-yellow-500/10",
-      note: "Since you joined",
+      note: "Practice duration",
     },
   ];
 
   return (
-    <div>
+    <div className="p-6 md:p-8">
       {/* Header */}
       <div className="mb-8 stagger-1">
-        <h1 className="font-display text-2xl font-bold text-brand-900 mb-1">
+        <h1 className="font-display text-2xl font-bold text-brand-900 dark:text-white mb-1">
           Welcome back, {(data?.therapistName ?? therapist?.name)?.split(" ") ?? "Doctor"} !
         </h1>
-        <p className="text-brand-900/60 text-sm">Here's your practice overview for today.</p>
+        <p className="text-brand-900/60 dark:text-slate-400 text-sm">Here's your practice overview for today.</p>
       </div>
 
       {/* Status Banner */}
@@ -85,7 +109,7 @@ export const TherapistDashboardPage = () => {
           <CheckCircle2 size={18} className="text-sage-500 shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-medium text-sage-700">Account Approved & Active</p>
-            <p className="text-xs text-sage-600/70 mt-0.5">You're visible to users. Start accepting session bookings once the booking module is live.</p>
+            <p className="text-xs text-sage-600/70 mt-0.5">You're visible to users. You can now manage incoming session requests.</p>
           </div>
         </div>
       )}
@@ -93,21 +117,21 @@ export const TherapistDashboardPage = () => {
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 stagger-2">
         {stats.map(({ label, value, icon: Icon, color, bg, note }) => (
-          <div key={label} className="bg-surface-50 border border-brand-900/10 rounded-2xl p-5 stat-card">
+          <div key={label} className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-5 stat-card">
             <div className={`w-9 h-9 rounded-xl ${bg} flex items-center justify-center mb-4`}>
               <Icon size={18} className={color} />
             </div>
-            <p className="text-2xl font-display font-bold text-brand-900">{value}</p>
-            <p className="text-brand-900/60 text-xs mt-0.5">{label}</p>
-            <p className="text-brand-900/30 text-[10px] mt-1">{note}</p>
+            <p className="text-2xl font-display font-bold text-brand-900 dark:text-white">{value}</p>
+            <p className="text-brand-900/60 dark:text-slate-400 text-xs mt-0.5">{label}</p>
+            <p className="text-brand-900/30 dark:text-slate-500 text-[10px] mt-1">{note}</p>
           </div>
         ))}
       </div>
 
       {/* Profile Summary */}
       <div className="grid sm:grid-cols-2 gap-6 stagger-3">
-        <div className="bg-surface-50 border border-brand-900/10 rounded-2xl p-6">
-          <h2 className="font-semibold text-brand-900 mb-4">Your Profile</h2>
+        <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6">
+          <h2 className="font-semibold text-brand-900 dark:text-white mb-4">Your Profile</h2>
           <div className="flex flex-col gap-3">
             {[
               { label: "Specializations", value: (data?.specialization ?? therapist?.specialization ?? []).join(", ") || "—" },
@@ -115,23 +139,23 @@ export const TherapistDashboardPage = () => {
               { label: "Account Status", value: data?.status ?? therapist?.status ?? "pending" },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-start justify-between gap-4">
-                <span className="text-xs text-brand-900/40 uppercase tracking-wider shrink-0">{label}</span>
-                <span className="text-sm text-brand-900/80 text-right">{value}</span>
+                <span className="text-xs text-brand-900/40 dark:text-slate-500 uppercase tracking-wider shrink-0">{label}</span>
+                <span className="text-sm text-brand-900/80 dark:text-slate-300 text-right">{value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-surface-50 border border-brand-900/10 rounded-2xl p-6">
-          <h2 className="font-semibold text-brand-900 mb-4">Coming Soon</h2>
+        <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6">
+          <h2 className="font-semibold text-brand-900 dark:text-white mb-4">Live Modules</h2>
           <div className="flex flex-col gap-3">
             {[
-              "Session booking & scheduling",
-              "Client progress tracking",
-              "Secure messaging with clients",
-              "Earnings & payout dashboard",
+              "Session management dashboard",
+              "Real-time request processing",
+              "Client alias identity protection",
+              "Secure authentication layer",
             ].map((item) => (
-              <div key={item} className="flex items-center gap-3 text-sm text-brand-900/60">
+              <div key={item} className="flex items-center gap-3 text-sm text-brand-900/60 dark:text-slate-400">
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-500/40 shrink-0" />
                 {item}
               </div>

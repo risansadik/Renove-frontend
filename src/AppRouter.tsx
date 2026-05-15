@@ -104,6 +104,7 @@ export const AppRouter = () => {
             <Route index element={<Navigate to="/therapist/dashboard" replace />} />
             <Route path="dashboard" element={<TherapistDashboardPage />} />
             <Route path="sessions" element={<TherapistDashboardPage />} />
+            <Route path="availability" element={<TherapistDashboardPage />} />
             <Route path="clients" element={<TherapistDashboardPage />} />
             <Route path="messages" element={<TherapistDashboardPage />} />
             <Route path="settings" element={<TherapistDashboardPage />} />

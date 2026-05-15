@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Brain, MessageCircle, Users, Star, Heart, Calendar } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { ApprovedTherapist } from "../../../services/api/auth.service.js";
 
 const AI_PROMPTS = ["I feel triggered", "Motivate me", "I need help", "Distract me"];
@@ -38,7 +39,6 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
             style={{ background: "radial-gradient(circle, var(--accent-glow-secondary), transparent 70%)", filter: "blur(20px)" }} />
 
           <div className="relative z-10 flex items-start gap-5 mb-6">
-            {/* Avatar */}
             <div className="relative flex-shrink-0">
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
                 style={{ background: "linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))" }}>
@@ -80,7 +80,7 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
           </button>
         </motion.div>
 
-        {/* Therapist Booking */}
+        {/* Human Experts Section */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -89,7 +89,6 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
         >
           <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full pointer-events-none"
             style={{ background: "radial-gradient(circle, var(--accent-glow), transparent 70%)", filter: "blur(20px)" }} />
-
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-2">
               <Heart size={22} style={{ color: "var(--accent-primary)" }} />
@@ -98,12 +97,10 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
             <p className="text-sm mb-6" style={{ color: "var(--fg-secondary)" }}>
               Certified recovery specialists available for personalized sessions.
             </p>
-
-            {/* Therapist cards */}
             <div className="space-y-3 mb-6">
               {(therapists.length > 0 ? therapists.slice(0, 3) : [
-                { _id: "1", name: "Dr. Sarah Collins", specialization: "Addiction Recovery", sessionFee: 80 } as any,
-                { _id: "2", name: "Dr. James Reid", specialization: "Trauma & PTSD", sessionFee: 90 } as any,
+                { id: "1", name: "Dr. Sarah Collins", specialization: "Addiction Recovery", consultationFee: 80 } as any,
+                { id: "2", name: "Dr. James Reid", specialization: "Trauma & PTSD", consultationFee: 90 } as any,
               ]).map((t: any, i) => (
                 <motion.button
                   key={t._id ?? i}
@@ -128,19 +125,18 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
                       <Star size={10} className="text-yellow-500" fill="currentColor" />
                       <span className="text-xs font-bold" style={{ color: "var(--fg-primary)" }}>4.9</span>
                     </div>
-                    <p className="text-[10px]" style={{ color: "var(--fg-muted)" }}>${t.sessionFee}/hr</p>
+                    <p className="text-[10px]" style={{ color: "var(--fg-muted)" }}>${t.consultationFee}/hr</p>
                   </div>
                 </motion.button>
               ))}
             </div>
-
             <div className="grid grid-cols-2 gap-3">
-              <button className="btn-primary rounded-xl h-12">
+              <Link to="/dashboard/therapists" className="btn-primary rounded-xl h-12 flex items-center justify-center gap-2">
                 <Calendar size={15} /> Book Session
-              </button>
-              <button className="btn-outline rounded-xl h-12" style={{ width: "100%" }}>
+              </Link>
+              <Link to="/dashboard/therapists" className="btn-outline rounded-xl h-12 flex items-center justify-center gap-2" style={{ width: "100%" }}>
                 <Users size={15} /> Browse All
-              </button>
+              </Link>
             </div>
           </div>
         </motion.div>

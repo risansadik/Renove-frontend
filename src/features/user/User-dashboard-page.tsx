@@ -12,9 +12,13 @@ import { HeroSection } from "./components/HeroSection.js";
 import { JourneySection } from "./components/JourneySection.js";
 import { SupportSection } from "./components/SupportSection.js";
 import { ProgressSection } from "./components/ProgressSection.js";
+import { useLocation } from "react-router-dom";
+import { TherapistList } from "../booking/components/TherapistList.js";
+import { UserSessionsPage } from "../booking/User-sessions-page.js";
 
 export const UserDashboardPage = () => {
   const user = useAuthStore(selectAuthUser);
+  const location = useLocation();
   const [data, setData] = useState<DashboardData | null>(null);
   const [therapists, setTherapists] = useState<ApprovedTherapist[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,11 +79,6 @@ export const UserDashboardPage = () => {
     }
   };
 
-  const handleBookTherapist = (_id: string) => {
-    toast.success("Booking system coming soon!");
-    setSelectedTherapist(null);
-  };
-
   if (loading) {
     return (
       <div className="min-h-full flex items-center justify-center">
@@ -93,41 +92,32 @@ export const UserDashboardPage = () => {
     );
   }
 
-  // Determine if user is new (no XP and no streak)
-  const isNew = (data?.xp ?? 0) === 0 && (data?.streakDays ?? 0) === 0;
+  // Determine current view based on path
+  const isTherapistView = location.pathname.endsWith("/therapists");
+  const isSessionsView = location.pathname.endsWith("/sessions");
 
   return (
-    <div className="min-h-full overflow-x-hidden" style={{ background: "var(--bg-base)" }}>
-      <TherapistDetailsModal
-        therapist={selectedTherapist}
-        isOpen={!!selectedTherapist}
-        onClose={() => setSelectedTherapist(null)}
-        onBook={handleBookTherapist}
-      />
-
-      {/* Section 1: Immersive Hero */}
-      <HeroSection data={data} isNew={isNew} greeting={greeting} />
-
-      {/* Section 2: Generated Recovery Journey */}
-      <JourneySection
-        data={data}
-        togglingId={togglingId}
-        onToggleMission={handleToggleMission}
-      />
-
-      {/* Section 3: AI Companion + Therapist */}
-      <SupportSection
-        therapists={therapists}
-        onSelectTherapist={setSelectedTherapist}
-      />
-
-      {/* Section 4: Progress Universe */}
-      <ProgressSection
-        data={data}
-        moodSelected={moodSelected}
-        moodLogging={moodLogging}
-        onMood={handleMood}
-      />
+    <div className="min-h-full overflow-x-hidden p-6 md:p-8" style={{ background: "var(--bg-base)" }}>
+      {isTherapistView ? (
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Heal with Professionals</h1>
+            <p className="text-slate-500">Expert guidance for your recovery journey.</p>
+          </div>
+          <TherapistList />
+        </div>
+      ) : isSessionsView ? (
+        <div className="max-w-5xl mx-auto">
+          <UserSessionsPage />
+        </div>
+      ) : (
+        <>
+          <HeroSection data={data} greeting={greeting} isNew={false} />
+          <JourneySection data={data} togglingId={togglingId} onToggleMission={handleToggleMission} />
+          <SupportSection therapists={therapists} onSelectTherapist={setSelectedTherapist} />
+          <ProgressSection data={data} moodSelected={moodSelected} moodLogging={moodLogging} onMood={handleMood} />
+        </>
+      )}
     </div>
   );
 };
