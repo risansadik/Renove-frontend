@@ -33,7 +33,7 @@ export const TherapistList = () => {
         const response = await userDashboardService.getTherapists();
         const approvedTherapists = response.data.data?.map((t: any) => ({
           id: t.id || t._id,
-          name: t.name,
+          name: t.name.startsWith("Dr. ") ? t.name : `Dr. ${t.name}`,
           qualification: t.qualification || "Licensed Therapist",
           specialization: t.specialization || [],
           experience: t.experience || 0,

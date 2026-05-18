@@ -131,7 +131,7 @@ export const ProgressSection = ({ data, moodSelected, moodLogging, onMood }: Pro
           </motion.div>
           <h3 className="font-bold mb-1" style={{ color: "var(--fg-primary)" }}>Upcoming Badge</h3>
           <p className="text-xs mb-5" style={{ color: "var(--fg-muted)" }}>
-            "The Resilient One" — 10 Day Streak
+            "The Resilient One" - 10 Day Streak
           </p>
           <div className="h-2 rounded-full mb-2" style={{ background: "var(--border-subtle)" }}>
             <motion.div

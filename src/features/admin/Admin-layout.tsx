@@ -3,7 +3,7 @@ import { NavLink, useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/use-auth-store.js";
 import { adminService } from "../../services/api/auth.service.js";
-import { LayoutDashboard, Users, Stethoscope, LogOut, Menu, X, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Users, Stethoscope, LogOut, Menu, X, ShieldCheck, Sparkles } from "lucide-react";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
 import { ThemeToggle } from "../../components/common/ThemeToggle.js";
 
@@ -52,7 +52,7 @@ export const AdminLayout = () => {
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center"
               style={{ background: "linear-gradient(135deg, #6b4c7a, #b89bbe)" }}>
-              <span className="text-white font-display font-bold text-xs">r</span>
+              <Sparkles size={15} className="text-white" />
             </div>
             <span className="font-display font-bold" style={{ color: "var(--fg-primary)" }}>reNove</span>
             <span className="ml-auto text-[9px] font-mono px-2 py-0.5 rounded-full"

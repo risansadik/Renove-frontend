@@ -60,7 +60,11 @@ export const UserDashboardPage = () => {
         userDashboardService.getTherapists(),
       ]);
       setData(dashRes.data.data ?? null);
-      setTherapists(therapistRes.data.data ?? []);
+      const mappedTherapists = (therapistRes.data.data ?? []).map((t: ApprovedTherapist) => ({
+        ...t,
+        name: t.name.startsWith("Dr. ") ? t.name : `Dr. ${t.name}`,
+      }));
+      setTherapists(mappedTherapists);
       setMoodSelected(dashRes.data.data?.recentMoods?.slice(-1)[0]?.mood ?? null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to load dashboard");

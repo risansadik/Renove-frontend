@@ -23,7 +23,7 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
         <h2 className="font-display text-4xl sm:text-5xl font-bold mb-4" style={{ color: "var(--fg-primary)" }}>
           Your Support System
         </h2>
-        <p style={{ color: "var(--fg-secondary)" }}>AI intelligence and human expertise — both on your side.</p>
+        <p style={{ color: "var(--fg-secondary)" }}>AI intelligence and human expertise - both on your side.</p>
       </motion.div>
 
       <div className="grid lg:grid-cols-2 gap-8">
@@ -50,14 +50,14 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
             <div>
               <h3 className="font-display text-2xl font-bold" style={{ color: "var(--fg-primary)" }}>Nova</h3>
               <p className="text-xs font-mono uppercase tracking-widest" style={{ color: "var(--accent-secondary)" }}>
-                AI Recovery Companion — Online
+                AI Recovery Companion - Online
               </p>
             </div>
           </div>
 
           <p className="text-sm leading-relaxed mb-6 italic"
             style={{ color: "var(--fg-secondary)", borderLeft: "3px solid var(--accent-primary)", paddingLeft: "0.875rem" }}>
-            "I've analyzed your emotional pattern today. Your momentum is building — let's keep that energy alive.
+            "I've analyzed your emotional pattern today. Your momentum is building - let's keep that energy alive.
             What do you need right now?"
           </p>
 

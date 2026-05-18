@@ -80,7 +80,7 @@ export const HeroSection = ({ data, isNew, greeting }: Props) => (
         }}
       >
         <Sparkles size={12} />
-        {greeting} — Your recovery universe awaits
+        {greeting} - Your recovery universe awaits
       </motion.div>
 
       {/* Main headline */}
