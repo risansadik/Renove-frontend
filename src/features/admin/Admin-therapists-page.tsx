@@ -28,6 +28,11 @@ export const AdminTherapistsPage = () => {
     const [limit, setLimit] = useState(10);
     const [totalTherapists, setTotalTherapists] = useState(0);
 
+    const getMediaUrl = (path: string | undefined) => {
+        if (!path) return '';
+        return path.startsWith('http') ? path : `${import.meta.env.VITE_API_BASE_URL}/${path}`;
+    };
+
     const fetchTherapists = async (p: number, l: number) => {
         setLoading(true);
         try {
@@ -135,7 +140,7 @@ export const AdminTherapistsPage = () => {
                                 <div className="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center shrink-0 overflow-hidden">
                                     {therapist.profileImage ? (
                                         <img 
-                                            src={`${import.meta.env.VITE_API_BASE_URL}/${therapist.profileImage}`} 
+                                            src={getMediaUrl(therapist.profileImage)} 
                                             className="w-full h-full object-cover" 
                                             alt={therapist.name} 
                                         />
@@ -247,17 +252,17 @@ export const AdminTherapistsPage = () => {
                                         </div>
                                     )}
 
-                                    {(therapist as any).certificationFiles?.length > 0 && (
+                                    {therapist.certificationFiles && therapist.certificationFiles.length > 0 && (
                                         <div className="sm:col-span-2 mt-4 p-4 bg-brand-500/5 rounded-2xl border border-brand-500/10">
                                             <p className="text-brand-900/40 text-[10px] uppercase tracking-[0.2em] font-bold mb-4">Review Certifications</p>
                                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                                {(therapist as any).certificationFiles?.map((file: string, idx: number) => {
+                                                {therapist.certificationFiles?.map((file: string, idx: number) => {
                                                     const isPdf = file.toLowerCase().endsWith('.pdf');
                                                     return (
                                                         <button 
                                                             key={idx}
                                                             onClick={() => setPreviewUrl({ 
-                                                                url: `${import.meta.env.VITE_API_BASE_URL}/${file}`, 
+                                                                url: getMediaUrl(file), 
                                                                 type: isPdf ? 'pdf' : 'image' 
                                                             })}
                                                             className="group relative flex flex-col items-center justify-center gap-3 aspect-square rounded-xl bg-white border border-brand-500/10 hover:border-brand-500/30 transition-all shadow-sm p-4 text-center overflow-hidden"

@@ -16,11 +16,13 @@ interface Therapist {
   bio: string;
 }
 
-import { userDashboardService } from "../../../services/api/auth.service";
+import { userDashboardService, type ApprovedTherapist } from "../../../services/api/auth.service";
+import { TherapistDetailsModal } from "../../user/components/Therapist-details-modal";
 
 export const TherapistList = () => {
   const [therapists, setTherapists] = useState<Therapist[]>([]);
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null);
+  const [profileTherapist, setProfileTherapist] = useState<ApprovedTherapist | null>(null);
   const [isBooking, setIsBooking] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -69,6 +71,11 @@ export const TherapistList = () => {
     }
   };
 
+  const getMediaUrl = (path: string | undefined) => {
+    if (!path) return '';
+    return path.startsWith('http') ? path : `${import.meta.env.VITE_API_BASE_URL}/${path}`;
+  };
+
   return (
     <div className="space-y-6">
       {!isBooking ? (
@@ -78,7 +85,7 @@ export const TherapistList = () => {
               <div className="flex gap-4">
                 <div className="w-20 h-20 rounded-2xl bg-brand-500/10 border border-brand-500/20 overflow-hidden flex-shrink-0">
                   {therapist.profileImage ? (
-                    <img src={therapist.profileImage} alt={therapist.name} className="w-full h-full object-cover" />
+                    <img src={getMediaUrl(therapist.profileImage)} alt={therapist.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-brand-500 font-bold text-2xl">
                       {therapist.name[0]}
@@ -124,7 +131,7 @@ export const TherapistList = () => {
                 <Button
                   variant="outline"
                   className="flex-1 text-xs gap-2"
-                  onClick={() => { }}
+                  onClick={() => setProfileTherapist(therapist as any)}
                 >
                   <Info size={14} />
                   Profile
@@ -153,8 +160,12 @@ export const TherapistList = () => {
 
           <div className="dash-card p-8">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500 font-bold text-xl">
-                {selectedTherapist?.name[0]}
+              <div className="w-16 h-16 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500 font-bold text-xl overflow-hidden">
+                {selectedTherapist?.profileImage ? (
+                  <img src={getMediaUrl(selectedTherapist.profileImage)} alt={selectedTherapist.name} className="w-full h-full object-cover" />
+                ) : (
+                  selectedTherapist?.name[0]
+                )}
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">Booking with {selectedTherapist?.name}</h2>
@@ -172,6 +183,17 @@ export const TherapistList = () => {
           </div>
         </div>
       )}
+
+      <TherapistDetailsModal
+        therapist={profileTherapist}
+        isOpen={!!profileTherapist}
+        onClose={() => setProfileTherapist(null)}
+        onBook={(id) => {
+          setProfileTherapist(null);
+          setSelectedTherapist(therapists.find(t => t.id === id) || null);
+          setIsBooking(true);
+        }}
+      />
     </div>
   );
 };

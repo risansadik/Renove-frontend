@@ -45,7 +45,7 @@ export const TherapistSessionsPage = () => {
       toast.success(`Booking ${status} successfully`);
       setRejectionId(null);
       setRejectionReason("");
-      fetchBookings();
+      fetchBookings(page, limit);
     } catch (error: any) {
       toast.error(error.message || "Failed to update status");
     }
@@ -55,7 +55,7 @@ export const TherapistSessionsPage = () => {
     try {
       await paymentService.completeSession(bookingId);
       toast.success("Session marked as completed. Funds moved to available balance.");
-      fetchBookings();
+      fetchBookings(page, limit);
     } catch (error: any) {
       toast.error(error.message || "Failed to complete session");
     }
@@ -243,7 +243,7 @@ export const TherapistSessionsPage = () => {
                   <div>
                     <PaymentTimer 
                       updatedAt={booking.updatedAt} 
-                      onExpire={() => fetchBookings()} 
+                      onExpire={() => fetchBookings(page, limit)} 
                     />
                   </div>
                 </div>

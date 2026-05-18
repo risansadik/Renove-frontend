@@ -25,6 +25,7 @@ export interface Therapist {
   consultationFee: number;
   bio: string;
   certifications?: string[];
+  certificationFiles?: string[];
   profileImage?: string;
   status: TherapistStatus;
   isVerified: boolean;
