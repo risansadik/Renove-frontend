@@ -100,8 +100,8 @@ export const AdminTherapistsPage = () => {
                             key={tab}
                             onClick={() => setStatusFilter(tab)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all border ${statusFilter === tab
-                                    ? "bg-brand-500/15 text-brand-600 border-brand-500/25"
-                                    : "text-brand-900/60 border-brand-900/10 hover:border-brand-900/20 hover:text-brand-900/80"
+                                ? "bg-brand-500/15 text-brand-600 border-brand-500/25"
+                                : "text-brand-900/60 border-brand-900/10 hover:border-brand-900/20 hover:text-brand-900/80"
                                 }`}
                         >
                             {tab} <span className="ml-1 opacity-60">({counts[tab]})</span>
@@ -139,10 +139,10 @@ export const AdminTherapistsPage = () => {
                             <div className="flex items-center gap-4 px-6 py-4">
                                 <div className="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center shrink-0 overflow-hidden">
                                     {therapist.profileImage ? (
-                                        <img 
-                                            src={getMediaUrl(therapist.profileImage)} 
-                                            className="w-full h-full object-cover" 
-                                            alt={therapist.name} 
+                                        <img
+                                            src={getMediaUrl(therapist.profileImage)}
+                                            className="w-full h-full object-cover"
+                                            alt={therapist.name}
                                         />
                                     ) : (
                                         <span className="text-brand-600 font-display font-bold text-sm">
@@ -205,11 +205,10 @@ export const AdminTherapistsPage = () => {
                             {expandedId === therapist.id && (
                                 <div className="border-t border-brand-900/10 px-6 py-5 grid sm:grid-cols-2 gap-x-8 gap-y-4 animate-fade-in">
                                     {[
-                                        { label: "Phone", value: therapist.phone },
                                         { label: "Gender", value: therapist.gender },
                                         { label: "Qualification", value: therapist.qualification },
                                         { label: "Experience", value: `${therapist.experience} years` },
-                                        { label: "Consultation fee", value: `INR ${therapist.consultationFee}` },
+                                        { label: "Consultation fee", value: `USD ${therapist.consultationFee}` },
                                         { label: "Joined", value: new Date(therapist.createdAt).toLocaleDateString() },
                                     ].map(({ label, value }) => (
                                         <div key={label}>
@@ -259,11 +258,11 @@ export const AdminTherapistsPage = () => {
                                                 {therapist.certificationFiles?.map((file: string, idx: number) => {
                                                     const isPdf = file.toLowerCase().endsWith('.pdf');
                                                     return (
-                                                        <button 
+                                                        <button
                                                             key={idx}
-                                                            onClick={() => setPreviewUrl({ 
-                                                                url: getMediaUrl(file), 
-                                                                type: isPdf ? 'pdf' : 'image' 
+                                                            onClick={() => setPreviewUrl({
+                                                                url: getMediaUrl(file),
+                                                                type: isPdf ? 'pdf' : 'image'
                                                             })}
                                                             className="group relative flex flex-col items-center justify-center gap-3 aspect-square rounded-xl bg-white border border-brand-500/10 hover:border-brand-500/30 transition-all shadow-sm p-4 text-center overflow-hidden"
                                                         >
@@ -338,32 +337,32 @@ export const AdminTherapistsPage = () => {
             {/* Document Preview Modal */}
             {previewUrl && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10">
-                    <div 
-                        className="absolute inset-0 bg-brand-900/90 backdrop-blur-sm" 
-                        onClick={() => setPreviewUrl(null)} 
+                    <div
+                        className="absolute inset-0 bg-brand-900/90 backdrop-blur-sm"
+                        onClick={() => setPreviewUrl(null)}
                     />
-                    
+
                     <div className="relative w-full max-w-4xl max-h-full bg-white rounded-3xl overflow-hidden shadow-2xl animate-fade-up flex flex-col">
                         <div className="flex items-center justify-between px-6 py-4 border-b border-brand-500/10 bg-white shrink-0">
                             <h3 className="font-display font-bold text-brand-900">Document Preview</h3>
-                            <button 
+                            <button
                                 onClick={() => setPreviewUrl(null)}
                                 className="w-8 h-8 rounded-full bg-brand-500/5 hover:bg-brand-500/10 flex items-center justify-center text-brand-900/40 hover:text-brand-900 transition-colors"
                             >
                                 <X size={20} />
                             </button>
                         </div>
-                        
+
                         <div className="flex-1 overflow-auto bg-brand-900/5 p-4 flex items-center justify-center min-h-0">
                             {previewUrl.type === 'image' ? (
-                                <img 
-                                    src={previewUrl.url} 
-                                    alt="Preview" 
+                                <img
+                                    src={previewUrl.url}
+                                    alt="Preview"
                                     className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                                 />
                             ) : (
-                                <iframe 
-                                    src={previewUrl.url} 
+                                <iframe
+                                    src={previewUrl.url}
                                     className="w-full h-full min-h-[70vh] rounded-lg bg-white"
                                     title="PDF Preview"
                                 />

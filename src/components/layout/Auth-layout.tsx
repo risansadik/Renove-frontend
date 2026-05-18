@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "../common/ThemeToggle.js";
+import { Sparkles } from "lucide-react";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -31,10 +32,10 @@ export const AuthLayout = ({ children, panel }: AuthLayoutProps) => (
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 flex items-center gap-3">
         <div className="w-9 h-9 rounded-xl flex items-center justify-center"
           style={{ background: "linear-gradient(135deg, #6b4c7a, #b89bbe)" }}>
-          <span className="text-white font-display font-bold text-sm">r</span>
+          <Sparkles size={16} className="text-white" />
         </div>
         <span className="font-display font-bold text-xl text-white tracking-tight">reNove</span>
-        <span className="ml-2 text-[10px] font-mono px-2 py-0.5 rounded-full text-white/60 border border-white/10">Beta</span>
+
       </motion.div>
 
       {/* Panel content */}
@@ -42,7 +43,7 @@ export const AuthLayout = ({ children, panel }: AuthLayoutProps) => (
         {panel ?? <DefaultPanel />}
       </motion.div>
 
-      <div className="relative z-10 text-white/25 text-xs font-mono">© 2025 reNove. Recovery reimagined.</div>
+      <div className="relative z-10 text-white/25 text-xs font-mono">© 2026 reNove. Recovery reimagined.</div>
     </aside>
 
     {/* Right form area */}
@@ -59,7 +60,7 @@ export const AuthLayout = ({ children, panel }: AuthLayoutProps) => (
         <div className="flex items-center gap-2 mb-8 lg:hidden">
           <div className="w-8 h-8 rounded-xl flex items-center justify-center"
             style={{ background: "linear-gradient(135deg, #6b4c7a, #b89bbe)" }}>
-            <span className="text-white font-display font-bold text-xs">r</span>
+            <Sparkles size={14} className="text-white" />
           </div>
           <span className="font-display font-bold text-lg" style={{ color: "var(--fg-primary)" }}>reNove</span>
         </div>
@@ -79,7 +80,7 @@ const DefaultPanel = () => (
       <span style={{ color: "#b89bbe" }}>starts here.</span>
     </h2>
     <p className="text-white/60 text-base leading-relaxed mb-10">
-      An AI-powered platform that transforms recovery into a guided progression journey — with therapist support, gamified milestones, and real-time emotional intelligence.
+      An AI-powered platform that transforms recovery into a guided progression journey - with therapist support, gamified milestones, and real-time emotional intelligence.
     </p>
     <div className="flex flex-col gap-4">
       {[

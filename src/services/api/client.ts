@@ -58,12 +58,26 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // For 403 or failed refresh
+    // For 401/403 or failed refresh
     if (apiError.statusCode === 401 || apiError.statusCode === 403) {
+      const session = useAuthStore.getState().session;
+      const role = session?.role;
+
+      if (apiError.statusCode === 403) {
+        sessionStorage.setItem(
+          "blocked_reason",
+          apiError.message || "Your account has been blocked by the administrator."
+        );
+      }
+
       useAuthStore.getState().logout();
       const path = window.location.pathname;
       if (!path.includes("/login") && !path.includes("/register") && !path.includes("/verify-otp")) {
-        window.location.href = "/user/login";
+        if (role === "therapist") {
+          window.location.href = "/therapist/login";
+        } else {
+          window.location.href = "/user/login";
+        }
       }
     }
 

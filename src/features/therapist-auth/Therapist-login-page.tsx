@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
@@ -35,6 +35,14 @@ export const TherapistLoginPage = () => {
     const navigate = useNavigate();
     const setTherapist = useAuthStore((s) => s.setTherapist);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const blockedReason = sessionStorage.getItem("blocked_reason");
+        if (blockedReason) {
+            toast.error(blockedReason, { id: "blocked-toast", duration: 6000 });
+            sessionStorage.removeItem("blocked_reason");
+        }
+    }, []);
 
     const {
         register,

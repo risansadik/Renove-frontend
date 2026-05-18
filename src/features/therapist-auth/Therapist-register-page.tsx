@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
@@ -63,7 +63,6 @@ export const TherapistRegisterPage = () => {
         handleSubmit,
         trigger,
         setValue,
-        watch,
         control,
         formState: { errors },
     } = useForm<RegisterTherapistFormInput, unknown, RegisterTherapistForm>({
@@ -331,6 +330,13 @@ export const TherapistRegisterPage = () => {
                     Already registered?{" "}
                     <Link to="/therapist/login" className="text-brand-900/60 hover:text-brand-900/80 transition-colors">
                         Sign in here
+                    </Link>
+                </p>
+
+                <p className="text-center text-brand-900/40 text-xs mt-3">
+                    Are you a user?{" "}
+                    <Link to="/user/register" className="text-brand-900/60 hover:text-brand-900 transition-colors">
+                        Register here
                     </Link>
                 </p>
             </div>

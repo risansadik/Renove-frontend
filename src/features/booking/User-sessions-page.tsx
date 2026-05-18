@@ -127,7 +127,8 @@ export const UserSessionsPage = () => {
       ) : (
         <div className="grid gap-4">
           {bookings.map((booking) => {
-            const therapistName = typeof booking.therapistId === 'object' ? booking.therapistId.name : 'Therapist';
+            const rawTherapistName = typeof booking.therapistId === 'object' ? booking.therapistId.name : 'Therapist';
+            const therapistName = rawTherapistName.startsWith("Dr. ") ? rawTherapistName : `Dr. ${rawTherapistName}`;
             const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
             
             let sessionTime = "Scheduled";

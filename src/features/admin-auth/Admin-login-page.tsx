@@ -9,7 +9,7 @@ import { Button } from "../../components/common/Button.js";
 import { adminLoginSchema, type AdminLoginForm } from "../../core/utils/form-schemas.js";
 import { adminService } from "../../services/api/auth.service.js";
 import { useAuthStore } from "../../store/use-auth-store.js";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Sparkles } from "lucide-react";
 import { handleError } from "../../core/utils/error-handler.js";
 
 export const AdminLoginPage = () => {
@@ -53,7 +53,7 @@ export const AdminLoginPage = () => {
                     </div>
                     <div className="flex items-center justify-center gap-2 mb-1">
                         <div className="w-6 h-6 rounded-lg bg-brand-500 flex items-center justify-center">
-                            <span className="text-white font-display font-bold text-xs">r</span>
+                            <Sparkles size={11} className="text-white" />
                         </div>
                         <span className="font-display font-bold text-lg text-brand-900">reNove</span>
                     </div>

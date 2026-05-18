@@ -17,7 +17,6 @@ export interface Therapist {
   id: string;
   name: string;
   email: string;
-  phone: string;
   gender: Gender;
   qualification: string;
   specialization: string[];
