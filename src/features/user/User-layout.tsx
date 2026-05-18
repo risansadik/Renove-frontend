@@ -6,7 +6,7 @@ import { userAuthService } from "../../services/api/auth.service.js";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
 import {
   LayoutDashboard, Brain, CalendarDays, BarChart3, Heart,
-  LogOut, Menu, X, Sparkles, PhoneCall, Flame,
+  LogOut, Menu, X, Sparkles, PhoneCall, Flame, Wallet
 } from "lucide-react";
 import { ThemeToggle } from "../../components/common/ThemeToggle.js";
 
@@ -16,6 +16,7 @@ const navItems = [
   { to: "/dashboard/ai-companion", icon: Brain, label: "AI Companion" },
   { to: "/dashboard/therapists", icon: Heart, label: "Therapists" },
   { to: "/dashboard/sessions", icon: CalendarDays, label: "Sessions" },
+  { to: "/dashboard/wallet", icon: Wallet, label: "Wallet" },
 ];
 
 export const UserLayout = () => {

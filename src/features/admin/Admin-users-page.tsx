@@ -11,17 +11,30 @@ export const AdminUsersPage = () => {
     const [search, setSearch] = useState("");
     const [actionId, setActionId] = useState<string | null>(null);
 
+    // Pagination State
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit, setLimit] = useState(10);
+
+    const fetchUsers = async (p: number, l: number) => {
+        setLoading(true);
+        try {
+            const res = await adminService.getUsers(p, l);
+            setUsers(res.data.data ?? []);
+            if (res.data.meta) {
+                setTotalPages(res.data.meta.totalPages);
+                setPage(res.data.meta.page);
+            }
+        } catch (err) {
+            handleError(err, "Failed to load users");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        adminService
-            .getUsers()
-            .then((res) => {
-                setUsers(res.data.data ?? []);
-            })
-            .catch((err) => {
-                handleError(err, "Failed to load users");
-            })
-            .finally(() => setLoading(false));
-    }, []);
+        fetchUsers(page, limit);
+    }, [page, limit]);
 
     const filtered = useMemo(() => {
         const q = search.toLowerCase();
@@ -138,6 +151,30 @@ export const AdminUsersPage = () => {
                     </div>
                 )}
             </div>
+
+            {!loading && totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-between stagger-3">
+                    <p className="text-sm text-brand-900/60">
+                        Page {page} of {totalPages}
+                    </p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="px-4 py-2 rounded-lg border border-brand-900/10 text-sm font-medium text-brand-900 disabled:opacity-50 hover:bg-brand-900/5 transition-colors"
+                        >
+                            Previous
+                        </button>
+                        <button
+                            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="px-4 py-2 rounded-lg border border-brand-900/10 text-sm font-medium text-brand-900 disabled:opacity-50 hover:bg-brand-900/5 transition-colors"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

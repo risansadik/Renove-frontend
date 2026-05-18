@@ -12,9 +12,10 @@ import { HeroSection } from "./components/HeroSection.js";
 import { JourneySection } from "./components/JourneySection.js";
 import { SupportSection } from "./components/SupportSection.js";
 import { ProgressSection } from "./components/ProgressSection.js";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { TherapistList } from "../booking/components/TherapistList.js";
 import { UserSessionsPage } from "../booking/User-sessions-page.js";
+import paymentService from "../../services/api/payment.service.js";
 
 export const UserDashboardPage = () => {
   const user = useAuthStore(selectAuthUser);
@@ -26,6 +27,27 @@ export const UserDashboardPage = () => {
   const [moodLogging, setMoodLogging] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [selectedTherapist, setSelectedTherapist] = useState<ApprovedTherapist | null>(null);
+
+  // In UserDashboardPage or sessions component
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const paymentSuccess = searchParams.get("payment_success");
+    const bookingId = searchParams.get("bookingId"); // pass this in return_url too
+
+    if (paymentSuccess === "true" && bookingId) {
+      paymentService.verifyPayment(bookingId)
+        .then(() => {
+          toast.success("Payment confirmed! Session booked.");
+          setSearchParams({}); // clean URL
+          // refetch bookings
+        })
+        .catch(() => toast.error("Payment verification failed."));
+    }
+  }, []);
+
+
+
 
   const hour = new Date().getHours();
   const greeting =

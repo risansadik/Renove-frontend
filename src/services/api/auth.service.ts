@@ -113,13 +113,14 @@ export const adminService = {
 
   logout: () => apiClient.post<EmptyResponse>(API_ROUTES.ADMIN.LOGOUT),
 
-  getUsers: () => apiClient.get<ApiResponse<User[]>>(API_ROUTES.ADMIN.USERS),
+  getUsers: (page: number = 1, limit: number = 10) => 
+    apiClient.get<ApiResponse<User[]>>(`${API_ROUTES.ADMIN.USERS}?page=${page}&limit=${limit}`),
 
   updateUserStatus: (id: string, status: UserStatus) =>
     apiClient.patch<ApiResponse<User>>(API_ROUTES.ADMIN.USER_STATUS(id), { status }),
 
-  getTherapists: () =>
-    apiClient.get<ApiResponse<Therapist[]>>(API_ROUTES.ADMIN.THERAPISTS),
+  getTherapists: (page: number = 1, limit: number = 10) =>
+    apiClient.get<ApiResponse<Therapist[]>>(`${API_ROUTES.ADMIN.THERAPISTS}?page=${page}&limit=${limit}`),
 
   updateTherapistStatus: (id: string, status: TherapistStatus) =>
     apiClient.patch<ApiResponse<Therapist>>(API_ROUTES.ADMIN.THERAPIST_STATUS(id), {
@@ -148,6 +149,7 @@ export interface DashboardData {
   xpPercent: number;
   streakDays: number;
   totalSessionsDone: number;
+  pendingPayments: number;
   missions: DashboardMission[];
   recentMoods: { mood: string; loggedAt: string }[];
   habits: DashboardHabit[];
@@ -176,8 +178,8 @@ export const userDashboardService = {
       API_ROUTES.USER.MISSION(missionId)
     ),
 
-  getTherapists: () =>
-    apiClient.get<ApiResponse<ApprovedTherapist[]>>(API_ROUTES.USER.THERAPISTS),
+  getTherapists: (page: number = 1, limit: number = 10) =>
+    apiClient.get<ApiResponse<ApprovedTherapist[]>>(`${API_ROUTES.USER.THERAPISTS}?page=${page}&limit=${limit}`),
 };
 
 /* ── Therapist Dashboard ───────────────────────────────── */
@@ -191,6 +193,11 @@ export interface TherapistDashboardData {
   joinedDaysAgo: number;
   sessionsToday: number;
   upcomingSessionsThisWeek: number;
+  wallet: {
+    pendingBalance: number;
+    availableBalance: number;
+    withdrawnBalance: number;
+  };
 }
 
 export const therapistDashboardService = {

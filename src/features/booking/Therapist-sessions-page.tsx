@@ -1,18 +1,30 @@
 import { useState, useEffect } from "react";
 import { format, isValid } from "date-fns";
-import { Check, X, Clock, User, Video, Calendar, MoreVertical, MessageSquare } from "lucide-react";
+import { Check, X, Clock, User, Video, Calendar, MoreVertical, MessageSquare, CreditCard, CheckCircle } from "lucide-react";
 import bookingService, { type BookingResponse } from "../../services/api/booking.service";
+import paymentService from "../../services/api/payment.service";
 import toast from "react-hot-toast";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal";
+import { PaymentTimer } from "./components/PaymentTimer";
 
 export const TherapistSessionsPage = () => {
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchBookings = async () => {
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
+
+  const fetchBookings = async (p: number, l: number) => {
+    setIsLoading(true);
     try {
-      const response = await bookingService.getTherapistBookings();
+      const response = await bookingService.getTherapistBookings(p, l);
       setBookings(response.data);
+      if (response.meta) {
+        setTotalPages(response.meta.totalPages);
+        setPage(response.meta.page);
+      }
     } catch (error) {
       console.error("Failed to fetch bookings", error);
     } finally {
@@ -21,8 +33,8 @@ export const TherapistSessionsPage = () => {
   };
 
   useEffect(() => {
-    fetchBookings();
-  }, []);
+    fetchBookings(page, limit);
+  }, [page, limit]);
 
   const [rejectionId, setRejectionId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
@@ -36,6 +48,16 @@ export const TherapistSessionsPage = () => {
       fetchBookings();
     } catch (error: any) {
       toast.error(error.message || "Failed to update status");
+    }
+  };
+
+  const handleCompleteSession = async (bookingId: string) => {
+    try {
+      await paymentService.completeSession(bookingId);
+      toast.success("Session marked as completed. Funds moved to available balance.");
+      fetchBookings();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to complete session");
     }
   };
 
@@ -56,7 +78,8 @@ export const TherapistSessionsPage = () => {
   }
 
   const pending = bookings.filter(b => b.status === "pending");
-  const upcoming = bookings.filter(b => b.status === "accepted");
+  const awaitingPayment = bookings.filter(b => b.status === "awaiting_payment");
+  const upcoming = bookings.filter(b => b.status === "accepted" || b.status === "confirmed");
 
   const INBUILT_REASONS = [
     "Schedule conflict with other session",
@@ -131,6 +154,19 @@ export const TherapistSessionsPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {pending.map((booking) => {
               const patientName = typeof booking.userId === 'object' ? (booking.userId as any).name : `Patient #${booking.userId.slice(-4)}`;
+              const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
+              
+              let sessionTime = "Scheduled";
+              let durationText = "60 Min Session";
+              if (typeof booking.slotId === 'object') {
+                const start = new Date(booking.slotId.startTime);
+                const end = new Date(booking.slotId.endTime);
+                sessionTime = `${format(start, "hh:mm a")} - ${format(end, "hh:mm a")}`;
+                const diffMs = end.getTime() - start.getTime();
+                durationText = `${Math.round(diffMs / 60000)} Min Session`;
+              }
+              const requestedDate = format(new Date(booking.createdAt), "MMM d, yyyy 'at' hh:mm a");
+
               return (
                 <div key={booking.id} className="dash-card p-6 border-l-4 border-l-amber-500 flex flex-col gap-4 animate-in fade-in slide-in-from-right-4 duration-500">
                   <div className="flex justify-between items-start">
@@ -140,16 +176,16 @@ export const TherapistSessionsPage = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-slate-900 dark:text-white">{patientName}</h4>
-                        <p className="text-xs text-slate-500 flex items-center gap-1">
-                          <Calendar size={12} /> {safeFormat((booking as any).date || (booking as any).createdAt, "MMM d, yyyy")}
+                        <p className="text-[10px] text-slate-400 mt-0.5">
+                          Requested on {requestedDate}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <span className="text-sm font-bold text-slate-900 dark:text-white block">
-                        {(booking as any).slot || "Scheduled"}
+                        {sessionTime}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">60 Min Session</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{durationText}</span>
                     </div>
                   </div>
 
@@ -167,7 +203,7 @@ export const TherapistSessionsPage = () => {
                       <X size={14} /> Decline
                     </button>
                     <button 
-                      onClick={() => handleStatusUpdate(booking.id, "accepted")}
+                      onClick={() => handleStatusUpdate(booking.id, "awaiting_payment")}
                       className="flex-1 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
                     >
                       <Check size={14} /> Accept Request
@@ -180,6 +216,43 @@ export const TherapistSessionsPage = () => {
         )}
       </section>
 
+      {/* Awaiting Payment Section */}
+      {awaitingPayment.length > 0 && (
+        <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Awaiting Payment</h2>
+            <span className="px-2 py-0.5 rounded-full bg-blue-500 text-white text-[10px] font-black">{awaitingPayment.length}</span>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {awaitingPayment.map((booking) => {
+              const patientName = typeof booking.userId === 'object' ? (booking.userId as any).name : `Patient #${booking.userId.slice(-4)}`;
+              const requestedDate = format(new Date(booking.createdAt), "MMM d, yyyy 'at' hh:mm a");
+
+              return (
+                <div key={booking.id} className="dash-card p-6 border-l-4 border-l-blue-500 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                      <CreditCard size={24} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 dark:text-white">{patientName}</h4>
+                      <p className="text-xs text-slate-500">Waiting for patient to complete checkout</p>
+                      <p className="text-[10px] text-slate-400 mt-1">Requested on {requestedDate}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <PaymentTimer 
+                      updatedAt={booking.updatedAt} 
+                      onExpire={() => fetchBookings()} 
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {/* Upcoming Section */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Confirmed Sessions</h2>
@@ -190,12 +263,21 @@ export const TherapistSessionsPage = () => {
           <div className="grid gap-3">
             {upcoming.map((booking) => {
               const patientName = typeof booking.userId === 'object' ? (booking.userId as any).name : `Patient #${booking.userId.slice(-4)}`;
+              const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
+              
+              let sessionTime = "Scheduled";
+              if (typeof booking.slotId === 'object') {
+                const start = new Date(booking.slotId.startTime);
+                const end = new Date(booking.slotId.endTime);
+                sessionTime = `${format(start, "hh:mm a")} - ${format(end, "hh:mm a")}`;
+              }
+
               return (
                 <div key={booking.id} className="dash-card p-5 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                      <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-brand-500/5 text-brand-500 border border-brand-500/10">
-                        <span className="text-[9px] font-black uppercase leading-none">{safeFormat((booking as any).date || (booking as any).createdAt, "EEE")}</span>
-                        <span className="text-lg font-black leading-none">{safeFormat((booking as any).date || (booking as any).createdAt, "d")}</span>
+                        <span className="text-[9px] font-black uppercase leading-none">{format(sessionDate, "EEE")}</span>
+                        <span className="text-lg font-black leading-none">{format(sessionDate, "d")}</span>
                      </div>
                      <div>
                         <div className="flex items-center gap-2 mb-0.5">
@@ -203,7 +285,7 @@ export const TherapistSessionsPage = () => {
                           <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-tighter">Confirmed</span>
                         </div>
                         <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
-                          <span className="flex items-center gap-1"><Clock size={12} /> {(booking as any).slot || "Scheduled"}</span>
+                          <span className="flex items-center gap-1"><Clock size={12} /> {sessionTime}</span>
                           <span className="flex items-center gap-1"><Video size={12} /> Video Call</span>
                         </div>
                      </div>
@@ -213,9 +295,34 @@ export const TherapistSessionsPage = () => {
                     <button className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 transition-colors">
                       <MessageSquare size={18} />
                     </button>
-                    <button className="px-5 py-2.5 rounded-xl bg-brand-900 dark:bg-brand-500 text-white font-bold text-xs shadow-md">
-                      Launch Room
-                    </button>
+                    {booking.status === "confirmed" && (() => {
+                      // Logic: Show Complete button only if current time > session start time
+                      const now = new Date();
+                      
+                      let sessionStartTime = now; // Fallback
+                      if (typeof booking.slotId === 'object' && booking.slotId.startTime) {
+                        sessionStartTime = new Date(booking.slotId.startTime);
+                      }
+                      
+                      return now >= sessionStartTime;
+                    })() ? (
+                      <button 
+                        onClick={() => handleCompleteSession(booking.id)}
+                        className="px-5 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center gap-2"
+                      >
+                        <CheckCircle size={14} />
+                        Complete Session
+                      </button>
+                    ) : booking.status === "confirmed" ? (
+                      <div className="px-5 py-2.5 rounded-xl bg-amber-500/10 text-amber-500 font-bold text-[10px] border border-amber-500/20 flex items-center gap-2">
+                        <Clock size={12} />
+                        Upcoming
+                      </div>
+                    ) : (
+                      <div className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 font-bold text-xs">
+                        Awaiting Payment
+                      </div>
+                    )}
                     <button className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 transition-colors">
                       <MoreVertical size={18} />
                     </button>
@@ -226,6 +333,30 @@ export const TherapistSessionsPage = () => {
           </div>
         )}
       </section>
+
+      {!isLoading && totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between pt-6 border-t border-slate-200 dark:border-white/10">
+          <p className="text-sm text-slate-500">
+            Page {page} of {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

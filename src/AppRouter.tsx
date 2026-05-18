@@ -20,6 +20,8 @@ import { UserRegisterPage } from "./features/user-auth/User-register-page.js";
 import { VerifyOtpPage } from "./features/user-auth/Verify-otp-page.js";
 import { UserLayout } from "./features/user/User-layout.js";
 import { UserDashboardPage } from "./features/user/User-dashboard-page.js";
+import { UserWalletPage } from "./features/user/UserWalletPage.js";
+import { TherapistWalletPage } from "./features/therapist/TherapistWalletPage.js";
 import { useThemeStore } from "./store/use-theme-store.js";
 
 const NotFoundPage = () => (
@@ -90,6 +92,7 @@ export const AppRouter = () => {
             <Route path="ai-companion" element={<UserDashboardPage />} />
             <Route path="therapists" element={<UserDashboardPage />} />
             <Route path="sessions" element={<UserDashboardPage />} />
+            <Route path="wallet" element={<UserWalletPage />} />
           </Route>
 
           {/* ── Therapist auth ───────────────────────── */}
@@ -107,6 +110,7 @@ export const AppRouter = () => {
             <Route path="availability" element={<TherapistDashboardPage />} />
             <Route path="clients" element={<TherapistDashboardPage />} />
             <Route path="messages" element={<TherapistDashboardPage />} />
+            <Route path="wallet" element={<TherapistWalletPage />} />
             <Route path="settings" element={<TherapistDashboardPage />} />
           </Route>
 

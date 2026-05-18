@@ -22,17 +22,32 @@ export const AdminTherapistsPage = () => {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [previewUrl, setPreviewUrl] = useState<{ url: string, type: 'image' | 'pdf' } | null>(null);
 
+    // Pagination State
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalTherapists, setTotalTherapists] = useState(0);
+
+    const fetchTherapists = async (p: number, l: number) => {
+        setLoading(true);
+        try {
+            const res = await adminService.getTherapists(p, l);
+            setTherapists(res.data.data ?? []);
+            if (res.data.meta) {
+                setTotalPages(res.data.meta.totalPages);
+                setPage(res.data.meta.page);
+                setTotalTherapists(res.data.meta.total);
+            }
+        } catch (err) {
+            handleError(err, "Failed to load therapists");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        adminService
-            .getTherapists()
-            .then((res) => {
-                setTherapists(res.data.data ?? []);
-            })
-            .catch((err) => {
-                handleError(err, "Failed to load therapists");
-            })
-            .finally(() => setLoading(false));
-    }, []);
+        fetchTherapists(page, limit);
+    }, [page, limit]);
 
     const filtered = useMemo(() => {
         const q = search.toLowerCase();
@@ -70,7 +85,7 @@ export const AdminTherapistsPage = () => {
         <div>
             <div className="mb-6 stagger-1">
                 <h1 className="font-display text-2xl font-bold text-brand-900 mb-1">Therapist management</h1>
-                <p className="text-brand-900/60 text-sm">{therapists.length} total applications</p>
+                <p className="text-brand-900/60 text-sm">{totalTherapists} total applications</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-6 stagger-2">
@@ -290,6 +305,30 @@ export const AdminTherapistsPage = () => {
                     ))
                 )}
             </div>
+
+            {!loading && totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-between stagger-3">
+                    <p className="text-sm text-brand-900/60">
+                        Page {page} of {totalPages}
+                    </p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="px-4 py-2 rounded-lg border border-brand-900/10 text-sm font-medium text-brand-900 disabled:opacity-50 hover:bg-brand-900/5 transition-colors"
+                        >
+                            Previous
+                        </button>
+                        <button
+                            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="px-4 py-2 rounded-lg border border-brand-900/10 text-sm font-medium text-brand-900 disabled:opacity-50 hover:bg-brand-900/5 transition-colors"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Document Preview Modal */}
             {previewUrl && (

@@ -36,11 +36,19 @@ export interface Admin {
   email: string;
 }
 
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface ApiResponse<T = null> {
   success: boolean;
   message: string;
   data: T | null;
   statusCode: number;
+  meta?: PaginationMeta;
 }
 
 export interface AuthUserData {

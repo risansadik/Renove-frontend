@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import { TherapistSessionsPage } from "../booking/Therapist-sessions-page.js";
 import { AvailabilityManager } from "./components/AvailabilityManager";
+import { WalletDashboard } from "./components/WalletDashboard";
+import paymentService from "../../services/api/payment.service";
 
 export const TherapistDashboardPage = () => {
   const therapist = useAuthStore(selectAuthTherapist);
@@ -14,12 +16,17 @@ export const TherapistDashboardPage = () => {
   const [data, setData] = useState<TherapistDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchDashboard = () => {
+    setLoading(true);
     therapistDashboardService
       .getDashboard()
       .then((res) => setData(res.data.data ?? null))
       .catch((err) => toast.error(err instanceof Error ? err.message : "Failed to load dashboard"))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchDashboard();
   }, []);
 
   if (loading) {
@@ -105,6 +112,16 @@ export const TherapistDashboardPage = () => {
         </div>
       )}
       {data?.status === "approved" && (
+        <div className="mb-8 stagger-1">
+          <WalletDashboard
+            pendingBalance={data.wallet.pendingBalance}
+            availableBalance={data.wallet.availableBalance}
+            withdrawnBalance={data.wallet.withdrawnBalance}
+          />
+        </div>
+      )}
+
+      {data?.status === "approved" && (
         <div className="mb-6 flex items-start gap-3 px-4 py-3 rounded-xl bg-sage-500/10 border border-sage-500/25 stagger-1">
           <CheckCircle2 size={18} className="text-sage-500 shrink-0 mt-0.5" />
           <div>
@@ -135,7 +152,7 @@ export const TherapistDashboardPage = () => {
           <div className="flex flex-col gap-3">
             {[
               { label: "Specializations", value: (data?.specialization ?? therapist?.specialization ?? []).join(", ") || "—" },
-              { label: "Consultation Fee", value: `₹${data?.consultationFee ?? therapist?.consultationFee ?? 0}` },
+              { label: "Consultation Fee", value: `$${data?.consultationFee ?? therapist?.consultationFee ?? 0}` },
               { label: "Account Status", value: data?.status ?? therapist?.status ?? "pending" },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-start justify-between gap-4">
