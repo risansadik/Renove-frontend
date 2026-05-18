@@ -164,6 +164,7 @@ export interface ApprovedTherapist {
   consultationFee: number;
   bio: string;
   avatar: string;
+  profileImage?: string;
 }
 
 export const userDashboardService = {

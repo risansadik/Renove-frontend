@@ -138,6 +138,17 @@ export const UserDashboardPage = () => {
           <JourneySection data={data} togglingId={togglingId} onToggleMission={handleToggleMission} />
           <SupportSection therapists={therapists} onSelectTherapist={setSelectedTherapist} />
           <ProgressSection data={data} moodSelected={moodSelected} moodLogging={moodLogging} onMood={handleMood} />
+
+          <TherapistDetailsModal 
+            therapist={selectedTherapist} 
+            isOpen={!!selectedTherapist} 
+            onClose={() => setSelectedTherapist(null)} 
+            onBook={(id) => {
+              setSelectedTherapist(null);
+              // In the dashboard overview, booking might navigate to /user/therapists to handle booking state
+              window.location.href = "/user/therapists";
+            }} 
+          />
         </>
       )}
     </div>

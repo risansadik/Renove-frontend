@@ -165,7 +165,7 @@ export const UserSessionsPage = () => {
                       <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
                         <PaymentTimer 
                           updatedAt={booking.updatedAt} 
-                          onExpire={() => fetchBookings()} 
+                          onExpire={() => fetchBookings(page, limit)} 
                         />
                         <button 
                           onClick={() => handlePayNow(booking)}
@@ -240,7 +240,7 @@ export const UserSessionsPage = () => {
                       toast.success("Payment successful!");
                       setSelectedBooking(null);
                       setClientSecret(null);
-                      fetchBookings();
+                      fetchBookings(page, limit);
                     }}
                   />
                 </StripePaymentWrapper>
