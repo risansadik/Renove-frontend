@@ -13,9 +13,12 @@ export interface BookingResponse {
   therapistId: string | { id: string; name: string; consultationFee: number };
   slotId: string | { id: string; startTime: string; endTime: string };
   type: string;
-  status: "pending" | "accepted" | "rejected" | "awaiting_payment" | "confirmed" | "completed" | "cancelled" | "expired";
+  status: "pending" | "accepted" | "rejected" | "awaiting_payment" | "confirmed" | "completed" | "cancelled" | "expired" | "no_show";
   note?: string;
   rejectionReason?: string;
+  cancelledBy?: string;
+  cancellationReason?: string;
+  cancelledAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -40,6 +43,13 @@ const bookingService = {
     const response = await apiClient.patch<{ success: boolean; data: BookingResponse }>(`/api/bookings/${id}/status`, {
       status,
       rejectionReason,
+    });
+    return response.data;
+  },
+
+  cancelBooking: async (id: string, reason: string) => {
+    const response = await apiClient.post<{ success: boolean; data: BookingResponse }>(`/api/bookings/${id}/cancel`, {
+      reason,
     });
     return response.data;
   },

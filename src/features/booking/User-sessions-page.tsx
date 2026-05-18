@@ -6,6 +6,7 @@ import paymentService from "../../services/api/payment.service";
 import { StripePaymentWrapper } from "./components/StripePaymentWrapper";
 import { CheckoutForm } from "./components/CheckoutForm";
 import { PaymentTimer } from "./components/PaymentTimer";
+import { CancellationModal } from "./components/CancellationModal";
 import toast from "react-hot-toast";
 
 export const UserSessionsPage = () => {
@@ -13,6 +14,8 @@ export const UserSessionsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<BookingResponse | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState<BookingResponse | null>(null);
 
   // Pagination State
   const [page, setPage] = useState(1);
@@ -50,6 +53,21 @@ export const UserSessionsPage = () => {
     }
   };
 
+  const handleCancelBooking = async (reason: string) => {
+    if (!bookingToCancel) return;
+    try {
+      const loadingToast = toast.loading("Cancelling appointment...");
+      await bookingService.cancelBooking(bookingToCancel.id, reason);
+      toast.success("Appointment cancelled successfully", { id: loadingToast });
+      fetchBookings(page, limit);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || error.message || "Failed to cancel booking");
+    } finally {
+      setIsCancelModalOpen(false);
+      setBookingToCancel(null);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const badges = {
       pending: "bg-amber-500/10 text-amber-500 border-amber-500/20",
@@ -58,8 +76,9 @@ export const UserSessionsPage = () => {
       awaiting_payment: "bg-blue-500/10 text-blue-500 border-blue-500/20",
       confirmed: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
       completed: "bg-brand-500/10 text-brand-500 border-brand-500/20",
-      cancelled: "bg-slate-500/10 text-slate-500 border-slate-500/20",
+      cancelled: "bg-red-500/10 text-red-500 border-red-500/20",
       expired: "bg-slate-500/10 text-slate-500 border-slate-500/20",
+      no_show: "bg-rose-500/10 text-rose-500 border-rose-500/20",
     };
     return badges[status as keyof typeof badges] || badges.pending;
   };
@@ -71,6 +90,8 @@ export const UserSessionsPage = () => {
       case "awaiting_payment": return <CreditCard size={14} />;
       case "confirmed": return <CheckCircle2 size={14} />;
       case "rejected": return <XCircle size={14} />;
+      case "cancelled": return <XCircle size={14} />;
+      case "no_show": return <XCircle size={14} />;
       case "completed": return <CheckCircle2 size={14} />;
       default: return <AlertCircle size={14} />;
     }
@@ -157,6 +178,26 @@ export const UserSessionsPage = () => {
                         {booking.rejectionReason}
                       </div>
                     )}
+
+                    {booking.status === "cancelled" && (
+                      <div className="mt-2 p-2 rounded-lg bg-red-500/5 border border-red-500/10 text-[10px] text-red-500 font-medium space-y-1">
+                        <div>
+                          <span className="font-bold uppercase mr-1">Cancelled by:</span>
+                          {booking.cancelledBy === (typeof booking.userId === 'object' ? (booking.userId as any).id : booking.userId) ? "You" : "Therapist"}
+                        </div>
+                        {booking.cancellationReason && (
+                          <div>
+                            <span className="font-bold uppercase mr-1">Reason:</span>
+                            {booking.cancellationReason}
+                          </div>
+                        )}
+                        {booking.cancelledAt && (
+                          <div className="text-[9px] text-slate-400">
+                            Cancelled on {format(new Date(booking.cancelledAt), "MMM d, yyyy h:mm a")}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -167,28 +208,63 @@ export const UserSessionsPage = () => {
                           updatedAt={booking.updatedAt} 
                           onExpire={() => fetchBookings(page, limit)} 
                         />
-                        <button 
-                          onClick={() => handlePayNow(booking)}
-                          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
-                        >
-                          <CreditCard size={16} />
-                          Pay Now
-                        </button>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <button 
+                            onClick={() => handlePayNow(booking)}
+                            className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
+                          >
+                            <CreditCard size={16} />
+                            Pay Now
+                          </button>
+                          <button
+                            onClick={() => {
+                              setBookingToCancel(booking);
+                              setIsCancelModalOpen(true);
+                            }}
+                            className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
                     )}
                     {(booking.status === "accepted" || booking.status === "confirmed") && (
-                      <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition-transform">
-                        Join Session
-                      </button>
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition-transform">
+                          Join Session
+                        </button>
+                        <button
+                          onClick={() => {
+                            setBookingToCancel(booking);
+                            setIsCancelModalOpen(true);
+                          }}
+                          className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     )}
                     {booking.status === "pending" && (
-                      <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                        Reschedule
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                          Reschedule
+                        </button>
+                        <button
+                          onClick={() => {
+                            setBookingToCancel(booking);
+                            setIsCancelModalOpen(true);
+                          }}
+                          className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                    {booking.status !== "awaiting_payment" && booking.status !== "accepted" && booking.status !== "confirmed" && booking.status !== "pending" && (
+                      <button className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-brand-500 transition-colors">
+                        <MoreVertical size={20} />
                       </button>
                     )}
-                    <button className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-brand-500 transition-colors">
-                      <MoreVertical size={20} />
-                    </button>
                   </div>
                 </div>
               );
@@ -248,6 +324,16 @@ export const UserSessionsPage = () => {
             </div>
           </div>
         )}
+
+        <CancellationModal
+          isOpen={isCancelModalOpen}
+          onClose={() => {
+            setIsCancelModalOpen(false);
+            setBookingToCancel(null);
+          }}
+          onConfirm={handleCancelBooking}
+          booking={bookingToCancel}
+        />
       </div>
     );
   };
