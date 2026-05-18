@@ -10,10 +10,10 @@ export interface CreateBookingData {
 export interface BookingResponse {
   id: string;
   userId: string;
-  therapistId: string;
-  slotId: string;
+  therapistId: string | { id: string; name: string; consultationFee: number };
+  slotId: string | { id: string; startTime: string; endTime: string };
   type: string;
-  status: "pending" | "accepted" | "rejected" | "completed" | "cancelled";
+  status: "pending" | "accepted" | "rejected" | "awaiting_payment" | "confirmed" | "completed" | "cancelled" | "expired";
   note?: string;
   rejectionReason?: string;
   createdAt: string;
@@ -26,13 +26,13 @@ const bookingService = {
     return response.data;
   },
 
-  getUserBookings: async () => {
-    const response = await apiClient.get<{ success: boolean; data: BookingResponse[] }>("/api/bookings/my-sessions");
+  getUserBookings: async (page: number = 1, limit: number = 10) => {
+    const response = await apiClient.get<{ success: boolean; data: BookingResponse[]; meta?: any }>(`/api/bookings/my-sessions?page=${page}&limit=${limit}`);
     return response.data;
   },
 
-  getTherapistBookings: async () => {
-    const response = await apiClient.get<{ success: boolean; data: BookingResponse[] }>("/api/bookings/therapist-sessions");
+  getTherapistBookings: async (page: number = 1, limit: number = 10) => {
+    const response = await apiClient.get<{ success: boolean; data: BookingResponse[]; meta?: any }>(`/api/bookings/therapist-sessions?page=${page}&limit=${limit}`);
     return response.data;
   },
 

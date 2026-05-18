@@ -1,33 +1,65 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { Calendar, Clock, Video, CheckCircle2, XCircle, Timer, AlertCircle, MoreVertical } from "lucide-react";
+import { Calendar, Clock, Video, CheckCircle2, XCircle, Timer, AlertCircle, MoreVertical, CreditCard, X } from "lucide-react";
 import bookingService, { type BookingResponse } from "../../services/api/booking.service";
+import paymentService from "../../services/api/payment.service";
+import { StripePaymentWrapper } from "./components/StripePaymentWrapper";
+import { CheckoutForm } from "./components/CheckoutForm";
+import { PaymentTimer } from "./components/PaymentTimer";
+import toast from "react-hot-toast";
 
 export const UserSessionsPage = () => {
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedBooking, setSelectedBooking] = useState<BookingResponse | null>(null);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
+
+  const fetchBookings = async (p: number, l: number) => {
+    setIsLoading(true);
+    try {
+      const response = await bookingService.getUserBookings(p, l);
+      setBookings(response.data);
+      if (response.meta) {
+        setTotalPages(response.meta.totalPages);
+        setPage(response.meta.page);
+      }
+    } catch (error) {
+      console.error("Failed to fetch bookings", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const response = await bookingService.getUserBookings();
-        setBookings(response.data);
-      } catch (error) {
-        console.error("Failed to fetch bookings", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchBookings();
-  }, []);
+    fetchBookings(page, limit);
+  }, [page, limit]);
+
+  const handlePayNow = async (booking: BookingResponse) => {
+    try {
+      setSelectedBooking(booking);
+      const res = await paymentService.createPaymentIntent(booking.id);
+      setClientSecret(res.data.clientSecret);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to initialize payment");
+      setSelectedBooking(null);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     const badges = {
       pending: "bg-amber-500/10 text-amber-500 border-amber-500/20",
       accepted: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
       rejected: "bg-red-500/10 text-red-500 border-red-500/20",
+      awaiting_payment: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+      confirmed: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
       completed: "bg-brand-500/10 text-brand-500 border-brand-500/20",
       cancelled: "bg-slate-500/10 text-slate-500 border-slate-500/20",
+      expired: "bg-slate-500/10 text-slate-500 border-slate-500/20",
     };
     return badges[status as keyof typeof badges] || badges.pending;
   };
@@ -36,6 +68,8 @@ export const UserSessionsPage = () => {
     switch (status) {
       case "pending": return <Timer size={14} />;
       case "accepted": return <CheckCircle2 size={14} />;
+      case "awaiting_payment": return <CreditCard size={14} />;
+      case "confirmed": return <CheckCircle2 size={14} />;
       case "rejected": return <XCircle size={14} />;
       case "completed": return <CheckCircle2 size={14} />;
       default: return <AlertCircle size={14} />;
@@ -72,9 +106,21 @@ export const UserSessionsPage = () => {
       ) : (
         <div className="grid gap-4">
           {bookings.map((booking) => {
-            const therapistName = typeof booking.therapistId === 'object' ? (booking.therapistId as any).name : 'Therapist';
-            const sessionDate = typeof booking.slotId === 'object' ? new Date((booking.slotId as any).startTime) : new Date(booking.createdAt);
-            const sessionTime = typeof booking.slotId === 'object' ? format(new Date((booking.slotId as any).startTime), "HH:mm") : "Scheduled";
+            const therapistName = typeof booking.therapistId === 'object' ? booking.therapistId.name : 'Therapist';
+            const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
+            
+            let sessionTime = "Scheduled";
+            let durationText = "60 Minutes";
+            if (typeof booking.slotId === 'object') {
+              const start = new Date(booking.slotId.startTime);
+              const end = new Date(booking.slotId.endTime);
+              sessionTime = `${format(start, "hh:mm a")} - ${format(end, "hh:mm a")}`;
+              const diffMs = end.getTime() - start.getTime();
+              durationText = `${Math.round(diffMs / 60000)} Minutes`;
+            }
+
+            const requestedDate = format(new Date(booking.createdAt), "MMM d, yyyy 'at' hh:mm a");
+            const consultationFee = typeof booking.therapistId === 'object' ? booking.therapistId.consultationFee : 0;
 
             return (
               <div key={booking.id} className="dash-card p-6 flex flex-col sm:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-left-4 duration-500">
@@ -96,10 +142,13 @@ export const UserSessionsPage = () => {
                       </span>
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">Session with {therapistName}</h3>
-                    <div className="flex items-center gap-3 text-sm text-slate-500">
+                    <div className="flex items-center gap-3 text-sm text-slate-500 mb-1">
                       <span className="flex items-center gap-1"><Clock size={14} /> {sessionTime}</span>
                       <span className="w-1 h-1 rounded-full bg-slate-300" />
-                      <span>60 Minutes</span>
+                      <span>{durationText}</span>
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-medium">
+                      Requested on {requestedDate}
                     </div>
 
                     {booking.status === "rejected" && booking.rejectionReason && (
@@ -111,26 +160,94 @@ export const UserSessionsPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  {booking.status === "accepted" && (
-                    <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition-transform">
-                      Join Session
+                <div className="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
+                    {booking.status === "awaiting_payment" && (
+                      <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
+                        <PaymentTimer 
+                          updatedAt={booking.updatedAt} 
+                          onExpire={() => fetchBookings()} 
+                        />
+                        <button 
+                          onClick={() => handlePayNow(booking)}
+                          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
+                        >
+                          <CreditCard size={16} />
+                          Pay Now
+                        </button>
+                      </div>
+                    )}
+                    {(booking.status === "accepted" || booking.status === "confirmed") && (
+                      <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition-transform">
+                        Join Session
+                      </button>
+                    )}
+                    {booking.status === "pending" && (
+                      <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                        Reschedule
+                      </button>
+                    )}
+                    <button className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-brand-500 transition-colors">
+                      <MoreVertical size={20} />
                     </button>
-                  )}
-                  {booking.status === "pending" && (
-                    <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                      Reschedule
-                    </button>
-                  )}
-                  <button className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-brand-500 transition-colors">
-                    <MoreVertical size={20} />
-                  </button>
+                  </div>
                 </div>
+              );
+            })}
+          </div>
+        )}
+
+        {!isLoading && totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-between">
+            <p className="text-sm text-slate-500">
+              Page {page} of {totalPages}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Modal */}
+        {selectedBooking && clientSecret && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto relative bg-[#100818] rounded-[32px] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300 custom-scrollbar">
+              <button 
+                onClick={() => { setSelectedBooking(null); setClientSecret(null); }}
+                className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-400 hover:text-white transition-colors z-10"
+              >
+                <X size={20} />
+              </button>
+              
+              <div className="p-8">
+                <StripePaymentWrapper clientSecret={clientSecret}>
+                  <CheckoutForm 
+                    amount={typeof selectedBooking.therapistId === 'object' ? selectedBooking.therapistId.consultationFee : 0} 
+                    bookingId={selectedBooking.id}
+                    onSuccess={() => {
+                      toast.success("Payment successful!");
+                      setSelectedBooking(null);
+                      setClientSecret(null);
+                      fetchBookings();
+                    }}
+                  />
+                </StripePaymentWrapper>
               </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-};
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
