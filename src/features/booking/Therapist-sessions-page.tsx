@@ -250,11 +250,14 @@ export const TherapistSessionsPage = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex flex-col items-end">
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 mb-1 border border-brand-500/10">
+                        {format(sessionDate, "EEE, MMM d, yyyy")}
+                      </span>
                       <span className="text-sm font-bold text-slate-900 dark:text-white block">
                         {sessionTime}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{durationText}</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{durationText}</span>
                     </div>
                   </div>
 
@@ -295,21 +298,37 @@ export const TherapistSessionsPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {awaitingPayment.map((booking) => {
               const patientName = typeof booking.userId === 'object' ? (booking.userId as any).name : `Patient #${booking.userId.slice(-4)}`;
+              const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
+              
+              let sessionTime = "Scheduled";
+              if (typeof booking.slotId === 'object') {
+                const start = new Date(booking.slotId.startTime);
+                const end = new Date(booking.slotId.endTime);
+                sessionTime = `${format(start, "hh:mm a")} - ${format(end, "hh:mm a")}`;
+              }
               const requestedDate = format(new Date(booking.createdAt), "MMM d, yyyy 'at' hh:mm a");
 
               return (
-                <div key={booking.id} className="dash-card p-6 border-l-4 border-l-blue-500 flex items-center justify-between">
+                <div key={booking.id} className="dash-card p-6 border-l-4 border-l-blue-500 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                    <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
                       <CreditCard size={24} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white">{patientName}</h4>
-                      <p className="text-xs text-slate-500">Waiting for patient to complete checkout</p>
-                      <p className="text-[10px] text-slate-400 mt-1">Requested on {requestedDate}</p>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-slate-900 dark:text-white">{patientName}</h4>
+                        <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500 text-[8px] font-black uppercase tracking-tighter">Awaiting Payment</span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400 mt-1.5">
+                        <span className="flex items-center gap-1 font-semibold text-brand-600 dark:text-brand-400">
+                          <Calendar size={12} className="shrink-0" /> {format(sessionDate, "EEE, MMM d, yyyy")}
+                        </span>
+                        <span className="flex items-center gap-1"><Clock size={12} className="shrink-0" /> {sessionTime}</span>
+                      </div>
+                      <p className="text-[10px] text-slate-400/80 mt-1">Requested on {requestedDate}</p>
                     </div>
                   </div>
-                  <div>
+                  <div className="flex items-center gap-4 self-end sm:self-center">
                     <PaymentTimer 
                       updatedAt={booking.updatedAt} 
                       onExpire={() => fetchBookings(page, limit)} 

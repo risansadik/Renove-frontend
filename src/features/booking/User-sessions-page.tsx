@@ -14,6 +14,12 @@ export const UserSessionsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<BookingResponse | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentBreakdown, setPaymentBreakdown] = useState<{
+    consultationFee: number;
+    commissionPercentage: number;
+    platformFee: number;
+    amount: number;
+  } | null>(null);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState<BookingResponse | null>(null);
 
@@ -47,6 +53,12 @@ export const UserSessionsPage = () => {
       setSelectedBooking(booking);
       const res = await paymentService.createPaymentIntent(booking.id);
       setClientSecret(res.data.clientSecret);
+      setPaymentBreakdown({
+        consultationFee: res.data.consultationFee ?? (typeof booking.therapistId === 'object' ? booking.therapistId.consultationFee : 0),
+        commissionPercentage: res.data.commissionPercentage ?? 0,
+        platformFee: res.data.platformFee ?? 0,
+        amount: res.data.amount,
+      });
     } catch (error: any) {
       toast.error(error.message || "Failed to initialize payment");
       setSelectedBooking(null);
@@ -302,7 +314,7 @@ export const UserSessionsPage = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
             <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto relative bg-[#100818] rounded-[32px] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300 custom-scrollbar">
               <button 
-                onClick={() => { setSelectedBooking(null); setClientSecret(null); }}
+                onClick={() => { setSelectedBooking(null); setClientSecret(null); setPaymentBreakdown(null); }}
                 className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-400 hover:text-white transition-colors z-10"
               >
                 <X size={20} />
@@ -311,12 +323,16 @@ export const UserSessionsPage = () => {
               <div className="p-8">
                 <StripePaymentWrapper clientSecret={clientSecret}>
                   <CheckoutForm 
-                    amount={typeof selectedBooking.therapistId === 'object' ? selectedBooking.therapistId.consultationFee : 0} 
+                    amount={paymentBreakdown?.amount ?? (typeof selectedBooking.therapistId === 'object' ? selectedBooking.therapistId.consultationFee : 0)} 
+                    consultationFee={paymentBreakdown?.consultationFee}
+                    platformFee={paymentBreakdown?.platformFee}
+                    commissionPercentage={paymentBreakdown?.commissionPercentage}
                     bookingId={selectedBooking.id}
                     onSuccess={() => {
                       toast.success("Payment successful!");
                       setSelectedBooking(null);
                       setClientSecret(null);
+                      setPaymentBreakdown(null);
                       fetchBookings(page, limit);
                     }}
                   />

@@ -12,12 +12,22 @@ interface CheckoutFormProps {
   onSuccess: () => void;
   amount: number;
   bookingId: string;
+  consultationFee?: number;
+  platformFee?: number;
+  commissionPercentage?: number;
 }
 
 /**
  * Professional-grade checkout form with real-time feedback and premium reNove styling.
  */
-export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, amount, bookingId }) => {
+export const CheckoutForm: React.FC<CheckoutFormProps> = ({ 
+  onSuccess, 
+  amount, 
+  bookingId,
+  consultationFee,
+  platformFee,
+  commissionPercentage
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -60,15 +70,37 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, amount, b
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-xl font-display font-semibold text-[var(--fg-primary)]">Payment Details</h3>
-          <p className="text-sm text-[var(--fg-secondary)]">Complete your session reservation</p>
-        </div>
-        <div className="text-right">
-          <span className="text-2xl font-bold text-[var(--accent-primary)]">${amount.toFixed(2)}</span>
-        </div>
+      <div className="mb-4">
+        <h3 className="text-xl font-display font-semibold text-[var(--fg-primary)] mb-1">Payment Details</h3>
+        <p className="text-sm text-[var(--fg-secondary)]">Complete your session reservation</p>
       </div>
+
+      {/* Glassmorphic Billing breakdown display */}
+      {consultationFee !== undefined && platformFee !== undefined && (
+        <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3 text-sm">
+          <div className="flex justify-between text-[var(--fg-secondary)]">
+            <span>Clinician Session Fee</span>
+            <span className="font-medium text-[var(--fg-primary)]">${consultationFee.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-[var(--fg-secondary)]">
+            <span>Platform Booking Fee ({commissionPercentage}%)</span>
+            <span className="font-medium text-[var(--fg-primary)]">${platformFee.toFixed(2)}</span>
+          </div>
+          <div className="h-px bg-white/10 my-1" />
+          <div className="flex justify-between items-center">
+            <span className="font-bold text-[var(--fg-primary)]">Total Payable</span>
+            <span className="text-xl font-extrabold text-[var(--accent-primary)]">${amount.toFixed(2)}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Fallback if breakdown not passed */}
+      {(consultationFee === undefined || platformFee === undefined) && (
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 mb-4">
+          <span className="font-bold text-[var(--fg-primary)]">Total Payable</span>
+          <span className="text-xl font-extrabold text-[var(--accent-primary)]">${amount.toFixed(2)}</span>
+        </div>
+      )}
 
       <PaymentElement />
 
