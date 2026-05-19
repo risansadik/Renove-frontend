@@ -7,6 +7,7 @@ import { AdminLayout } from "./features/admin/Admin-layout.js";
 import { AdminOverviewPage } from "./features/admin/Admin-overview-page.js";
 import { AdminTherapistsPage } from "./features/admin/Admin-therapists-page.js";
 import { AdminUsersPage } from "./features/admin/Admin-users-page.js";
+import { AdminFinancePage } from "./features/admin/Admin-finance-page.js";
 import { TherapistLoginPage } from "./features/therapist-auth/Therapist-login-page.js";
 import { TherapistRegisterPage } from "./features/therapist-auth/Therapist-register-page.js";
 import { TherapistForgotPasswordPage } from "./features/therapist-auth/Therapist-forgot-password-page.js";
@@ -121,6 +122,7 @@ export const AppRouter = () => {
             <Route path="dashboard" element={<AdminOverviewPage />} />
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="therapists" element={<AdminTherapistsPage />} />
+            <Route path="finance" element={<AdminFinancePage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

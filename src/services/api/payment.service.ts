@@ -4,6 +4,9 @@ import { API_ROUTES } from "../../core/constants/api-routes";
 export interface PaymentIntentResponse {
   clientSecret: string;
   amount: number;
+  consultationFee?: number;
+  commissionPercentage?: number;
+  platformFee?: number;
 }
 
 const paymentService = {
@@ -26,6 +29,21 @@ const paymentService = {
     const response = await apiClient.post<{ success: boolean; message: string; data: any }>(
       "/api/payments/verify-payment",
       { bookingId }
+    );
+    return response.data;
+  },
+
+  getAdminFinanceStats: async () => {
+    const response = await apiClient.get<{ success: boolean; data: any }>(
+      "/api/admin/finance/stats"
+    );
+    return response.data;
+  },
+
+  updateAdminCommission: async (commissionPercentage: number) => {
+    const response = await apiClient.patch<{ success: boolean; data: any }>(
+      "/api/admin/settings/commission",
+      { commissionPercentage }
     );
     return response.data;
   },
