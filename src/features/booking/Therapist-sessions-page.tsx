@@ -222,7 +222,7 @@ export const TherapistSessionsPage = () => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {pending.map((booking) => {
-              const patientName = typeof booking.userId === 'object' ? (booking.userId as any).name : `Patient #${booking.userId.slice(-4)}`;
+              const patientName = typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).name : `Patient #${typeof booking.userId === 'string' ? booking.userId.slice(-4) : ''}`;
               const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
               
               let sessionTime = "Scheduled";
@@ -297,7 +297,7 @@ export const TherapistSessionsPage = () => {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {awaitingPayment.map((booking) => {
-              const patientName = typeof booking.userId === 'object' ? (booking.userId as any).name : `Patient #${booking.userId.slice(-4)}`;
+              const patientName = typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).name : `Patient #${typeof booking.userId === 'string' ? booking.userId.slice(-4) : ''}`;
               const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
               
               let sessionTime = "Scheduled";
@@ -350,7 +350,7 @@ export const TherapistSessionsPage = () => {
         ) : (
           <div className="grid gap-3">
             {upcoming.map((booking) => {
-              const patientName = typeof booking.userId === 'object' ? (booking.userId as any).name : `Patient #${booking.userId.slice(-4)}`;
+              const patientName = typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).name : `Patient #${typeof booking.userId === 'string' ? booking.userId.slice(-4) : ''}`;
               const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
               
               let sessionTime = "Scheduled";
@@ -448,7 +448,7 @@ export const TherapistSessionsPage = () => {
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">Session History</h2>
           <div className="grid gap-3">
             {pastAndCancelled.map((booking) => {
-              const patientName = typeof booking.userId === 'object' ? (booking.userId as any).name : `Patient #${booking.userId.slice(-4)}`;
+              const patientName = typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).name : `Patient #${typeof booking.userId === 'string' ? booking.userId.slice(-4) : ''}`;
               const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
               
               let sessionTime = "Scheduled";
@@ -487,7 +487,7 @@ export const TherapistSessionsPage = () => {
                             {booking.cancellationReason || "No reason provided"}
                             {booking.cancelledBy && (
                               <span className="text-slate-400 text-[9px] ml-2">
-                                (Cancelled by {booking.cancelledBy === (typeof booking.userId === 'object' ? (booking.userId as any).id : booking.userId) ? "Patient" : "You"})
+                                (Cancelled by {booking.cancelledBy === (typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).id : booking.userId) ? "Patient" : "You"})
                               </span>
                             )}
                           </div>

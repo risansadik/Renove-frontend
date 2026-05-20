@@ -26,7 +26,7 @@ const paymentService = {
   },
 
   verifyPayment: async (bookingId: string) => {
-    const response = await apiClient.post<{ success: boolean; message: string; data: any }>(
+    const response = await apiClient.post<{ success: boolean; message: string; data: unknown }>(
       "/api/payments/verify-payment",
       { bookingId }
     );
@@ -34,14 +34,14 @@ const paymentService = {
   },
 
   getAdminFinanceStats: async () => {
-    const response = await apiClient.get<{ success: boolean; data: any }>(
+    const response = await apiClient.get<{ success: boolean; data: unknown }>(
       "/api/admin/finance/stats"
     );
     return response.data;
   },
 
   updateAdminCommission: async (commissionPercentage: number) => {
-    const response = await apiClient.patch<{ success: boolean; data: any }>(
+    const response = await apiClient.patch<{ success: boolean; data: unknown }>(
       "/api/admin/settings/commission",
       { commissionPercentage }
     );

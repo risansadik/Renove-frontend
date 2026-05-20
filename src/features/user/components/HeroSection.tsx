@@ -10,7 +10,15 @@ const HOW_IT_WORKS = [
   { icon: Shield, label: "Expert Guides", desc: "AI + human accountability" },
 ];
 
-const ORB_POSITIONS = [
+interface OrbPosition {
+  top?: string;
+  left?: string;
+  right?: string;
+  size: number;
+  delay: number;
+}
+
+const ORB_POSITIONS: OrbPosition[] = [
   { top: "10%", left: "5%", size: 300, delay: 0 },
   { top: "60%", right: "5%", size: 250, delay: 2 },
   { top: "30%", left: "40%", size: 180, delay: 1 },
@@ -40,8 +48,8 @@ export const HeroSection = ({ data, isNew, greeting }: Props) => (
             : "radial-gradient(circle, rgba(107,76,122,0.4), transparent 70%)",
           filter: "blur(40px)",
           top: o.top,
-          left: (o as any).left,
-          right: (o as any).right,
+          left: o.left,
+          right: o.right,
         }}
       />
     ))}

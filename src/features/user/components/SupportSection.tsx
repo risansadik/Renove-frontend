@@ -99,11 +99,11 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
             </p>
             <div className="space-y-3 mb-6">
               {(therapists.length > 0 ? therapists.slice(0, 3) : [
-                { id: "1", name: "Dr. Sarah Collins", specialization: "Addiction Recovery", consultationFee: 80 } as any,
-                { id: "2", name: "Dr. James Reid", specialization: "Trauma & PTSD", consultationFee: 90 } as any,
-              ]).map((t: any, i) => (
+                { id: "1", name: "Dr. Sarah Collins", specialization: "Addiction Recovery", consultationFee: 80 } as unknown as ApprovedTherapist,
+                { id: "2", name: "Dr. James Reid", specialization: "Trauma & PTSD", consultationFee: 90 } as unknown as ApprovedTherapist,
+              ]).map((t: ApprovedTherapist, i) => (
                 <motion.button
-                  key={t._id ?? i}
+                  key={t.id ?? i}
                   whileHover={{ x: 4 }}
                   onClick={() => therapists.length > 0 && onSelectTherapist(t)}
                   className="w-full flex items-center gap-4 p-3.5 rounded-2xl text-left transition-all"

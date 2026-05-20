@@ -3,15 +3,22 @@ import { NavLink, useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/use-auth-store.js";
 import { adminService } from "../../services/api/auth.service.js";
-import { LayoutDashboard, Users, Stethoscope, Coins, LogOut, Menu, X, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  LayoutDashboard, Users, UserCog, DollarSign, Settings,
+  LogOut, Menu, X, Shield, FileCheck,
+  Sparkles,
+  ShieldCheck
+} from "lucide-react";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
 import { ThemeToggle } from "../../components/common/ThemeToggle.js";
 
 const navItems = [
   { to: "/admin/dashboard", icon: LayoutDashboard, label: "Overview" },
   { to: "/admin/users", icon: Users, label: "Users" },
-  { to: "/admin/therapists", icon: Stethoscope, label: "Therapists" },
-  { to: "/admin/finance", icon: Coins, label: "Financials" },
+  { to: "/admin/therapists", icon: UserCog, label: "Therapists" },
+  { to: "/admin/reviews", icon: FileCheck, label: "Profile Reviews" },
+  { to: "/admin/finance", icon: DollarSign, label: "Finance" },
+  { to: "/admin/profile", icon: Settings, label: "Admin Profile" },
 ];
 
 export const AdminLayout = () => {

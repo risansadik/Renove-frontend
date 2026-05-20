@@ -1,7 +1,7 @@
 export type IsoDateString = string;
 export type AuthRole = "user" | "therapist" | "admin";
 export type UserStatus = "active" | "blocked";
-export type TherapistStatus = "pending" | "approved" | "rejected";
+export type TherapistStatus = "pending" | "approved" | "rejected" | "review_required";
 export type Gender = "male" | "female" | "other";
 
 export interface User {
@@ -10,6 +10,8 @@ export interface User {
   email: string;
   isVerified: boolean;
   status: UserStatus;
+  profileImage?: string;
+  isGoogleAuth?: boolean;
   createdAt: IsoDateString;
 }
 
@@ -28,12 +30,16 @@ export interface Therapist {
   profileImage?: string;
   status: TherapistStatus;
   isVerified: boolean;
+  pendingUpdates?: Partial<Therapist>;
+  adminRejectionReason?: string;
   createdAt: IsoDateString;
 }
 
 export interface Admin {
   id: string;
+  name: string;
   email: string;
+  profileImage?: string;
 }
 
 export interface PaginationMeta {
