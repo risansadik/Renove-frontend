@@ -27,23 +27,38 @@ export const TherapistProfilePage = () => {
   const [qualification, setQualification] = useState("");
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
-  const loadProfile = async () => {
-    try {
-      const res = await profileService.getTherapistProfile();
-      if (res.success && res.data?.therapist) {
-        setLocalTherapist(res.data.therapist);
-        setTherapist(res.data.therapist); // Update global store
-      }
-    } catch (err: unknown) {
-      handleError(err, "Failed to load profile");
-    } finally {
-      setIsFetching(false);
-    }
-  };
-
   useEffect(() => {
-    loadProfile();
-  }, []);
+    const loadProfile = async () => {
+      try {
+        const res = await profileService.getTherapistProfile();
+        if (res.success && res.data?.therapist) {
+          setLocalTherapist(res.data.therapist);
+          setTherapist(res.data.therapist); // Update global store
+        }
+      } catch (err: unknown) {
+        handleError(err, "Failed to load profile");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      loadProfile();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [setTherapist]);
+
+  const [prevTherapist, setPrevTherapist] = useState<Therapist | null>(null);
+
+  if (therapist !== prevTherapist) {
+    setPrevTherapist(therapist);
+    if (therapist) {
+      setName(therapist.name || "");
+      setBio(therapist.bio || "");
+      setConsultationFee(therapist.consultationFee?.toString() || "");
+      setSpecialization(therapist.specialization?.join(", ") || "");
+    }
+  }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,16 +72,6 @@ export const TherapistProfilePage = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  useEffect(() => {
-    if (therapist) {
-      setName(therapist.name || "");
-      setBio(therapist.bio || "");
-      setConsultationFee(therapist.consultationFee?.toString() || "");
-      setSpecialization(therapist.specialization?.join(", ") || "");
-      setQualification(therapist.qualification || "");
-    }
-  }, [therapist]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();

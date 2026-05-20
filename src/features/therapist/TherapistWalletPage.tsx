@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Wallet, ArrowDownLeft, ArrowUpRight, History, Clock, TrendingUp, DollarSign } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, History, Clock, TrendingUp, DollarSign } from "lucide-react";
 import walletService, { type WalletData } from "../../services/api/wallet.service";
 import { format } from "date-fns";
 
@@ -29,7 +29,10 @@ export const TherapistWalletPage = () => {
   };
 
   useEffect(() => {
-    fetchWallet(page, limit);
+    const timer = setTimeout(() => {
+      fetchWallet(page, limit);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [page, limit]);
 
   if (loading) {

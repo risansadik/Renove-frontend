@@ -19,20 +19,30 @@ export const PaymentTimer = ({ updatedAt, onExpire }: PaymentTimerProps) => {
       const diff = differenceInSeconds(expirationTime, new Date());
       if (diff <= 0) {
         setIsExpired(true);
-        if (onExpire && !isExpired) onExpire();
         return 0;
       }
       return diff;
     };
 
-    setTimeLeft(calculateTimeLeft());
+    const timeoutId = setTimeout(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 0);
 
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [updatedAt, onExpire, isExpired]);
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(timer);
+    };
+  }, [updatedAt]);
+
+  useEffect(() => {
+    if (isExpired && onExpire) {
+      onExpire();
+    }
+  }, [isExpired, onExpire]);
 
   if (isExpired) {
     return (

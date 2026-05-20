@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/use-auth-store.js";
 import { profileService } from "../../services/api/profile.service.js";
@@ -33,11 +33,14 @@ export const UserProfilePage = () => {
     }
   };
 
-  useEffect(() => {
+  const [prevUser, setPrevUser] = useState<typeof user>(null);
+
+  if (user !== prevUser) {
+    setPrevUser(user);
     if (user) {
       setName(user.name);
     }
-  }, [user]);
+  }
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();

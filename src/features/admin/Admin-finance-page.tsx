@@ -59,7 +59,7 @@ export const AdminFinancePage = () => {
     let description = "";
     let data: Transaction[] = [];
     let valueColumnHeader = "";
-    let renderValue = (t: Transaction) => "";
+    let renderValue: (t: Transaction) => string = () => "";
     let totalVal = 0;
 
     switch (activeModal) {
@@ -126,22 +126,26 @@ export const AdminFinancePage = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const res = await paymentService.getAdminFinanceStats();
+      const res = await paymentService.getAdminFinanceStats<FinanceStats>();
       if (res.success) {
         setStats(res.data);
         setNewCommission(res.data.commissionPercentage);
       } else {
         toast.error("Failed to load financial records");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to load financial stats");
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      toast.error(e.message || "Failed to load financial stats");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchStats();
+    const timer = setTimeout(() => {
+      fetchStats();
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleUpdateCommission = async (e: React.FormEvent) => {
@@ -160,8 +164,9 @@ export const AdminFinancePage = () => {
       } else {
         toast.error("Failed to update commission rate");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update commission");
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      toast.error(e.message || "Failed to update commission");
     } finally {
       setUpdating(false);
     }

@@ -4,23 +4,17 @@ import toast from "react-hot-toast";
  * Extract a human-readable message from an error object.
  * Handles ApiClientError, AxiosError, and standard Error.
  */
-interface PotentialError {
-  message?: string;
-  response?: {
-    data?: {
-      message?: string;
-      statusCode?: number;
-    };
-    status?: number;
-  };
-}
-
 /**
  * Extract a human-readable message from an error object.
  * Handles ApiClientError, AxiosError, and standard Error.
  */
 export const getErrorMessage = (err: unknown): string => {
-  const potentialErr = err as any;
+  interface ErrorShape {
+    message?: string;
+    errors?: Array<{ message?: string }>;
+    response?: { data?: { message?: string } };
+  }
+  const potentialErr = err as ErrorShape;
 
   // If there are detailed validation errors, return the first validation error's message
   if (potentialErr?.errors && Array.isArray(potentialErr.errors) && potentialErr.errors.length > 0) {

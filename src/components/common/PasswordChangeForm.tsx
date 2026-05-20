@@ -41,7 +41,7 @@ export const PasswordChangeForm = ({ onSubmit, isLoading }: PasswordChangeFormPr
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-    } catch (err: unknown) {
+    } catch {
       // Errors should be handled by the parent caller or toast
     }
   };

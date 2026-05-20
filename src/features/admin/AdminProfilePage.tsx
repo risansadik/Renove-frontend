@@ -23,23 +23,26 @@ export const AdminProfilePage = () => {
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
-  const loadProfile = async () => {
-    try {
-      const res = await profileService.getAdminProfile();
-      if (res.success && res.data?.admin) {
-        setLocalAdmin(res.data.admin);
-        setAdmin(res.data.admin);
-      }
-    } catch (err: unknown) {
-      handleError(err, "Failed to load profile");
-    } finally {
-      setIsFetching(false);
-    }
-  };
-
   useEffect(() => {
-    loadProfile();
-  }, []);
+    const loadProfile = async () => {
+      try {
+        const res = await profileService.getAdminProfile();
+        if (res.success && res.data?.admin) {
+          setLocalAdmin(res.data.admin);
+          setAdmin(res.data.admin);
+        }
+      } catch (err: unknown) {
+        handleError(err, "Failed to load profile");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      loadProfile();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [setAdmin]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,11 +57,14 @@ export const AdminProfilePage = () => {
     }
   };
 
-  useEffect(() => {
+  const [prevAdmin, setPrevAdmin] = useState<Admin | null>(null);
+
+  if (admin !== prevAdmin) {
+    setPrevAdmin(admin);
     if (admin) {
       setName(admin.name || "");
     }
-  }, [admin]);
+  }
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();

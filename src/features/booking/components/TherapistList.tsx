@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Star, MapPin, Video, MessageCircle, Info } from "lucide-react";
+import { Star, Info } from "lucide-react";
 import { Button } from "../../../components/common/Button";
 import { BookingCalendar } from "./BookingCalendar";
 import bookingService from "../../../services/api/booking.service";
@@ -25,14 +25,13 @@ export const TherapistList = () => {
   const [profileTherapist, setProfileTherapist] = useState<ApprovedTherapist | null>(null);
   const [isBooking, setIsBooking] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTherapists = async () => {
       try {
         const response = await userDashboardService.getTherapists();
-        const approvedTherapists = response.data.data?.map((t: any) => ({
-          id: t.id || t._id,
+        const approvedTherapists = response.data.data?.map((t: ApprovedTherapist & { qualification?: string; _id?: string }) => ({
+          id: t.id || t._id || "",
           name: t.name.startsWith("Dr. ") ? t.name : `Dr. ${t.name}`,
           qualification: t.qualification || "Licensed Therapist",
           specialization: t.specialization || [],
@@ -42,10 +41,8 @@ export const TherapistList = () => {
           bio: t.bio || "No bio available.",
         })) || [];
         setTherapists(approvedTherapists);
-      } catch (error) {
+      } catch {
         toast.error("Failed to load therapists");
-      } finally {
-        setLoading(false);
       }
     };
     fetchTherapists();
@@ -64,8 +61,9 @@ export const TherapistList = () => {
       toast.success("Booking request sent successfully!");
       setIsBooking(false);
       setSelectedTherapist(null);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create booking");
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err.message || "Failed to create booking");
     } finally {
       setIsSubmitting(false);
     }
@@ -131,7 +129,7 @@ export const TherapistList = () => {
                 <Button
                   variant="outline"
                   className="flex-1 text-xs gap-2"
-                  onClick={() => setProfileTherapist(therapist as any)}
+                  onClick={() => setProfileTherapist(therapist as unknown as ApprovedTherapist)}
                 >
                   <Info size={14} />
                   Profile

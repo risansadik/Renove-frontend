@@ -45,7 +45,10 @@ export const UserSessionsPage = () => {
   };
 
   useEffect(() => {
-    fetchBookings(page, limit);
+    const timer = setTimeout(() => {
+      fetchBookings(page, limit);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [page, limit]);
 
   const handlePayNow = async (booking: BookingResponse) => {
@@ -59,8 +62,9 @@ export const UserSessionsPage = () => {
         platformFee: res.data.platformFee ?? 0,
         amount: res.data.amount,
       });
-    } catch (error: any) {
-      toast.error(error.message || "Failed to initialize payment");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to initialize payment";
+      toast.error(msg);
       setSelectedBooking(null);
     }
   };
@@ -72,8 +76,9 @@ export const UserSessionsPage = () => {
       await bookingService.cancelBooking(bookingToCancel.id, reason);
       toast.success("Appointment cancelled successfully", { id: loadingToast });
       fetchBookings(page, limit);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || error.message || "Failed to cancel booking");
+    } catch (error: unknown) {
+      const errObj = error as { response?: { data?: { message?: string } }; message?: string };
+      toast.error(errObj.response?.data?.message || errObj.message || "Failed to cancel booking");
     } finally {
       setIsCancelModalOpen(false);
       setBookingToCancel(null);
@@ -154,7 +159,6 @@ export const UserSessionsPage = () => {
             }
 
             const requestedDate = format(new Date(booking.createdAt), "MMM d, yyyy 'at' hh:mm a");
-            const consultationFee = typeof booking.therapistId === 'object' ? booking.therapistId.consultationFee : 0;
 
             return (
               <div key={booking.id} className="dash-card p-6 flex flex-col sm:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-left-4 duration-500">
@@ -196,7 +200,7 @@ export const UserSessionsPage = () => {
                       <div className="mt-2 p-2 rounded-lg bg-red-500/5 border border-red-500/10 text-[10px] text-red-500 font-medium space-y-1">
                         <div>
                           <span className="font-bold uppercase mr-1">Cancelled by:</span>
-                          {booking.cancelledBy === (typeof booking.userId === 'object' ? (booking.userId as any).id : booking.userId) ? "You" : "Therapist"}
+                          {booking.cancelledBy === (typeof booking.userId === 'object' ? (booking.userId as { id: string }).id : booking.userId) ? "You" : "Therapist"}
                         </div>
                         {booking.cancellationReason && (
                           <div>

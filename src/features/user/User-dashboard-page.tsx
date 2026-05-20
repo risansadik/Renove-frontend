@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import { useAuthStore, selectAuthUser } from "../../store/use-auth-store.js";
 import {
   userDashboardService,
   type DashboardData,
@@ -18,7 +17,6 @@ import { UserSessionsPage } from "../booking/User-sessions-page.js";
 import paymentService from "../../services/api/payment.service.js";
 
 export const UserDashboardPage = () => {
-  const user = useAuthStore(selectAuthUser);
   const location = useLocation();
   const [data, setData] = useState<DashboardData | null>(null);
   const [therapists, setTherapists] = useState<ApprovedTherapist[]>([]);
@@ -44,7 +42,7 @@ export const UserDashboardPage = () => {
         })
         .catch(() => toast.error("Payment verification failed."));
     }
-  }, []);
+  }, [searchParams, setSearchParams]);
 
 
 
@@ -73,7 +71,12 @@ export const UserDashboardPage = () => {
     }
   }, []);
 
-  useEffect(() => { fetchDashboard(); }, [fetchDashboard]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchDashboard();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [fetchDashboard]);
 
   const handleMood = async (mood: string) => {
     if (moodLogging) return;
@@ -147,7 +150,7 @@ export const UserDashboardPage = () => {
             therapist={selectedTherapist} 
             isOpen={!!selectedTherapist} 
             onClose={() => setSelectedTherapist(null)} 
-            onBook={(id) => {
+            onBook={() => {
               setSelectedTherapist(null);
               // In the dashboard overview, booking might navigate to /user/therapists to handle booking state
               window.location.href = "/user/therapists";
