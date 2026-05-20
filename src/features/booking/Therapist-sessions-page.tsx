@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { format, isValid } from "date-fns";
+import { format } from "date-fns";
 import { Check, X, Clock, User, Video, Calendar, MoreVertical, MessageSquare, CreditCard, CheckCircle } from "lucide-react";
 import bookingService, { type BookingResponse } from "../../services/api/booking.service";
 import paymentService from "../../services/api/payment.service";
@@ -33,7 +33,10 @@ export const TherapistSessionsPage = () => {
   };
 
   useEffect(() => {
-    fetchBookings(page, limit);
+    const timer = setTimeout(() => {
+      fetchBookings(page, limit);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [page, limit]);
 
   const [rejectionId, setRejectionId] = useState<string | null>(null);
@@ -46,8 +49,9 @@ export const TherapistSessionsPage = () => {
       setRejectionId(null);
       setRejectionReason("");
       fetchBookings(page, limit);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update status");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to update status";
+      toast.error(msg);
     }
   };
 
@@ -56,8 +60,9 @@ export const TherapistSessionsPage = () => {
       await paymentService.completeSession(bookingId);
       toast.success("Session marked as completed. Funds moved to available balance.");
       fetchBookings(page, limit);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to complete session");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to complete session";
+      toast.error(msg);
     }
   };
 
@@ -73,16 +78,12 @@ export const TherapistSessionsPage = () => {
       setCancelId(null);
       setCancelReasonText("");
       fetchBookings(page, limit);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to cancel session");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to cancel session";
+      toast.error(msg);
     }
   };
 
-  const safeFormat = (dateStr: string | undefined, formatStr: string, fallback = "—") => {
-    if (!dateStr) return fallback;
-    const date = new Date(dateStr);
-    return isValid(date) ? format(date, formatStr) : fallback;
-  };
 
   if (isLoading) {
     return (

@@ -1,5 +1,4 @@
 import apiClient from "./client";
-import { API_ROUTES } from "../../core/constants/api-routes";
 
 export interface PaymentIntentResponse {
   clientSecret: string;
@@ -33,8 +32,8 @@ const paymentService = {
     return response.data;
   },
 
-  getAdminFinanceStats: async () => {
-    const response = await apiClient.get<{ success: boolean; data: unknown }>(
+  getAdminFinanceStats: async <T = unknown>() => {
+    const response = await apiClient.get<{ success: boolean; data: T }>(
       "/api/admin/finance/stats"
     );
     return response.data;

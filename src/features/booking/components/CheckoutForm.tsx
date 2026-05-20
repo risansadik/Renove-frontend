@@ -57,8 +57,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       try {
         await paymentService.verifyPayment(bookingId);
         onSuccess();
-      } catch (err: any) {
-        setErrorMessage(err.message || "Failed to verify payment with our server.");
+      } catch (err: unknown) {
+        const errorShape = err as { message?: string };
+        setErrorMessage(errorShape.message || "Failed to verify payment with our server.");
         setIsProcessing(false);
       }
     } else {

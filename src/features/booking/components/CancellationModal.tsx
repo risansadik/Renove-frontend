@@ -46,14 +46,7 @@ export const CancellationModal: React.FC<CancellationModalProps> = ({
     const diffMs = startTime.getTime() - now.getTime();
     const hoursRemaining = diffMs / (1000 * 60 * 60);
 
-    let percent = 0;
-    if (hoursRemaining > 24) {
-      percent = 100;
-    } else if (hoursRemaining >= 6) {
-      percent = 50;
-    } else {
-      percent = 0;
-    }
+    const percent = hoursRemaining > 24 ? 100 : hoursRemaining >= 6 ? 50 : 0;
 
     return {
       percent,

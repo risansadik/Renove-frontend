@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { profileService } from "../../services/api/profile.service.js";
 import { Button } from "../../components/common/Button.js";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
-import { AlertCircle, CheckCircle, FileCheck, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, FileCheck } from "lucide-react";
 import type { Therapist } from "../../domain/model/index.js";
 
 export const AdminProfileReviewPage = () => {
@@ -31,7 +31,10 @@ export const AdminProfileReviewPage = () => {
   };
 
   useEffect(() => {
-    fetchPending();
+    const timer = setTimeout(() => {
+      fetchPending();
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleApprove = async (id: string) => {
@@ -39,7 +42,7 @@ export const AdminProfileReviewPage = () => {
     try {
       await profileService.reviewTherapistUpdate(id, { status: "approved" });
       toast.success("Profile updates approved successfully");
-      setPendingTherapists(prev => prev.filter(t => (t.id || (t as any)._id) !== id));
+      setPendingTherapists(prev => prev.filter(t => (t.id || (t as { _id?: string })._id) !== id));
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };
       toast.error(e.response?.data?.message || "Failed to approve updates");
@@ -52,7 +55,7 @@ export const AdminProfileReviewPage = () => {
     if (!selectedTherapist) return;
     if (!rejectionReason.trim()) return toast.error("Rejection reason is required");
 
-    const id = selectedTherapist.id || (selectedTherapist as any)._id;
+    const id = selectedTherapist.id || (selectedTherapist as { _id?: string })._id || "";
     setIsProcessing(true);
     try {
       await profileService.reviewTherapistUpdate(id, {
@@ -60,7 +63,7 @@ export const AdminProfileReviewPage = () => {
         reason: rejectionReason
       });
       toast.success("Profile updates rejected");
-      setPendingTherapists(prev => prev.filter(t => (t.id || (t as any)._id) !== id));
+      setPendingTherapists(prev => prev.filter(t => (t.id || (t as { _id?: string })._id) !== id));
       setRejectionModalOpen(false);
       setRejectionReason("");
       setSelectedTherapist(null);
@@ -103,7 +106,7 @@ export const AdminProfileReviewPage = () => {
             const updates = therapist.pendingUpdates || {};
 
             return (
-              <div key={therapist.id || (therapist as any)._id} className="p-6 rounded-2xl flex flex-col xl:flex-row gap-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
+            <div key={therapist.id || (therapist as { _id?: string })._id} className="p-6 rounded-2xl flex flex-col xl:flex-row gap-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
                 {/* Current Profile Preview */}
                 <div className="xl:w-1/3 space-y-4">
                   <div className="flex items-center gap-4">
@@ -142,7 +145,7 @@ export const AdminProfileReviewPage = () => {
                     <Button variant="outline" className="border-red-500/30 text-red-500 hover:bg-red-500/5 hover:border-red-500/50" onClick={() => openRejectModal(therapist)} loading={isProcessing} disabled={isProcessing}>
                       Reject
                     </Button>
-                    <Button variant="primary" onClick={() => handleApprove(therapist.id || (therapist as any)._id)} loading={isProcessing} disabled={isProcessing}>
+                    <Button variant="primary" onClick={() => handleApprove(therapist.id || (therapist as { _id?: string })._id || "")} loading={isProcessing} disabled={isProcessing}>
                       Approve Updates
                     </Button>
                   </div>

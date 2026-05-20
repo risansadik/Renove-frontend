@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Calendar, Plus, Clock, Trash2, CheckCircle2, AlertCircle, X } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Calendar, Plus, Clock, Trash2, X } from "lucide-react";
 import { Button } from "../../../components/common/Button";
 import availabilityService, { type AvailabilityRule } from "../../../services/api/availability.service";
 import toast from "react-hot-toast";
@@ -29,20 +29,23 @@ export const AvailabilityManager = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchRules();
-  }, []);
-
-  const fetchRules = async () => {
+  const fetchRules = useCallback(async () => {
     try {
       const res = await availabilityService.getMyAvailabilityRules();
       setRules(res.data);
-    } catch (error) {
+    } catch {
       toast.error("Failed to load availability rules");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchRules();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [fetchRules]);
 
   const toggleDay = (day: string) => {
     setSelectedDays(prev => 
@@ -80,8 +83,9 @@ export const AvailabilityManager = () => {
       setSelectedDays([]);
       setStartTime("09:00");
       setEndTime("10:00");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create rule");
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err.message || "Failed to create rule");
     } finally {
       setIsSubmitting(false);
     }
@@ -92,8 +96,9 @@ export const AvailabilityManager = () => {
       await availabilityService.deleteAvailability(id);
       toast.success("Rule deleted successfully");
       fetchRules();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete rule");
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err.message || "Failed to delete rule");
     }
   };
 

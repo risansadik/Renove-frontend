@@ -5,7 +5,7 @@ import { useAuthStore } from "../../store/use-auth-store.js";
 import { adminService } from "../../services/api/auth.service.js";
 import {
   LayoutDashboard, Users, UserCog, DollarSign, Settings,
-  LogOut, Menu, X, Shield, FileCheck,
+  LogOut, Menu, X, FileCheck,
   Sparkles,
   ShieldCheck
 } from "lucide-react";

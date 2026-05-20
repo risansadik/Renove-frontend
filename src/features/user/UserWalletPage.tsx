@@ -29,7 +29,10 @@ export const UserWalletPage = () => {
   };
 
   useEffect(() => {
-    fetchWallet(page, limit);
+    const timer = setTimeout(() => {
+      fetchWallet(page, limit);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [page, limit]);
 
   if (loading) {

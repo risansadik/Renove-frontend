@@ -14,7 +14,7 @@ export const AdminUsersPage = () => {
     // Pagination State
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit, setLimit] = useState(10);
+    const limit = 10;
 
     const fetchUsers = async (p: number, l: number) => {
         setLoading(true);
@@ -32,9 +32,12 @@ export const AdminUsersPage = () => {
         }
     };
 
-    useEffect(() => {
-        fetchUsers(page, limit);
-    }, [page, limit]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchUsers(page, limit);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [page, limit]);
 
     const filtered = useMemo(() => {
         const q = search.toLowerCase();

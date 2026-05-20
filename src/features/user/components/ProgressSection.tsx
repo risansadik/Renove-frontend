@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Flame, Star, Award, Heart, Smile, Meh, Frown, Shield, Target, Clock, Activity } from "lucide-react";
+import { Flame, Star, Award, Heart, Smile, Meh, Frown, Shield, Target, Clock } from "lucide-react";
 import type { DashboardData } from "../../../services/api/auth.service.js";
 
 const MOOD_OPTIONS = [

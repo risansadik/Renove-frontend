@@ -25,7 +25,7 @@ export const AdminTherapistsPage = () => {
     // Pagination State
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit, setLimit] = useState(10);
+    const limit = 10;
     const [totalTherapists, setTotalTherapists] = useState(0);
 
     const getMediaUrl = (path: string | undefined) => {
@@ -50,9 +50,12 @@ export const AdminTherapistsPage = () => {
         }
     };
 
-    useEffect(() => {
-        fetchTherapists(page, limit);
-    }, [page, limit]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchTherapists(page, limit);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [page, limit]);
 
     const filtered = useMemo(() => {
         const q = search.toLowerCase();

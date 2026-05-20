@@ -8,7 +8,6 @@ import { useLocation } from "react-router-dom";
 import { TherapistSessionsPage } from "../booking/Therapist-sessions-page.js";
 import { AvailabilityManager } from "./components/AvailabilityManager";
 import { WalletDashboard } from "./components/WalletDashboard";
-import paymentService from "../../services/api/payment.service";
 
 export const TherapistDashboardPage = () => {
   const therapist = useAuthStore(selectAuthTherapist);
@@ -26,7 +25,10 @@ export const TherapistDashboardPage = () => {
   };
 
   useEffect(() => {
-    fetchDashboard();
+    const timer = setTimeout(() => {
+      fetchDashboard();
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading) {

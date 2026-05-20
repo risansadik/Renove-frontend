@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format, addDays, startOfToday, isSameDay, startOfDay, endOfDay } from "date-fns";
-import { ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Loader2 } from "lucide-react";
+import { Clock, Calendar as CalendarIcon, Loader2 } from "lucide-react";
 import { Button } from "../../../components/common/Button";
 import availabilityService, { type TherapistSlot } from "../../../services/api/availability.service";
 import toast from "react-hot-toast";
@@ -20,23 +20,23 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
   const days = Array.from({ length: 14 }, (_, i) => addDays(startOfToday(), i));
 
   useEffect(() => {
+    const fetchSlots = async () => {
+      setLoadingSlots(true);
+      try {
+        const start = startOfDay(selectedDate).toISOString();
+        const end = endOfDay(selectedDate).toISOString();
+        const res = await availabilityService.getAvailableSlots(therapistId, start, end);
+        setSlots(res.data);
+        setSelectedSlotId(null); // Reset selection on date change
+      } catch {
+        toast.error("Failed to fetch available slots");
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+
     fetchSlots();
   }, [selectedDate, therapistId]);
-
-  const fetchSlots = async () => {
-    setLoadingSlots(true);
-    try {
-      const start = startOfDay(selectedDate).toISOString();
-      const end = endOfDay(selectedDate).toISOString();
-      const res = await availabilityService.getAvailableSlots(therapistId, start, end);
-      setSlots(res.data);
-      setSelectedSlotId(null); // Reset selection on date change
-    } catch (error) {
-      toast.error("Failed to fetch available slots");
-    } finally {
-      setLoadingSlots(false);
-    }
-  };
 
   const handleBooking = () => {
     if (selectedSlotId) {
