@@ -32,11 +32,18 @@ apiClient.interceptors.response.use(
     const apiError: ApiError = {
       message: error.response?.data?.message ?? error.message ?? "Something went wrong",
       statusCode: error.response?.data?.statusCode ?? error.response?.status,
+      errors: error.response?.data?.errors,
     };
 
-    // If 401 and we haven't retried yet
-    if (apiError.statusCode === 401 && originalRequest && !(originalRequest as any)._retry) {
-      (originalRequest as any)._retry = true;
+    // Skip token refresh for all authentication-related requests (e.g. login, register, google auth, OTP, refresh token)
+    const isAuthRoute = originalRequest?.url && (
+      originalRequest.url.includes("/auth/") ||
+      originalRequest.url.includes("/admin/login") ||
+      originalRequest.url.includes("/admin/logout")
+    );
+
+    if (apiError.statusCode === 401 && originalRequest && !isAuthRoute && !(originalRequest as typeof originalRequest & { _retry?: boolean })._retry) {
+      (originalRequest as typeof originalRequest & { _retry?: boolean })._retry = true;
 
       try {
         // Attempt to refresh the token

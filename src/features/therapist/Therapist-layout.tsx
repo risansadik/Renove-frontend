@@ -3,7 +3,7 @@ import { NavLink, useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore, selectAuthTherapist } from "../../store/use-auth-store.js";
 import { therapistAuthService } from "../../services/api/auth.service.js";
-import { LayoutDashboard, CalendarDays, Clock, Users, MessageCircle, Settings, LogOut, Menu, X, Stethoscope, Wallet } from "lucide-react";
+import { LayoutDashboard, CalendarDays, Clock, Users, MessageCircle, Settings, LogOut, Menu, X, Stethoscope, Wallet, User } from "lucide-react";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
 import { ThemeToggle } from "../../components/common/ThemeToggle.js";
 
@@ -14,6 +14,7 @@ const navItems = [
   { to: "/therapist/clients", icon: Users, label: "Clients" },
   { to: "/therapist/messages", icon: MessageCircle, label: "Messages" },
   { to: "/therapist/wallet", icon: Wallet, label: "Wallet" },
+  { to: "/therapist/profile", icon: User, label: "Profile" },
   { to: "/therapist/settings", icon: Settings, label: "Settings" },
 ];
 

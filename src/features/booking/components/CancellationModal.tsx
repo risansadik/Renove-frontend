@@ -31,7 +31,7 @@ export const CancellationModal: React.FC<CancellationModalProps> = ({
   const getRefundDetails = () => {
     if (!booking) return null;
     
-    const fee = typeof booking.therapistId === "object" ? (booking.therapistId as any).consultationFee || 0 : 0;
+    const fee = typeof booking.therapistId === "object" && booking.therapistId !== null ? (booking.therapistId as { id: string; name: string; consultationFee: number }).consultationFee || 0 : 0;
     
     if (booking.status === "awaiting_payment" || booking.status === "pending") {
       return { percent: 100, amount: 0, hoursRemaining: 999, freeRelease: true };

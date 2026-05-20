@@ -30,12 +30,12 @@ const bookingService = {
   },
 
   getUserBookings: async (page: number = 1, limit: number = 10) => {
-    const response = await apiClient.get<{ success: boolean; data: BookingResponse[]; meta?: any }>(`/api/bookings/my-sessions?page=${page}&limit=${limit}`);
+    const response = await apiClient.get<{ success: boolean; data: BookingResponse[]; meta?: { page: number; limit: number; totalPages: number; totalBookings: number } }>(`/api/bookings/my-sessions?page=${page}&limit=${limit}`);
     return response.data;
   },
 
   getTherapistBookings: async (page: number = 1, limit: number = 10) => {
-    const response = await apiClient.get<{ success: boolean; data: BookingResponse[]; meta?: any }>(`/api/bookings/therapist-sessions?page=${page}&limit=${limit}`);
+    const response = await apiClient.get<{ success: boolean; data: BookingResponse[]; meta?: { page: number; limit: number; totalPages: number; totalBookings: number } }>(`/api/bookings/therapist-sessions?page=${page}&limit=${limit}`);
     return response.data;
   },
 

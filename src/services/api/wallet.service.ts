@@ -21,7 +21,7 @@ export interface WalletData {
 
 const walletService = {
   getWalletData: async (page: number = 1, limit: number = 10) => {
-    const response = await apiClient.get<{ success: boolean; data: WalletData; meta?: any }>(`/api/wallet?page=${page}&limit=${limit}`);
+    const response = await apiClient.get<{ success: boolean; data: WalletData; meta?: Record<string, unknown> }>(`/api/wallet?page=${page}&limit=${limit}`);
     return response.data;
   },
 };

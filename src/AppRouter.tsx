@@ -8,6 +8,8 @@ import { AdminOverviewPage } from "./features/admin/Admin-overview-page.js";
 import { AdminTherapistsPage } from "./features/admin/Admin-therapists-page.js";
 import { AdminUsersPage } from "./features/admin/Admin-users-page.js";
 import { AdminFinancePage } from "./features/admin/Admin-finance-page.js";
+import { AdminProfilePage } from "./features/admin/AdminProfilePage.js";
+import { AdminProfileReviewPage } from "./features/admin/AdminProfileReviewPage.js";
 import { TherapistLoginPage } from "./features/therapist-auth/Therapist-login-page.js";
 import { TherapistRegisterPage } from "./features/therapist-auth/Therapist-register-page.js";
 import { TherapistForgotPasswordPage } from "./features/therapist-auth/Therapist-forgot-password-page.js";
@@ -22,8 +24,10 @@ import { VerifyOtpPage } from "./features/user-auth/Verify-otp-page.js";
 import { UserLayout } from "./features/user/User-layout.js";
 import { UserDashboardPage } from "./features/user/User-dashboard-page.js";
 import { UserWalletPage } from "./features/user/UserWalletPage.js";
+import { UserProfilePage } from "./features/user/UserProfilePage.js";
 import { TherapistWalletPage } from "./features/therapist/TherapistWalletPage.js";
 import { useThemeStore } from "./store/use-theme-store.js";
+import { TherapistProfilePage } from "./features/therapist/TherapistProfilePage.js";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -94,6 +98,7 @@ export const AppRouter = () => {
             <Route path="therapists" element={<UserDashboardPage />} />
             <Route path="sessions" element={<UserDashboardPage />} />
             <Route path="wallet" element={<UserWalletPage />} />
+            <Route path="profile" element={<UserProfilePage />} />
           </Route>
 
           {/* ── Therapist auth ───────────────────────── */}
@@ -112,6 +117,7 @@ export const AppRouter = () => {
             <Route path="clients" element={<TherapistDashboardPage />} />
             <Route path="messages" element={<TherapistDashboardPage />} />
             <Route path="wallet" element={<TherapistWalletPage />} />
+            <Route path="profile" element={<TherapistProfilePage />} />
             <Route path="settings" element={<TherapistDashboardPage />} />
           </Route>
 
@@ -123,6 +129,8 @@ export const AppRouter = () => {
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="therapists" element={<AdminTherapistsPage />} />
             <Route path="finance" element={<AdminFinancePage />} />
+            <Route path="profile" element={<AdminProfilePage />} />
+            <Route path="reviews" element={<AdminProfileReviewPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />
