@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Flame, CheckCircle2, Sparkles, Brain, Shield, Zap, Activity } from "lucide-react";
-import type { DashboardData } from "../../../services/api/auth.service.js";
+import type { DashboardData } from "../../../services/api/auth.service.ts";
 
 const MILESTONES = [
   { title: "First Step", desc: "Initiating your journey to freedom.", icon: Sparkles, done: true, active: true },

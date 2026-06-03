@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Users, Star, Heart, Briefcase, GraduationCap, Calendar } from "lucide-react";
-import type { ApprovedTherapist } from "../../../services/api/auth.service.js";
+import type { ApprovedTherapist } from "../../../services/api/auth.service.ts";
 
 interface Props {
   therapist: ApprovedTherapist | null;

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useAuthStore, selectAuthTherapist } from "../../store/use-auth-store.js";
-import { therapistDashboardService, type TherapistDashboardData } from "../../services/api/auth.service.js";
+import { useAuthStore, selectAuthTherapist } from "../../store/use-auth-store.ts";
+import { therapistDashboardService, type TherapistDashboardData } from "../../services/api/auth.service.ts";
 import { CalendarDays, Users, Briefcase, Clock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { useLocation } from "react-router-dom";
-import { TherapistSessionsPage } from "../booking/Therapist-sessions-page.js";
+import { TherapistSessionsPage } from "../booking/Therapist-sessions-page.tsx";
 import { AvailabilityManager } from "./components/AvailabilityManager";
 import { WalletDashboard } from "./components/WalletDashboard";
 

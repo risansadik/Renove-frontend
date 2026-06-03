@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
-import { ThemeToggle } from "../common/ThemeToggle.js";
+import { ThemeToggle } from "../common/ThemeToggle.tsx";
 import { Sparkles } from "lucide-react";
 
 interface AuthLayoutProps {

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Brain, MessageCircle, Users, Star, Heart, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { ApprovedTherapist } from "../../../services/api/auth.service.js";
+import type { ApprovedTherapist } from "../../../services/api/auth.service.ts";
 
 const AI_PROMPTS = ["I feel triggered", "Motivate me", "I need help", "Distract me"];
 

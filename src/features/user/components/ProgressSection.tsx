@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Flame, Star, Award, Heart, Smile, Meh, Frown, Shield, Target, Clock } from "lucide-react";
-import type { DashboardData } from "../../../services/api/auth.service.js";
+import type { DashboardData } from "../../../services/api/auth.service.ts";
 
 const MOOD_OPTIONS = [
   { value: "great", icon: Smile, label: "Great" },

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Sparkles, ArrowRight, Zap, Brain, Trophy, Shield, Star } from "lucide-react";
-import type { DashboardData } from "../../../services/api/auth.service.js";
+import type { DashboardData } from "../../../services/api/auth.service.ts";
 
 const HOW_IT_WORKS = [
   { icon: Brain, label: "AI Analyzes You", desc: "Habits, triggers & patterns" },

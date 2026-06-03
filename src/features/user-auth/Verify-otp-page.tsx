@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { AuthLayout } from "../../components/layout/Auth-layout.js";
-import { OtpInput } from "../../components/common/Otp-input.js";
-import { Button } from "../../components/common/Button.js";
-import { userAuthService, therapistAuthService } from "../../services/api/auth.service.js";
+import { AuthLayout } from "../../components/layout/Auth-layout.tsx";
+import { OtpInput } from "../../components/common/Otp-input.tsx";
+import { Button } from "../../components/common/Button.tsx";
+import { userAuthService, therapistAuthService } from "../../services/api/auth.service.ts";
 import { Mail } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.js";
+import { handleError } from "../../core/utils/error-handler.ts";
 
 interface VerifyOtpPageProps {
     role: "user" | "therapist";

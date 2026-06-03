@@ -4,8 +4,8 @@ import {
   selectAuthRole,
   selectIsAuthenticated,
   useAuthStore,
-} from "../../store/use-auth-store.js";
-import type { AuthRole } from "../../domain/model/index.js";
+} from "../../store/use-auth-store.ts";
+import type { AuthRole } from "../../domain/model/index.ts";
 
 interface ProtectedRouteProps {
   children: ReactNode;
