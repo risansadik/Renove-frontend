@@ -1,5 +1,5 @@
-import apiClient from "./client.js";
-import { API_ROUTES } from "../../core/constants/api-routes.js";
+import apiClient from "./client.ts";
+import { API_ROUTES } from "../../core/constants/api-routes.ts";
 import type {
   ApiResponse,
   AuthAdminData,
@@ -10,7 +10,7 @@ import type {
   TherapistStatus,
   User,
   UserStatus,
-} from "../../domain/model/index.js";
+} from "../../domain/model/index.ts";
 
 export interface RegisterUserPayload {
   name: string;
@@ -112,14 +112,20 @@ export const adminService = {
 
   logout: () => apiClient.post<EmptyResponse>(API_ROUTES.ADMIN.LOGOUT),
 
-  getUsers: (page: number = 1, limit: number = 10) => 
-    apiClient.get<ApiResponse<User[]>>(`${API_ROUTES.ADMIN.USERS}?page=${page}&limit=${limit}`),
+  getUsers: (page: number = 1, limit: number = 10, search: string = "") => {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (search.trim()) params.set("search", search.trim());
+    return apiClient.get<ApiResponse<User[]>>(`${API_ROUTES.ADMIN.USERS}?${params.toString()}`);
+  },
 
   updateUserStatus: (id: string, status: UserStatus) =>
     apiClient.patch<ApiResponse<User>>(API_ROUTES.ADMIN.USER_STATUS(id), { status }),
 
-  getTherapists: (page: number = 1, limit: number = 10) =>
-    apiClient.get<ApiResponse<Therapist[]>>(`${API_ROUTES.ADMIN.THERAPISTS}?page=${page}&limit=${limit}`),
+  getTherapists: (page: number = 1, limit: number = 10, search: string = "") => {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (search.trim()) params.set("search", search.trim());
+    return apiClient.get<ApiResponse<Therapist[]>>(`${API_ROUTES.ADMIN.THERAPISTS}?${params.toString()}`);
+  },
 
   updateTherapistStatus: (id: string, status: TherapistStatus) =>
     apiClient.patch<ApiResponse<Therapist>>(API_ROUTES.ADMIN.THERAPIST_STATUS(id), {
@@ -178,8 +184,11 @@ export const userDashboardService = {
       API_ROUTES.USER.MISSION(missionId)
     ),
 
-  getTherapists: (page: number = 1, limit: number = 10) =>
-    apiClient.get<ApiResponse<ApprovedTherapist[]>>(`${API_ROUTES.USER.THERAPISTS}?page=${page}&limit=${limit}`),
+  getTherapists: (page: number = 1, limit: number = 10, search: string = "") => {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (search.trim()) params.set("search", search.trim());
+    return apiClient.get<ApiResponse<ApprovedTherapist[]>>(`${API_ROUTES.USER.THERAPISTS}?${params.toString()}`);
+  },
 };
 
 /* ── Therapist Dashboard ───────────────────────────────── */

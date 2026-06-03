@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Star, Info } from "lucide-react";
+import { Star, Info, Search, Loader2 } from "lucide-react";
 import { Button } from "../../../components/common/Button";
 import { BookingCalendar } from "./BookingCalendar";
 import bookingService from "../../../services/api/booking.service";
@@ -25,11 +25,23 @@ export const TherapistList = () => {
   const [profileTherapist, setProfileTherapist] = useState<ApprovedTherapist | null>(null);
   const [isBooking, setIsBooking] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   useEffect(() => {
     const fetchTherapists = async () => {
+      setLoading(true);
       try {
-        const response = await userDashboardService.getTherapists();
+        const response = await userDashboardService.getTherapists(1, 20, debouncedSearch);
         const approvedTherapists = response.data.data?.map((t: ApprovedTherapist & { qualification?: string; _id?: string }) => ({
           id: t.id || t._id || "",
           name: t.name.startsWith("Dr. ") ? t.name : `Dr. ${t.name}`,
@@ -43,10 +55,12 @@ export const TherapistList = () => {
         setTherapists(approvedTherapists);
       } catch {
         toast.error("Failed to load therapists");
+      } finally {
+        setLoading(false);
       }
     };
     fetchTherapists();
-  }, []);
+  }, [debouncedSearch]);
 
   const handleBooking = async (slotId: string) => {
     if (!selectedTherapist) return;
@@ -77,8 +91,29 @@ export const TherapistList = () => {
   return (
     <div className="space-y-6">
       {!isBooking ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {therapists.map((therapist) => (
+        <>
+          <div className="relative max-w-sm">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search by name or specialty..."
+              className="input-field pl-10 w-full text-sm"
+            />
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 size={24} className="animate-spin text-brand-500" />
+            </div>
+          ) : therapists.length === 0 ? (
+            <div className="dash-card p-8 text-center text-sm text-slate-500">
+              {search ? "No therapists match your search." : "No therapists are available right now."}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {therapists.map((therapist) => (
             <div key={therapist.id} className="dash-card p-6 flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex gap-4">
                 <div className="w-20 h-20 rounded-2xl bg-brand-500/10 border border-brand-500/20 overflow-hidden flex-shrink-0">
@@ -145,8 +180,10 @@ export const TherapistList = () => {
                 </Button>
               </div>
             </div>
-          ))}
-        </div>
+              ))}
+            </div>
+          )}
+        </>
       ) : (
         <div className="max-w-2xl mx-auto space-y-6">
           <button

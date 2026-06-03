@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import type { ApiResponse } from "../../domain/model";
-import { useAuthStore } from "../../store/use-auth-store.js";
+import { useAuthStore } from "../../store/use-auth-store.ts";
 
 export interface ApiError {
   message: string;

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { profileService } from "../../services/api/profile.service.js";
-import { Button } from "../../components/common/Button.js";
-import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
+import { profileService } from "../../services/api/profile.service.ts";
+import { Button } from "../../components/common/Button.tsx";
+import { ConfirmationModal } from "../../components/common/Confirmation-modal.tsx";
 import { AlertCircle, CheckCircle, FileCheck } from "lucide-react";
-import type { Therapist } from "../../domain/model/index.js";
+import type { Therapist } from "../../domain/model/index.ts";
 
 export const AdminProfileReviewPage = () => {
   const [pendingTherapists, setPendingTherapists] = useState<Therapist[]>([]);

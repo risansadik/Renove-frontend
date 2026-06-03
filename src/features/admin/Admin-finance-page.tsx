@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import paymentService from "../../services/api/payment.service.js";
+import paymentService from "../../services/api/payment.service.ts";
 import { 
   TrendingUp, 
   DollarSign, 
@@ -72,7 +72,6 @@ export const AdminFinancePage = () => {
         );
         valueColumnHeader = "Platform Share";
         renderValue = (t) => `+$${(t.platformFee || 0).toFixed(2)}`;
-        totalVal = data.reduce((acc, t) => acc + (t.platformFee || 0), 0);
         break;
 
       case "earnings":
@@ -84,7 +83,6 @@ export const AdminFinancePage = () => {
         );
         valueColumnHeader = "Clinician Share";
         renderValue = (t) => `+$${(t.consultationFee || 0).toFixed(2)}`;
-        totalVal = data.reduce((acc, t) => acc + (t.consultationFee || 0), 0);
         break;
 
       case "pending":
@@ -94,7 +92,6 @@ export const AdminFinancePage = () => {
         data = stats.transactions.filter((t) => t.status === "pending");
         valueColumnHeader = "Pending Balance";
         renderValue = (t) => `$${t.amount.toFixed(2)}`;
-        totalVal = data.reduce((acc, t) => acc + t.amount, 0);
         break;
 
       case "withdrawn":
@@ -106,7 +103,6 @@ export const AdminFinancePage = () => {
         );
         valueColumnHeader = "Withdrawal Amount";
         renderValue = (t) => `-$${t.amount.toFixed(2)}`;
-        totalVal = data.reduce((acc, t) => acc + t.amount, 0);
         break;
 
       case "refunds":
@@ -116,7 +112,6 @@ export const AdminFinancePage = () => {
         data = stats.transactions.filter((t) => t.refundAmount !== undefined && t.refundAmount > 0);
         valueColumnHeader = "Refunded Amount";
         renderValue = (t) => `-$${(t.refundAmount || 0).toFixed(2)}`;
-        totalVal = data.reduce((acc, t) => acc + (t.refundAmount || 0), 0);
         break;
     }
 

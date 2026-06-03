@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useAuthStore } from "../../store/use-auth-store.js";
-import { profileService } from "../../services/api/profile.service.js";
-import { Input } from "../../components/common/Input.js";
-import { Button } from "../../components/common/Button.js";
-import { ImageCropper } from "../../components/common/ImageCropper.js";
-import { PasswordChangeForm } from "../../components/common/PasswordChangeForm.js";
+import { useAuthStore } from "../../store/use-auth-store.ts";
+import { profileService } from "../../services/api/profile.service.ts";
+import { Input } from "../../components/common/Input.tsx";
+import { Button } from "../../components/common/Button.tsx";
+import { ImageCropper } from "../../components/common/ImageCropper.tsx";
+import { PasswordChangeForm } from "../../components/common/PasswordChangeForm.tsx";
 import { User, ShieldAlert } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.js";
+import { handleError } from "../../core/utils/error-handler.ts";
 
 export const UserProfilePage = () => {
   const { session, setUser } = useAuthStore();

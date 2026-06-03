@@ -3,14 +3,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Input } from "../../components/common/Input.js";
-import { PasswordInput } from "../../components/common/Password-input.js";
-import { Button } from "../../components/common/Button.js";
-import { adminLoginSchema, type AdminLoginForm } from "../../core/utils/form-schemas.js";
-import { adminService } from "../../services/api/auth.service.js";
-import { useAuthStore } from "../../store/use-auth-store.js";
+import { Input } from "../../components/common/Input.tsx";
+import { PasswordInput } from "../../components/common/Password-input.tsx";
+import { Button } from "../../components/common/Button.tsx";
+import { adminLoginSchema, type AdminLoginForm } from "../../core/utils/form-schemas.ts";
+import { adminService } from "../../services/api/auth.service.ts";
+import { useAuthStore } from "../../store/use-auth-store.ts";
 import { ShieldCheck, Sparkles } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.js";
+import { handleError } from "../../core/utils/error-handler.ts";
 
 export const AdminLoginPage = () => {
     const navigate = useNavigate();

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { adminService } from "../../services/api/auth.service.js";
-import type { Therapist } from "../../domain/model/index.js";
+import { adminService } from "../../services/api/auth.service.ts";
+import type { Therapist } from "../../domain/model/index.ts";
 import { Search, CheckCircle2, XCircle, Loader2, ChevronDown, ChevronUp, FileText, ImageIcon, X } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.js";
+import { handleError } from "../../core/utils/error-handler.ts";
 
 type StatusFilter = "all" | "pending" | "approved" | "rejected";
 
@@ -11,12 +11,14 @@ const statusColors: Record<Therapist["status"], string> = {
     pending: "bg-yellow-400/10 text-yellow-400 border-yellow-400/20",
     approved: "bg-green-400/10 text-green-400 border-green-400/20",
     rejected: "bg-red-400/10 text-red-400 border-red-400/20",
+    review_required: "bg-blue-400/10 text-blue-400 border-blue-400/20",
 };
 
 export const AdminTherapistsPage = () => {
     const [therapists, setTherapists] = useState<Therapist[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
     const [actionId, setActionId] = useState<string | null>(null);
     const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -33,10 +35,10 @@ export const AdminTherapistsPage = () => {
         return path.startsWith('http') ? path : `${import.meta.env.VITE_API_BASE_URL}/${path}`;
     };
 
-    const fetchTherapists = async (p: number, l: number) => {
+    const fetchTherapists = async (p: number, l: number, q: string) => {
         setLoading(true);
         try {
-            const res = await adminService.getTherapists(p, l);
+            const res = await adminService.getTherapists(p, l, q);
             setTherapists(res.data.data ?? []);
             if (res.data.meta) {
                 setTotalPages(res.data.meta.totalPages);
@@ -50,21 +52,25 @@ export const AdminTherapistsPage = () => {
         }
     };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchTherapists(page, limit);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [page, limit]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search.trim());
+            setPage(1);
+        }, 350);
+
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    useEffect(() => {
+        fetchTherapists(page, limit, debouncedSearch);
+    }, [page, debouncedSearch]);
 
     const filtered = useMemo(() => {
-        const q = search.toLowerCase();
         return therapists.filter((t) => {
-            const matchesSearch = t.name.toLowerCase().includes(q) || t.email.toLowerCase().includes(q);
             const matchesStatus = statusFilter === "all" || t.status === statusFilter;
-            return matchesSearch && matchesStatus;
+            return matchesStatus;
         });
-    }, [search, statusFilter, therapists]);
+    }, [statusFilter, therapists]);
 
     const updateStatus = async (therapist: Therapist, status: "approved" | "rejected") => {
         try {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { PasswordInput } from "./Password-input.js";
-import { Button } from "./Button.js";
+import { PasswordInput } from "./Password-input.tsx";
+import { Button } from "./Button.tsx";
 import { KeyRound } from "lucide-react";
 import toast from "react-hot-toast";
 

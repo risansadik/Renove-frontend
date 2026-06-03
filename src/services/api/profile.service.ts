@@ -1,5 +1,5 @@
-import apiClient from "./client.js";
-import type { ApiResponse, User, Therapist, Admin } from "../../domain/model/index.js";
+import apiClient from "./client.ts";
+import type { ApiResponse, User, Therapist, Admin } from "../../domain/model/index.ts";
 
 interface PasswordUpdateDto {
   currentPasswordRaw: string;

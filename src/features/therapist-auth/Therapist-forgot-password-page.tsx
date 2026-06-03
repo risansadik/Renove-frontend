@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { AuthLayout } from "../../components/layout/Auth-layout.js";
-import { Input } from "../../components/common/Input.js";
-import { Button } from "../../components/common/Button.js";
-import { forgotPasswordSchema, type ForgotPasswordForm } from "../../core/utils/form-schemas.js";
-import { therapistAuthService } from "../../services/api/auth.service.js";
+import { AuthLayout } from "../../components/layout/Auth-layout.tsx";
+import { Input } from "../../components/common/Input.tsx";
+import { Button } from "../../components/common/Button.tsx";
+import { forgotPasswordSchema, type ForgotPasswordForm } from "../../core/utils/form-schemas.ts";
+import { therapistAuthService } from "../../services/api/auth.service.ts";
 import { ArrowLeft, KeyRound } from "lucide-react";
 
 const TherapistPanel = () => (

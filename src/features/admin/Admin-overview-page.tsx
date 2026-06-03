@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { adminService } from "../../services/api/auth.service.js";
-import type { User, Therapist } from "../../domain/model/index.js";
+import { adminService } from "../../services/api/auth.service.ts";
+import type { User, Therapist } from "../../domain/model/index.ts";
 import { Users, Stethoscope, Clock, CheckCircle2, TrendingUp } from "lucide-react";
 
 export const AdminOverviewPage = () => {

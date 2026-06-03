@@ -3,18 +3,18 @@ import {
   userDashboardService,
   type DashboardData,
   type ApprovedTherapist,
-} from "../../services/api/auth.service.js";
+} from "../../services/api/auth.service.ts";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
-import { TherapistDetailsModal } from "./components/Therapist-details-modal.js";
-import { HeroSection } from "./components/HeroSection.js";
-import { JourneySection } from "./components/JourneySection.js";
-import { SupportSection } from "./components/SupportSection.js";
-import { ProgressSection } from "./components/ProgressSection.js";
+import { TherapistDetailsModal } from "./components/Therapist-details-modal.tsx";
+import { HeroSection } from "./components/HeroSection.tsx";
+import { JourneySection } from "./components/JourneySection.tsx";
+import { SupportSection } from "./components/SupportSection.tsx";
+import { ProgressSection } from "./components/ProgressSection.tsx";
 import { useLocation, useSearchParams } from "react-router-dom";
-import { TherapistList } from "../booking/components/TherapistList.js";
-import { UserSessionsPage } from "../booking/User-sessions-page.js";
-import paymentService from "../../services/api/payment.service.js";
+import { TherapistList } from "../booking/components/TherapistList.tsx";
+import { UserSessionsPage } from "../booking/User-sessions-page.tsx";
+import paymentService from "../../services/api/payment.service.ts";
 
 export const UserDashboardPage = () => {
   const location = useLocation();

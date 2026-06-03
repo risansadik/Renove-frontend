@@ -55,6 +55,7 @@ export interface ApiResponse<T = null> {
   data: T | null;
   statusCode: number;
   meta?: PaginationMeta;
+  errors?: unknown;
 }
 
 export interface AuthUserData {

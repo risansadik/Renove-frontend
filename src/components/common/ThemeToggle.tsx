@@ -1,4 +1,4 @@
-import { useThemeStore } from "../../store/use-theme-store.js";
+import { useThemeStore } from "../../store/use-theme-store.ts";
 import { Sun, Moon } from "lucide-react";
 
 export const ThemeToggle = () => {

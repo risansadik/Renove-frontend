@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { NavLink, useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useAuthStore, selectAuthUser } from "../../store/use-auth-store.js";
-import { userAuthService } from "../../services/api/auth.service.js";
-import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
+import { useAuthStore, selectAuthUser } from "../../store/use-auth-store.ts";
+import { userAuthService } from "../../services/api/auth.service.ts";
+import { ConfirmationModal } from "../../components/common/Confirmation-modal.tsx";
 import {
   LayoutDashboard, Brain, CalendarDays, BarChart3, Heart,
   LogOut, Menu, X, Sparkles, PhoneCall, Flame, Wallet, Settings
 } from "lucide-react";
-import { ThemeToggle } from "../../components/common/ThemeToggle.js";
+import { ThemeToggle } from "../../components/common/ThemeToggle.tsx";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Home" },

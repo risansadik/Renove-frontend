@@ -1,29 +1,32 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { adminService } from "../../services/api/auth.service.js";
-import type { User } from "../../domain/model/index.js";
+import { adminService } from "../../services/api/auth.service.ts";
+import type { User } from "../../domain/model/index.ts";
 import { Search, ShieldOff, ShieldCheck, Loader2 } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.js";
+import { handleError } from "../../core/utils/error-handler.ts";
 
 export const AdminUsersPage = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [actionId, setActionId] = useState<string | null>(null);
+    const [totalUsers, setTotalUsers] = useState(0);
 
     // Pagination State
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const limit = 10;
 
-    const fetchUsers = async (p: number, l: number) => {
+    const fetchUsers = async (p: number, l: number, q: string) => {
         setLoading(true);
         try {
-            const res = await adminService.getUsers(p, l);
+            const res = await adminService.getUsers(p, l, q);
             setUsers(res.data.data ?? []);
             if (res.data.meta) {
                 setTotalPages(res.data.meta.totalPages);
                 setPage(res.data.meta.page);
+                setTotalUsers(res.data.meta.total);
             }
         } catch (err) {
             handleError(err, "Failed to load users");
@@ -32,17 +35,18 @@ export const AdminUsersPage = () => {
         }
     };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchUsers(page, limit);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [page, limit]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search.trim());
+            setPage(1);
+        }, 350);
 
-    const filtered = useMemo(() => {
-        const q = search.toLowerCase();
-        return users.filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
-    }, [search, users]);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    useEffect(() => {
+        fetchUsers(page, limit, debouncedSearch);
+    }, [page, debouncedSearch]);
 
     const toggleStatus = async (user: User) => {
         const newStatus = user.status === "active" ? "blocked" : "active";
@@ -63,7 +67,7 @@ export const AdminUsersPage = () => {
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4 stagger-1">
                 <div>
                     <h1 className="font-display text-2xl font-bold text-brand-900 mb-1">User management</h1>
-                    <p className="text-brand-900/60 text-sm">{users.length} total users</p>
+                    <p className="text-brand-900/60 text-sm">{totalUsers} total users</p>
                 </div>
 
                 <div className="sm:ml-auto relative">
@@ -83,7 +87,7 @@ export const AdminUsersPage = () => {
                     <div className="flex items-center justify-center py-16">
                         <Loader2 size={24} className="animate-spin text-brand-600" />
                     </div>
-                ) : filtered.length === 0 ? (
+                ) : users.length === 0 ? (
                     <div className="text-center py-16 text-brand-900/40 text-sm">
                         {search ? "No users match your search." : "No users found."}
                     </div>
@@ -100,7 +104,7 @@ export const AdminUsersPage = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-brand-900/10">
-                                {filtered.map((user) => (
+                                {users.map((user) => (
                                     <tr key={user.id} className="hover:bg-brand-900/5 transition-colors">
                                         <td className="px-6 py-4">
                                             <div>

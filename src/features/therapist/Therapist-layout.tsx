@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { NavLink, useNavigate, Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useAuthStore, selectAuthTherapist } from "../../store/use-auth-store.js";
-import { therapistAuthService } from "../../services/api/auth.service.js";
+import { useAuthStore, selectAuthTherapist } from "../../store/use-auth-store.ts";
+import { therapistAuthService } from "../../services/api/auth.service.ts";
 import { LayoutDashboard, CalendarDays, Clock, Users, MessageCircle, Settings, LogOut, Menu, X, Stethoscope, Wallet, User } from "lucide-react";
-import { ConfirmationModal } from "../../components/common/Confirmation-modal.js";
-import { ThemeToggle } from "../../components/common/ThemeToggle.js";
+import { ConfirmationModal } from "../../components/common/Confirmation-modal.tsx";
+import { ThemeToggle } from "../../components/common/ThemeToggle.tsx";
 
 const navItems = [
   { to: "/therapist/dashboard", icon: LayoutDashboard, label: "Overview" },
