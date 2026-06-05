@@ -8,7 +8,6 @@ import { ImageCropper } from "../../components/common/ImageCropper.tsx";
 import { PasswordChangeForm } from "../../components/common/PasswordChangeForm.tsx";
 import { User, AlertTriangle, ShieldCheck, AlertCircle } from "lucide-react";
 import type { Therapist } from "../../domain/model/index.ts";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 export const TherapistProfilePage = () => {
   const { session, setTherapist } = useAuthStore();
@@ -35,8 +34,6 @@ export const TherapistProfilePage = () => {
           setLocalTherapist(res.data.therapist);
           setTherapist(res.data.therapist); // Update global store
         }
-      } catch (err: unknown) {
-        handleError(err, "Failed to load profile");
       } finally {
         setIsFetching(false);
       }
@@ -111,8 +108,6 @@ export const TherapistProfilePage = () => {
 
         setProfileImageFile(null);
       }
-    } catch (err: unknown) {
-      handleError(err, "Failed to update profile");
     } finally {
       setIsLoading(false);
     }
@@ -126,9 +121,6 @@ export const TherapistProfilePage = () => {
         newPasswordRaw
       });
       toast.success("Password changed successfully!");
-    } catch (err: unknown) {
-      handleError(err, "Failed to change password");
-      throw err;
     } finally {
       setIsLoading(false);
     }

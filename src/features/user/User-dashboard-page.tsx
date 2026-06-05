@@ -37,10 +37,9 @@ export const UserDashboardPage = () => {
       paymentService.verifyPayment(bookingId)
         .then(() => {
           toast.success("Payment confirmed! Session booked.");
-          setSearchParams({}); // clean URL
-          // refetch bookings
+          setSearchParams({}); 
         })
-        .catch(() => toast.error("Payment verification failed."));
+
     }
   }, [searchParams, setSearchParams]);
 
@@ -64,8 +63,6 @@ export const UserDashboardPage = () => {
       }));
       setTherapists(mappedTherapists);
       setMoodSelected(dashRes.data.data?.recentMoods?.slice(-1)[0]?.mood ?? null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to load dashboard");
     } finally {
       setLoading(false);
     }
@@ -101,8 +98,6 @@ export const UserDashboardPage = () => {
       if (res.data.data) {
         setData((prev) => prev ? { ...prev, missions: res.data.data!.missions } : prev);
       }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update mission");
     } finally {
       setTogglingId(null);
     }

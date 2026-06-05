@@ -28,7 +28,7 @@ export const AdminLayout = () => {
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const handleLogout = async () => {
-    try { await adminService.logout(); } catch { /* proceed */ }
+    await adminService.logout().catch(() => { });
     logout();
     toast.success("Logged out");
     navigate("/admin/login");

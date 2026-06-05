@@ -8,7 +8,6 @@ import { ImageCropper } from "../../components/common/ImageCropper.tsx";
 import { PasswordChangeForm } from "../../components/common/PasswordChangeForm.tsx";
 import { User, ShieldCheck } from "lucide-react";
 import type { Admin } from "../../domain/model/index.ts";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 export const AdminProfilePage = () => {
   const { session, setAdmin } = useAuthStore();
@@ -31,8 +30,6 @@ export const AdminProfilePage = () => {
           setLocalAdmin(res.data.admin);
           setAdmin(res.data.admin);
         }
-      } catch (err: unknown) {
-        handleError(err, "Failed to load profile");
       } finally {
         setIsFetching(false);
       }
@@ -85,9 +82,7 @@ export const AdminProfilePage = () => {
         toast.success("Profile updated successfully!");
         setProfileImageFile(null);
       }
-    } catch (err: unknown) {
-      handleError(err, "Failed to update profile");
-    } finally {
+    }finally {
       setIsLoading(false);
     }
   };
@@ -100,10 +95,7 @@ export const AdminProfilePage = () => {
         newPasswordRaw
       });
       toast.success("Password changed successfully!");
-    } catch (err: unknown) {
-      handleError(err, "Failed to change password");
-      throw err;
-    } finally {
+    }  finally {
       setIsLoading(false);
     }
   };

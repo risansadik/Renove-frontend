@@ -15,7 +15,6 @@ import {
 } from "../../core/utils/form-schemas.ts";
 import { therapistAuthService } from "../../services/api/auth.service.ts";
 import { ChevronLeft, ChevronRight, CheckCircle2, Upload, FileText, ImageIcon, X } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.ts";
 import { Select } from "../../components/common/Select.tsx";
 import { ImageCropper } from "../../components/common/ImageCropper.tsx";
 
@@ -117,8 +116,6 @@ export const TherapistRegisterPage = () => {
             const res = await therapistAuthService.register(payload);
             toast.success("Registration submitted! Please verify your email.");
             navigate("/therapist/verify-otp", { state: { email: res.data.data?.email } });
-        } catch (err) {
-            handleError(err, "Registration failed");
         } finally {
             setLoading(false);
         }

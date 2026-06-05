@@ -10,7 +10,6 @@ import { PasswordInput } from "../../components/common/Password-input.tsx";
 import { Button } from "../../components/common/Button.tsx";
 import { loginSchema, type LoginForm } from "../../core/utils/form-schemas.ts";
 import { userAuthService } from "../../services/api/auth.service.ts";
-import { handleError } from "../../core/utils/error-handler.ts";
 import { useAuthStore } from "../../store/use-auth-store.ts";
 
 export const UserLoginPage = () => {
@@ -42,8 +41,6 @@ export const UserLoginPage = () => {
         toast.success(`Welcome back, ${user.name}!`);
         navigate("/dashboard");
       }
-    } catch (err) {
-      handleError(err, "Login failed");
     } finally {
       setLoading(false);
     }
@@ -65,8 +62,6 @@ export const UserLoginPage = () => {
           toast.success(`Welcome back, ${user.name}!`);
           navigate("/dashboard");
         }
-      } catch (err) {
-        handleError(err, "Google login failed");
       } finally {
         setGoogleLoading(false);
       }

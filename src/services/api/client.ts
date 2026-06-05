@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import type { ApiResponse } from "../../domain/model";
 import { useAuthStore } from "../../store/use-auth-store.ts";
+import toast from "react-hot-toast";
 
 export interface ApiError {
   message: string;
@@ -88,6 +89,7 @@ apiClient.interceptors.response.use(
       }
     }
 
+    toast.error(apiError.message);
     return Promise.reject(new ApiClientError(apiError));
   }
 );

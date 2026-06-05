@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { adminService } from "../../services/api/auth.service.ts";
 import type { User } from "../../domain/model/index.ts";
 import { Search, ShieldOff, ShieldCheck, Loader2 } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.ts";
+
 
 export const AdminUsersPage = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -28,8 +28,6 @@ export const AdminUsersPage = () => {
                 setPage(res.data.meta.page);
                 setTotalUsers(res.data.meta.total);
             }
-        } catch (err) {
-            handleError(err, "Failed to load users");
         } finally {
             setLoading(false);
         }
@@ -55,8 +53,6 @@ export const AdminUsersPage = () => {
             await adminService.updateUserStatus(user.id, newStatus);
             setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, status: newStatus } : u)));
             toast.success(`User ${newStatus === "blocked" ? "blocked" : "unblocked"}`);
-        } catch (err) {
-            handleError(err, "Action failed");
         } finally {
             setActionId(null);
         }

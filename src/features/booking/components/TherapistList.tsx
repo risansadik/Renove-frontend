@@ -53,8 +53,6 @@ export const TherapistList = () => {
           bio: t.bio || "No bio available.",
         })) || [];
         setTherapists(approvedTherapists);
-      } catch {
-        toast.error("Failed to load therapists");
       } finally {
         setLoading(false);
       }
@@ -75,9 +73,6 @@ export const TherapistList = () => {
       toast.success("Booking request sent successfully!");
       setIsBooking(false);
       setSelectedTherapist(null);
-    } catch (error: unknown) {
-      const err = error as { message?: string };
-      toast.error(err.message || "Failed to create booking");
     } finally {
       setIsSubmitting(false);
     }
@@ -116,7 +111,7 @@ export const TherapistList = () => {
               {therapists.map((therapist) => (
             <div key={therapist.id} className="dash-card p-6 flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex gap-4">
-                <div className="w-20 h-20 rounded-2xl bg-brand-500/10 border border-brand-500/20 overflow-hidden flex-shrink-0">
+                <div className="w-20 h-20 rounded-2xl bg-brand-500/10 border border-brand-500/20 overflow-hidden shrink-0">
                   {therapist.profileImage ? (
                     <img src={getMediaUrl(therapist.profileImage)} alt={therapist.name} className="w-full h-full object-cover" />
                   ) : (
@@ -125,7 +120,7 @@ export const TherapistList = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex flex-col flex-grow">
+                <div className="flex flex-col grow">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">{therapist.name}</h3>
                     <div className="flex items-center gap-1 text-amber-500 font-bold text-sm">

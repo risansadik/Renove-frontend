@@ -10,7 +10,6 @@ import { Button } from "../../components/common/Button.tsx";
 import { loginSchema, type LoginForm } from "../../core/utils/form-schemas.ts";
 import { therapistAuthService } from "../../services/api/auth.service.ts";
 import { useAuthStore } from "../../store/use-auth-store.ts";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 const TherapistLoginPanel = () => (
     <div>
@@ -60,8 +59,6 @@ export const TherapistLoginPage = () => {
                 toast.success(`Welcome back, ${therapist.name}!`);
                 navigate("/therapist/dashboard");
             }
-        } catch (err) {
-            handleError(err, "Login failed");
         } finally {
             setLoading(false);
         }

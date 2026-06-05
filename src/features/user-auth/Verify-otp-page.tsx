@@ -6,7 +6,6 @@ import { OtpInput } from "../../components/common/Otp-input.tsx";
 import { Button } from "../../components/common/Button.tsx";
 import { userAuthService, therapistAuthService } from "../../services/api/auth.service.ts";
 import { Mail } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 interface VerifyOtpPageProps {
     role: "user" | "therapist";
@@ -47,8 +46,6 @@ export const VerifyOtpPage = ({ role }: VerifyOtpPageProps) => {
             await service.verifyOtp({ email, otp });
             toast.success("Email verified successfully!");
             navigate(loginPath, { state: { verified: true } });
-        } catch (err) {
-            setOtpError(err instanceof Error ? err.message : "Invalid OTP");
         } finally {
             setLoading(false);
         }
@@ -62,8 +59,6 @@ export const VerifyOtpPage = ({ role }: VerifyOtpPageProps) => {
             setCountdown(60);
             setOtp("");
             setOtpError("");
-        } catch (err) {
-            handleError(err, "Failed to resend OTP");
         } finally {
             setResending(false);
         }

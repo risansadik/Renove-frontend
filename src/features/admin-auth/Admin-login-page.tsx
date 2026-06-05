@@ -10,7 +10,6 @@ import { adminLoginSchema, type AdminLoginForm } from "../../core/utils/form-sch
 import { adminService } from "../../services/api/auth.service.ts";
 import { useAuthStore } from "../../store/use-auth-store.ts";
 import { ShieldCheck, Sparkles } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 export const AdminLoginPage = () => {
     const navigate = useNavigate();
@@ -33,9 +32,7 @@ export const AdminLoginPage = () => {
                 toast.success("Welcome, Admin!");
                 navigate("/admin/dashboard");
             }
-        } catch (err) {
-            handleError(err, "Login failed");
-        } finally {
+        }  finally {
             setLoading(false);
         }
     };

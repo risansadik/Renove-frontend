@@ -33,9 +33,7 @@ export const AvailabilityManager = () => {
     try {
       const res = await availabilityService.getMyAvailabilityRules();
       setRules(res.data);
-    } catch {
-      toast.error("Failed to load availability rules");
-    } finally {
+    }  finally {
       setLoading(false);
     }
   }, []);
@@ -83,23 +81,17 @@ export const AvailabilityManager = () => {
       setSelectedDays([]);
       setStartTime("09:00");
       setEndTime("10:00");
-    } catch (error: unknown) {
-      const err = error as { message?: string };
-      toast.error(err.message || "Failed to create rule");
-    } finally {
+    }finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    try {
+    
       await availabilityService.deleteAvailability(id);
       toast.success("Rule deleted successfully");
       fetchRules();
-    } catch (error: unknown) {
-      const err = error as { message?: string };
-      toast.error(err.message || "Failed to delete rule");
-    }
+    
   };
 
   return (
@@ -191,7 +183,7 @@ export const AvailabilityManager = () => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg glass-card rounded-[32px] p-8 overflow-hidden spotlight-card shadow-2xl"
+              className="relative w-full max-w-lg glass-card rounded-4xl p-8 overflow-hidden spotlight-card shadow-2xl"
               style={{ background: "var(--bg-card)", border: "1px solid var(--border-default)" }}
             >
               <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/5 transition-colors">
