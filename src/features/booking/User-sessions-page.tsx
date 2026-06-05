@@ -37,8 +37,6 @@ export const UserSessionsPage = () => {
         setTotalPages(response.meta.totalPages);
         setPage(response.meta.page);
       }
-    } catch (error) {
-      console.error("Failed to fetch bookings", error);
     } finally {
       setIsLoading(false);
     }
@@ -62,10 +60,8 @@ export const UserSessionsPage = () => {
         platformFee: res.data.platformFee ?? 0,
         amount: res.data.amount,
       });
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : "Failed to initialize payment";
-      toast.error(msg);
-      setSelectedBooking(null);
+    } finally{
+         setSelectedBooking(null);
     }
   };
 
@@ -76,10 +72,7 @@ export const UserSessionsPage = () => {
       await bookingService.cancelBooking(bookingToCancel.id, reason);
       toast.success("Appointment cancelled successfully", { id: loadingToast });
       fetchBookings(page, limit);
-    } catch (error: unknown) {
-      const errObj = error as { response?: { data?: { message?: string } }; message?: string };
-      toast.error(errObj.response?.data?.message || errObj.message || "Failed to cancel booking");
-    } finally {
+    }finally {
       setIsCancelModalOpen(false);
       setBookingToCancel(null);
     }
@@ -316,7 +309,7 @@ export const UserSessionsPage = () => {
         {/* Payment Modal */}
         {selectedBooking && clientSecret && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto relative bg-[#100818] rounded-[32px] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300 custom-scrollbar">
+            <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto relative bg-[#100818] rounded-4xl border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300 custom-scrollbar">
               <button 
                 onClick={() => { setSelectedBooking(null); setClientSecret(null); setPaymentBreakdown(null); }}
                 className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-400 hover:text-white transition-colors z-10"

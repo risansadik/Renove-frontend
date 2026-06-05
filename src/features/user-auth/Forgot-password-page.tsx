@@ -9,7 +9,6 @@ import { Button } from "../../components/common/Button.tsx";
 import { forgotPasswordSchema, type ForgotPasswordForm } from "../../core/utils/form-schemas.ts";
 import { userAuthService } from "../../services/api/auth.service.ts";
 import { ArrowLeft, KeyRound } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 export const ForgotPasswordPage = () => {
     const navigate = useNavigate();
@@ -29,8 +28,6 @@ export const ForgotPasswordPage = () => {
             await userAuthService.forgotPassword(data.email);
             setSent(true);
             toast.success("Reset OTP sent to your email");
-        } catch (err) {
-            handleError(err, "Failed to send OTP");
         } finally {
             setLoading(false);
         }

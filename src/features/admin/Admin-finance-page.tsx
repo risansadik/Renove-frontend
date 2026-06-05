@@ -125,8 +125,8 @@ export const AdminFinancePage = () => {
   };
 
   const fetchStats = async (p = 1) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await paymentService.getAdminFinanceStats<FinanceStats>(p, limit);
       if (res.success) {
         setStats(res.data);
@@ -136,12 +136,7 @@ export const AdminFinancePage = () => {
           setPage(res.meta.page);
           setTotalTransactions(res.meta.total);
         }
-      } else {
-        toast.error("Failed to load financial records");
       }
-    } catch (err: unknown) {
-      const e = err as { message?: string };
-      toast.error(e.message || "Failed to load financial stats");
     } finally {
       setLoading(false);
     }
@@ -164,12 +159,7 @@ export const AdminFinancePage = () => {
       if (res.success) {
         toast.success("Platform commission updated successfully!");
         fetchStats();
-      } else {
-        toast.error("Failed to update commission rate");
       }
-    } catch (err: unknown) {
-      const e = err as { message?: string };
-      toast.error(e.message || "Failed to update commission");
     } finally {
       setUpdating(false);
     }

@@ -7,6 +7,7 @@ import {
 import { Button } from "../../../components/common/Button";
 import { AlertCircle, Lock } from "lucide-react";
 import paymentService from "../../../services/api/payment.service";
+import { ApiClientError } from "../../../services/api/client";
 
 interface CheckoutFormProps {
   onSuccess: () => void;
@@ -20,9 +21,9 @@ interface CheckoutFormProps {
 /**
  * Professional-grade checkout form with real-time feedback and premium reNove styling.
  */
-export const CheckoutForm: React.FC<CheckoutFormProps> = ({ 
-  onSuccess, 
-  amount, 
+export const CheckoutForm: React.FC<CheckoutFormProps> = ({
+  onSuccess,
+  amount,
   bookingId,
   consultationFee,
   platformFee,
@@ -57,9 +58,13 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       try {
         await paymentService.verifyPayment(bookingId);
         onSuccess();
-      } catch (err: unknown) {
-        const errorShape = err as { message?: string };
-        setErrorMessage(errorShape.message || "Failed to verify payment with our server.");
+      } catch (err) {
+        if (err instanceof ApiClientError) {
+          setErrorMessage(err.message);
+        } else {
+          setErrorMessage("Failed to verify payment with our server.");
+        }
+      } finally {
         setIsProcessing(false);
       }
     } else {
@@ -72,25 +77,25 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="mb-4">
-        <h3 className="text-xl font-display font-semibold text-[var(--fg-primary)] mb-1">Payment Details</h3>
-        <p className="text-sm text-[var(--fg-secondary)]">Complete your session reservation</p>
+        <h3 className="text-xl font-display font-semibold text-(--fg-primary) mb-1">Payment Details</h3>
+        <p className="text-sm text-(--fg-secondary)">Complete your session reservation</p>
       </div>
 
       {/* Glassmorphic Billing breakdown display */}
       {consultationFee !== undefined && platformFee !== undefined && (
         <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3 text-sm">
-          <div className="flex justify-between text-[var(--fg-secondary)]">
+          <div className="flex justify-between text-(--fg-secondary)">
             <span>Clinician Session Fee</span>
-            <span className="font-medium text-[var(--fg-primary)]">${consultationFee.toFixed(2)}</span>
+            <span className="font-medium text-(--fg-primary)">${consultationFee.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-[var(--fg-secondary)]">
+          <div className="flex justify-between text-(--fg-secondary)">
             <span>Platform Booking Fee ({commissionPercentage}%)</span>
-            <span className="font-medium text-[var(--fg-primary)]">${platformFee.toFixed(2)}</span>
+            <span className="font-medium text-(--fg-primary)">${platformFee.toFixed(2)}</span>
           </div>
           <div className="h-px bg-white/10 my-1" />
           <div className="flex justify-between items-center">
-            <span className="font-bold text-[var(--fg-primary)]">Total Payable</span>
-            <span className="text-xl font-extrabold text-[var(--accent-primary)]">${amount.toFixed(2)}</span>
+            <span className="font-bold text-(--fg-primary)">Total Payable</span>
+            <span className="text-xl font-extrabold text-(--accent-primary)">${amount.toFixed(2)}</span>
           </div>
         </div>
       )}
@@ -98,8 +103,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       {/* Fallback if breakdown not passed */}
       {(consultationFee === undefined || platformFee === undefined) && (
         <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 mb-4">
-          <span className="font-bold text-[var(--fg-primary)]">Total Payable</span>
-          <span className="text-xl font-extrabold text-[var(--accent-primary)]">${amount.toFixed(2)}</span>
+          <span className="font-bold text-(--fg-primary)">Total Payable</span>
+          <span className="text-xl font-extrabold text-(--accent-primary)">${amount.toFixed(2)}</span>
         </div>
       )}
 
@@ -123,7 +128,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           Pay Now
         </Button>
 
-        <p className="text-center text-xs text-[var(--fg-muted)] flex items-center justify-center gap-1">
+        <p className="text-center text-xs text-(--fg-muted) flex items-center justify-center gap-1">
           <Lock size={12} />
           Secured by Stripe. Your data is never stored on our servers.
         </p>

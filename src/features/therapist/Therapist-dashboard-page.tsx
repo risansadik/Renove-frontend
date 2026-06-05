@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useAuthStore, selectAuthTherapist } from "../../store/use-auth-store.ts";
 import { therapistDashboardService, type TherapistDashboardData } from "../../services/api/auth.service.ts";
 import { CalendarDays, Users, Briefcase, Clock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import toast from "react-hot-toast";
 
 import { useLocation } from "react-router-dom";
 import { TherapistSessionsPage } from "../booking/Therapist-sessions-page.tsx";
@@ -20,7 +19,6 @@ export const TherapistDashboardPage = () => {
     therapistDashboardService
       .getDashboard()
       .then((res) => setData(res.data.data ?? null))
-      .catch((err) => toast.error(err instanceof Error ? err.message : "Failed to load dashboard"))
       .finally(() => setLoading(false));
   };
 

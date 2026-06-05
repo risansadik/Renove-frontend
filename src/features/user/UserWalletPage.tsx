@@ -21,8 +21,6 @@ export const UserWalletPage = () => {
         setTotalPages(res.meta.totalPages);
         setPage(res.meta.page);
       }
-    } catch (err) {
-      console.error("Failed to fetch wallet", err);
     } finally {
       setLoading(false);
     }
@@ -38,8 +36,8 @@ export const UserWalletPage = () => {
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-48 bg-white/5 rounded-[32px]" />
-        <div className="h-64 bg-white/5 rounded-[32px]" />
+        <div className="h-48 bg-white/5 rounded-4xl" />
+        <div className="h-64 bg-white/5 rounded-4xl" />
       </div>
     );
   }
@@ -54,7 +52,7 @@ export const UserWalletPage = () => {
       </div>
 
       {/* Balance Card */}
-      <div className="relative overflow-hidden p-8 rounded-[32px] border border-white/10 shadow-2xl bg-gradient-to-br from-[#1a1225] to-[#100818] text-white">
+      <div className="relative overflow-hidden p-8 rounded-4xl border border-white/10 shadow-2xl bg-linear-to-br from-[#1a1225] to-[#100818] text-white">
         <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
           <Wallet size={120} />
         </div>
@@ -97,7 +95,7 @@ export const UserWalletPage = () => {
             </div>
           ) : (
             data?.transactions.map((tx) => (
-              <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+              <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/2 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                     tx.type === 'credit' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'

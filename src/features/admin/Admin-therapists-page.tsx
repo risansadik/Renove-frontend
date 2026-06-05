@@ -3,7 +3,6 @@ import toast from "react-hot-toast";
 import { adminService } from "../../services/api/auth.service.ts";
 import type { Therapist } from "../../domain/model/index.ts";
 import { Search, CheckCircle2, XCircle, Loader2, ChevronDown, ChevronUp, FileText, ImageIcon, X } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 type StatusFilter = "all" | "pending" | "approved" | "rejected";
 
@@ -45,8 +44,6 @@ export const AdminTherapistsPage = () => {
                 setPage(res.data.meta.page);
                 setTotalTherapists(res.data.meta.total);
             }
-        } catch (err) {
-            handleError(err, "Failed to load therapists");
         } finally {
             setLoading(false);
         }
@@ -80,8 +77,6 @@ export const AdminTherapistsPage = () => {
                 prev.map((t) => (t.id === therapist.id ? { ...t, status } : t))
             );
             toast.success(`Therapist ${status}`);
-        } catch (err) {
-            handleError(err, "Action failed");
         } finally {
             setActionId(null);
         }
@@ -345,7 +340,7 @@ export const AdminTherapistsPage = () => {
 
             {/* Document Preview Modal */}
             {previewUrl && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10">
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-10">
                     <div
                         className="absolute inset-0 bg-brand-900/90 backdrop-blur-sm"
                         onClick={() => setPreviewUrl(null)}

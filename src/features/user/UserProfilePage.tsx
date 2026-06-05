@@ -7,7 +7,6 @@ import { Button } from "../../components/common/Button.tsx";
 import { ImageCropper } from "../../components/common/ImageCropper.tsx";
 import { PasswordChangeForm } from "../../components/common/PasswordChangeForm.tsx";
 import { User, ShieldAlert } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 export const UserProfilePage = () => {
   const { session, setUser } = useAuthStore();
@@ -60,8 +59,6 @@ export const UserProfilePage = () => {
         toast.success("Profile updated successfully!");
         setProfileImageFile(null); // Reset file so we don't re-upload
       }
-    } catch (err: unknown) {
-      handleError(err, "Failed to update profile");
     } finally {
       setIsLoading(false);
     }
@@ -75,9 +72,6 @@ export const UserProfilePage = () => {
         newPasswordRaw
       });
       toast.success("Password changed successfully!");
-    } catch (err: unknown) {
-      handleError(err, "Failed to change password");
-      throw err;
     } finally {
       setIsLoading(false);
     }

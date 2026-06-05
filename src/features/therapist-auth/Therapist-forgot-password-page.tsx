@@ -41,9 +41,7 @@ export const TherapistForgotPasswordPage = () => {
             await therapistAuthService.forgotPassword(data.email);
             setSent(true);
             toast.success("Reset OTP sent to your email");
-        } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to send OTP");
-        } finally {
+        }  finally {
             setLoading(false);
         }
     };

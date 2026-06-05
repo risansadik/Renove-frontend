@@ -25,8 +25,6 @@ export const TherapistSessionsPage = () => {
         setTotalPages(response.meta.totalPages);
         setPage(response.meta.page);
       }
-    } catch (error) {
-      console.error("Failed to fetch bookings", error);
     } finally {
       setIsLoading(false);
     }
@@ -43,27 +41,17 @@ export const TherapistSessionsPage = () => {
   const [rejectionReason, setRejectionReason] = useState("");
 
   const handleStatusUpdate = async (id: string, status: string, reason?: string) => {
-    try {
       await bookingService.updateBookingStatus(id, status, reason);
       toast.success(`Booking ${status} successfully`);
       setRejectionId(null);
       setRejectionReason("");
       fetchBookings(page, limit);
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : "Failed to update status";
-      toast.error(msg);
-    }
   };
 
   const handleCompleteSession = async (bookingId: string) => {
-    try {
       await paymentService.completeSession(bookingId);
       toast.success("Session marked as completed. Funds moved to available balance.");
       fetchBookings(page, limit);
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : "Failed to complete session";
-      toast.error(msg);
-    }
   };
 
   const [cancelId, setCancelId] = useState<string | null>(null);
@@ -71,17 +59,12 @@ export const TherapistSessionsPage = () => {
 
   const handleCancelBooking = async () => {
     if (!cancelId) return;
-    try {
       const loadingToast = toast.loading("Cancelling session...");
       await bookingService.cancelBooking(cancelId, cancelReasonText || "Therapist requested cancellation");
       toast.success("Session cancelled successfully", { id: loadingToast });
       setCancelId(null);
       setCancelReasonText("");
       fetchBookings(page, limit);
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : "Failed to cancel session";
-      toast.error(msg);
-    }
   };
 
 

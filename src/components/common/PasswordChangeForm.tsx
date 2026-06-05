@@ -35,15 +35,12 @@ export const PasswordChangeForm = ({ onSubmit, isLoading }: PasswordChangeFormPr
       return toast.error("New passwords do not match");
     }
 
-    try {
       await onSubmit(currentPassword, newPassword);
-      // Reset form on success
+  
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-    } catch {
-      // Errors should be handled by the parent caller or toast
-    }
+
   };
 
   const isFormInvalid = !currentPassword || !newPassword || !confirmPassword;

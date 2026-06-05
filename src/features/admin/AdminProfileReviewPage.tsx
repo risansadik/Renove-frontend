@@ -22,10 +22,7 @@ export const AdminProfileReviewPage = () => {
       if (res.success && res.data) {
         setPendingTherapists(res.data.therapists);
       }
-    } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string } } };
-      toast.error(e.response?.data?.message || "Failed to fetch pending updates");
-    } finally {
+    }finally {
       setIsLoading(false);
     }
   };
@@ -43,9 +40,6 @@ export const AdminProfileReviewPage = () => {
       await profileService.reviewTherapistUpdate(id, { status: "approved" });
       toast.success("Profile updates approved successfully");
       setPendingTherapists(prev => prev.filter(t => (t.id || (t as { _id?: string })._id) !== id));
-    } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string } } };
-      toast.error(e.response?.data?.message || "Failed to approve updates");
     } finally {
       setIsProcessing(false);
     }
@@ -67,10 +61,7 @@ export const AdminProfileReviewPage = () => {
       setRejectionModalOpen(false);
       setRejectionReason("");
       setSelectedTherapist(null);
-    } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string } } };
-      toast.error(e.response?.data?.message || "Failed to reject updates");
-    } finally {
+    }finally {
       setIsProcessing(false);
     }
   };

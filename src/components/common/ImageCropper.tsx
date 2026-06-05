@@ -36,7 +36,6 @@ export const ImageCropper = ({
     });
 
   const getCroppedImg = async () => {
-    try {
       if (!croppedAreaPixels) return;
       const img = await createImage(image);
       const canvas = document.createElement('canvas');
@@ -62,16 +61,13 @@ export const ImageCropper = ({
       canvas.toBlob((blob) => {
         if (blob) onCrop(blob);
       }, 'image/jpeg', 0.9);
-    } catch (e) {
-      console.error(e);
-    }
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6">
       <div className="absolute inset-0 bg-brand-900/90 backdrop-blur-xl" onClick={onCancel} />
       
-      <div className="relative w-full max-w-2xl bg-white rounded-[32px] overflow-hidden shadow-2xl animate-fade-up">
+      <div className="relative w-full max-w-2xl bg-white rounded-4xl overflow-hidden shadow-2xl animate-fade-up">
         <div className="flex items-center justify-between px-8 py-6 border-b border-brand-500/5">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-2xl bg-brand-500/10 flex items-center justify-center text-brand-600">
@@ -88,7 +84,7 @@ export const ImageCropper = ({
         </div>
 
         <div className="p-8">
-          <div className="relative h-[400px] w-full bg-brand-900/5 rounded-3xl overflow-hidden border border-brand-500/10">
+          <div className="relative h-100 w-full bg-brand-900/5 rounded-3xl overflow-hidden border border-brand-500/10">
             <Cropper
               image={image}
               crop={crop}
@@ -139,7 +135,7 @@ export const ImageCropper = ({
                 <Button variant="outline" onClick={onCancel} className="flex-1 h-14 rounded-2xl border-brand-500/10">
                   Cancel
                 </Button>
-                <Button onClick={getCroppedImg} className="flex-[2] h-14 rounded-2xl shadow-xl shadow-brand-500/20">
+                <Button onClick={getCroppedImg} className="flex-2 h-14 rounded-2xl shadow-xl shadow-brand-500/20">
                   Apply & Save
                 </Button>
               </div>

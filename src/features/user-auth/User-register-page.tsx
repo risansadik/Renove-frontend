@@ -11,7 +11,6 @@ import { Button } from "../../components/common/Button.tsx";
 import { registerUserSchema, type RegisterUserForm } from "../../core/utils/form-schemas.ts";
 import { userAuthService } from "../../services/api/auth.service.ts";
 import { useAuthStore } from "../../store/use-auth-store.ts";
-import { handleError } from "../../core/utils/error-handler.ts";
 
 export const UserRegisterPage = () => {
   const navigate = useNavigate();
@@ -29,8 +28,6 @@ export const UserRegisterPage = () => {
       const res = await userAuthService.register(data);
       toast.success("OTP sent to your email!");
       navigate("/user/verify-otp", { state: { email: res.data.data?.email } });
-    } catch (err) {
-      handleError(err, "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -54,8 +51,6 @@ export const UserRegisterPage = () => {
           toast.success(`Welcome, ${user.name}!`);
           navigate("/dashboard");
         }
-      } catch (err) {
-        handleError(err, "Google registration failed");
       } finally {
         setGoogleLoading(false);
       }

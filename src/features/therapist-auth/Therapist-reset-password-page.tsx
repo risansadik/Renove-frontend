@@ -69,8 +69,6 @@ export const TherapistResetPasswordPage = () => {
             await therapistAuthService.forgotPassword(email);
             toast.success("New code sent to your email");
             setCountdown(60);
-        } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to resend code");
         } finally {
             setResending(false);
         }
@@ -86,8 +84,6 @@ export const TherapistResetPasswordPage = () => {
             await therapistAuthService.verifyResetOtp({ email, otp });
             setStep("password");
             toast.success("Code verified! Set your new password.");
-        } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Invalid or expired code");
         } finally {
             setLoading(false);
         }
@@ -99,9 +95,7 @@ export const TherapistResetPasswordPage = () => {
             await therapistAuthService.resetPassword(data);
             toast.success("Password reset successfully!");
             navigate("/therapist/login");
-        } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Reset failed");
-        } finally {
+        }finally {
             setLoading(false);
         }
     };

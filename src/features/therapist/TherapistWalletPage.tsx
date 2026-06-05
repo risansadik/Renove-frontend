@@ -21,8 +21,6 @@ export const TherapistWalletPage = () => {
         setTotalPages(res.meta.totalPages);
         setPage(res.meta.page);
       }
-    } catch (err) {
-      console.error("Failed to fetch wallet", err);
     } finally {
       setLoading(false);
     }
@@ -39,10 +37,10 @@ export const TherapistWalletPage = () => {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="h-40 bg-white/5 rounded-[32px]" />
-          <div className="h-40 bg-white/5 rounded-[32px]" />
+          <div className="h-40 bg-white/5 rounded-4xl" />
+          <div className="h-40 bg-white/5 rounded-4xl" />
         </div>
-        <div className="h-64 bg-white/5 rounded-[32px]" />
+        <div className="h-64 bg-white/5 rounded-4xl" />
       </div>
     );
   }
@@ -60,7 +58,7 @@ export const TherapistWalletPage = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Available Balance */}
-        <div className="relative overflow-hidden p-8 rounded-[32px] border border-white/10 shadow-2xl bg-gradient-to-br from-[#1a251a] to-[#08180c] text-white">
+        <div className="relative overflow-hidden p-8 rounded-4xl border border-white/10 shadow-2xl bg-linear-to-br from-[#1a251a] to-[#08180c] text-white">
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
             <TrendingUp size={80} />
           </div>
@@ -81,7 +79,7 @@ export const TherapistWalletPage = () => {
         </div>
 
         {/* Pending Balance */}
-        <div className="relative overflow-hidden p-8 rounded-[32px] border border-white/10 shadow-2xl bg-[#100818] text-white">
+        <div className="relative overflow-hidden p-8 rounded-4xl border border-white/10 shadow-2xl bg-[#100818] text-white">
           <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
             <Clock size={80} />
           </div>
@@ -118,7 +116,7 @@ export const TherapistWalletPage = () => {
             </div>
           ) : (
             data?.transactions.map((tx) => (
-              <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+              <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/2 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                     tx.type === 'credit' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'

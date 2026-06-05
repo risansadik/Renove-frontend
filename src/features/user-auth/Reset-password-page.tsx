@@ -10,8 +10,6 @@ import { Button } from "../../components/common/Button.tsx";
 import { resetPasswordSchema, type ResetPasswordForm } from "../../core/utils/form-schemas.ts";
 import { userAuthService } from "../../services/api/auth.service.ts";
 import { ArrowLeft, ShieldCheck, CheckCircle2 } from "lucide-react";
-import { handleError } from "../../core/utils/error-handler.ts";
-
 export const ResetPasswordPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -57,8 +55,6 @@ export const ResetPasswordPage = () => {
             await userAuthService.forgotPassword(email);
             toast.success("New code sent to your email");
             setCountdown(60);
-        } catch (err) {
-            handleError(err, "Failed to resend code");
         } finally {
             setResending(false);
         }
@@ -74,9 +70,7 @@ export const ResetPasswordPage = () => {
             await userAuthService.verifyResetOtp({ email, otp });
             setStep("password");
             toast.success("Code verified! Set your new password.");
-        } catch (err) {
-            handleError(err, "Invalid or expired code");
-        } finally {
+        }finally {
             setLoading(false);
         }
     };
@@ -87,9 +81,7 @@ export const ResetPasswordPage = () => {
             await userAuthService.resetPassword(data);
             toast.success("Password reset successfully!");
             navigate("/user/login");
-        } catch (err) {
-            handleError(err, "Reset failed");
-        } finally {
+        }  finally {
             setLoading(false);
         }
     };
