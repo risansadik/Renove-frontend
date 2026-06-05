@@ -50,6 +50,20 @@ const availabilityService = {
     const response = await apiClient.get<{ success: boolean; data: AvailabilityRule[] }>("/api/availability/my-rules");
     return response.data;
   },
+
+  lockSlot: async (slotId: string) => {
+    const response = await apiClient.post<{ success: boolean; data: { lockExpiresAt: string } }>(
+      `/api/availability/slots/${slotId}/lock`
+    );
+    return response.data;
+  },
+
+  unlockSlot: async (slotId: string) => {
+    const response = await apiClient.post<{ success: boolean }>(`/api/availability/slots/${slotId}/unlock`);
+    return response.data;
+  },
+
+  
 };
 
 export default availabilityService;

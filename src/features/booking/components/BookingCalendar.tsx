@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { format, addDays, startOfToday, isSameDay, startOfDay, endOfDay } from "date-fns";
-import { Clock, Calendar as CalendarIcon, Loader2 } from "lucide-react";
+import { Clock, Calendar as CalendarIcon, Loader2, Lock } from "lucide-react";
 import { Button } from "../../../components/common/Button";
 import availabilityService, { type TherapistSlot } from "../../../services/api/availability.service";
 import toast from "react-hot-toast";
+
+const LOCK_DURATION_SECONDS = 10 * 60; // 10 minutes
 
 interface BookingCalendarProps {
   therapistId: string;
@@ -16,18 +18,70 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
   const [slots, setSlots] = useState<TherapistSlot[]>([]);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [lockingSlotId, setLockingSlotId] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lockedSlotRef = useRef<string | null>(null);
 
   const days = Array.from({ length: 14 }, (_, i) => addDays(startOfToday(), i));
 
+  // Cleanup timer
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setTimeLeft(null);
+  }, []);
+
+  // Unlock current slot
+  const unlockCurrentSlot = useCallback(async (slotId: string) => {
+    try {
+      await availabilityService.unlockSlot(slotId);
+    } catch {
+      // Silently fail — lock will expire naturally
+    }
+    lockedSlotRef.current = null;
+  }, []);
+
+  // Start countdown timer
+  const startTimer = useCallback((durationSeconds: number, slotId: string) => {
+    clearTimer();
+    setTimeLeft(durationSeconds);
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          // Lock expired — reset selection
+          setSelectedSlotId(null);
+          lockedSlotRef.current = null;
+          toast.error("Slot reservation expired. Please select again.");
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, [clearTimer]);
+
+  // Fetch slots on date change
   useEffect(() => {
     const fetchSlots = async () => {
       setLoadingSlots(true);
+
+      // Unlock previous slot if any when date changes
+      if (lockedSlotRef.current) {
+        await unlockCurrentSlot(lockedSlotRef.current);
+        setSelectedSlotId(null);
+        clearTimer();
+      }
+
       try {
         const start = startOfDay(selectedDate).toISOString();
         const end = endOfDay(selectedDate).toISOString();
         const res = await availabilityService.getAvailableSlots(therapistId, start, end);
         setSlots(res.data);
-        setSelectedSlotId(null); // Reset selection on date change
       } catch {
         toast.error("Failed to fetch available slots");
       } finally {
@@ -38,17 +92,67 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
     fetchSlots();
   }, [selectedDate, therapistId]);
 
-  const handleBooking = () => {
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      clearTimer();
+      if (lockedSlotRef.current) {
+        unlockCurrentSlot(lockedSlotRef.current);
+      }
+    };
+  }, [clearTimer, unlockCurrentSlot]);
+
+  const handleSlotClick = async (slotId: string) => {
+    // Deselect if clicking the same slot
+    if (selectedSlotId === slotId) {
+      clearTimer();
+      await unlockCurrentSlot(slotId);
+      setSelectedSlotId(null);
+      return;
+    }
+
+    // Unlock previous slot if switching
+    if (lockedSlotRef.current && lockedSlotRef.current !== slotId) {
+      await unlockCurrentSlot(lockedSlotRef.current);
+      clearTimer();
+    }
+
+    setLockingSlotId(slotId);
+    try {
+      await availabilityService.lockSlot(slotId);
+      lockedSlotRef.current = slotId;
+      setSelectedSlotId(slotId);
+      startTimer(LOCK_DURATION_SECONDS, slotId);
+      toast.success("Slot reserved for 10 minutes");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Slot is no longer available");
+      // Refresh slots to reflect updated availability
+      const start = startOfDay(selectedDate).toISOString();
+      const end = endOfDay(selectedDate).toISOString();
+      const res = await availabilityService.getAvailableSlots(therapistId, start, end);
+      setSlots(res.data);
+    } finally {
+      setLockingSlotId(null);
+    }
+  };
+
+  const handleBooking = async () => {
     if (selectedSlotId) {
+      clearTimer();
       onSelect(selectedSlotId);
     }
+  };
+
+  const formatTimeLeft = (seconds: number) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
   };
 
   const selectedSlot = slots.find(s => s.id === selectedSlotId);
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* ... rest of the component remains the same ... */}
       {/* Date Selection */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -65,7 +169,7 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
               <button
                 key={day.toISOString()}
                 onClick={() => setSelectedDate(day)}
-                className={`flex flex-col items-center min-w-[70px] py-4 rounded-2xl border-2 transition-all snap-start
+                className={`flex flex-col items-center min-w-17.5 py-4 rounded-2xl border-2 transition-all snap-start
                   ${isSelected
                     ? 'border-brand-500 bg-brand-500/5 dark:bg-brand-500/10'
                     : 'border-slate-100 dark:border-white/5 hover:border-brand-500/30'}
@@ -102,17 +206,25 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {slots.map((slot) => {
               const isSelected = selectedSlotId === slot.id;
+              const isLocking = lockingSlotId === slot.id;
+
               return (
                 <button
                   key={slot.id}
-                  onClick={() => setSelectedSlotId(isSelected ? null : slot.id)}
-                  className={`py-3 rounded-xl border-2 font-semibold text-sm transition-all
+                  onClick={() => handleSlotClick(slot.id)}
+                  disabled={isLocking}
+                  className={`py-3 rounded-xl border-2 font-semibold text-sm transition-all relative
                     ${isSelected
                       ? 'border-brand-500 bg-brand-500 text-white shadow-lg shadow-brand-500/20'
                       : 'border-slate-100 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-brand-500/30'}
+                    ${isLocking ? 'opacity-60 cursor-wait' : ''}
                   `}
                 >
-                  {format(new Date(slot.startTime), "HH:mm")}
+                  {isLocking ? (
+                    <Loader2 className="animate-spin mx-auto" size={16} />
+                  ) : (
+                    format(new Date(slot.startTime), "HH:mm")
+                  )}
                 </button>
               );
             })}
@@ -122,11 +234,18 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
 
       {/* Action */}
       <div className="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-between">
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-1">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Selected Session</span>
           <span className="text-sm font-bold text-slate-900 dark:text-white">
             {format(selectedDate, "MMMM d")} at {selectedSlot ? format(new Date(selectedSlot.startTime), "HH:mm") : "--:--"}
           </span>
+          {/* Countdown Timer */}
+          {timeLeft !== null && (
+            <span className={`text-xs font-bold flex items-center gap-1 ${timeLeft <= 60 ? 'text-red-500' : 'text-amber-500'}`}>
+              <Lock size={10} />
+              Reserved for {formatTimeLeft(timeLeft)}
+            </span>
+          )}
         </div>
         <Button
           onClick={handleBooking}
