@@ -32,12 +32,14 @@ const paymentService = {
     return response.data;
   },
 
-  getAdminFinanceStats: async <T = unknown>() => {
-    const response = await apiClient.get<{ success: boolean; data: T }>(
-      "/api/admin/finance/stats"
-    );
-    return response.data;
-  },
+  getAdminFinanceStats: async <T = unknown>(page = 1, limit = 10) => {
+  const response = await apiClient.get<{
+    success: boolean;
+    data: T;
+    meta?: { total: number; page: number; limit: number; totalPages: number };
+  }>(`/api/admin/finance/stats?page=${page}&limit=${limit}`);
+  return response.data;
+},
 
   updateAdminCommission: async (commissionPercentage: number) => {
     const response = await apiClient.patch<{ success: boolean; data: unknown }>(

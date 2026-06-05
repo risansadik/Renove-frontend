@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import paymentService from "../../services/api/payment.service.ts";
-import { 
-  TrendingUp, 
-  DollarSign, 
-  Percent, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
-  Wallet, 
-  RefreshCw, 
-  CheckCircle, 
+import {
+  TrendingUp,
+  DollarSign,
+  Percent,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Wallet,
+  RefreshCw,
+  CheckCircle,
   AlertCircle,
   FileText,
   X
@@ -50,6 +50,12 @@ export const AdminFinancePage = () => {
   const [newCommission, setNewCommission] = useState<number | "">("");
   const [updating, setUpdating] = useState(false);
   const [activeModal, setActiveModal] = useState<"revenue" | "earnings" | "pending" | "withdrawn" | "refunds" | null>(null);
+
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalTransactions, setTotalTransactions] = useState(0);
+  const limit = 10;
 
   const getModalDetails = () => {
     if (!stats || !activeModal) return null;
@@ -118,13 +124,18 @@ export const AdminFinancePage = () => {
     return { title, icon, description, data, valueColumnHeader, renderValue, totalVal };
   };
 
-  const fetchStats = async () => {
+  const fetchStats = async (p = 1) => {
     try {
       setLoading(true);
-      const res = await paymentService.getAdminFinanceStats<FinanceStats>();
+      const res = await paymentService.getAdminFinanceStats<FinanceStats>(p, limit);
       if (res.success) {
         setStats(res.data);
         setNewCommission(res.data.commissionPercentage);
+        if (res.meta) {
+          setTotalPages(res.meta.totalPages);
+          setPage(res.meta.page);
+          setTotalTransactions(res.meta.total);
+        }
       } else {
         toast.error("Failed to load financial records");
       }
@@ -137,11 +148,8 @@ export const AdminFinancePage = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchStats();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
+    fetchStats(page);
+  }, [page]);
 
   const handleUpdateCommission = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,7 +184,7 @@ export const AdminFinancePage = () => {
           <p className="text-brand-900/60 text-sm">Platform ledger, analytics, and commission controller.</p>
         </div>
         <button
-          onClick={fetchStats}
+          onClick={() => { setPage(1); fetchStats(1); }}
           disabled={loading}
           className="mt-4 md:mt-0 flex items-center gap-2 px-4 py-2 bg-surface-50 border border-brand-900/10 hover:border-brand-900/20 text-brand-900 rounded-xl text-sm font-medium transition-all cursor-pointer disabled:opacity-55"
         >
@@ -199,7 +207,7 @@ export const AdminFinancePage = () => {
           <div className="space-y-8">
             {/* Stats Cards grid */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-              <div 
+              <div
                 onClick={() => setActiveModal("revenue")}
                 className="bg-surface-50 border border-brand-900/10 rounded-2xl p-5 stat-card cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all hover:bg-brand-900/5 hover:border-brand-900/20 group stagger-1"
               >
@@ -210,7 +218,7 @@ export const AdminFinancePage = () => {
                 <p className="text-brand-900/60 text-xs mt-1">Platform Revenue</p>
               </div>
 
-              <div 
+              <div
                 onClick={() => setActiveModal("earnings")}
                 className="bg-surface-50 border border-brand-900/10 rounded-2xl p-5 stat-card cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all hover:bg-brand-900/5 hover:border-brand-900/20 group stagger-2"
               >
@@ -221,7 +229,7 @@ export const AdminFinancePage = () => {
                 <p className="text-brand-900/60 text-xs mt-1">Total Clinician Earnings</p>
               </div>
 
-              <div 
+              <div
                 onClick={() => setActiveModal("pending")}
                 className="bg-surface-50 border border-brand-900/10 rounded-2xl p-5 stat-card cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all hover:bg-brand-900/5 hover:border-brand-900/20 group stagger-3"
               >
@@ -232,7 +240,7 @@ export const AdminFinancePage = () => {
                 <p className="text-brand-900/60 text-xs mt-1">Pending Payouts</p>
               </div>
 
-              <div 
+              <div
                 onClick={() => setActiveModal("withdrawn")}
                 className="bg-surface-50 border border-brand-900/10 rounded-2xl p-5 stat-card cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all hover:bg-brand-900/5 hover:border-brand-900/20 group stagger-4"
               >
@@ -243,7 +251,7 @@ export const AdminFinancePage = () => {
                 <p className="text-brand-900/60 text-xs mt-1">Total Withdrawn</p>
               </div>
 
-              <div 
+              <div
                 onClick={() => setActiveModal("refunds")}
                 className="bg-surface-50 border border-brand-900/10 rounded-2xl p-5 stat-card col-span-2 lg:col-span-1 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all hover:bg-brand-900/5 hover:border-brand-900/20 group stagger-5"
               >
@@ -352,13 +360,12 @@ export const AdminFinancePage = () => {
                               )}
                             </td>
                             <td className="py-4 px-4 text-center">
-                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                                t.status === "completed" 
-                                  ? "bg-green-500/10 text-green-600" 
-                                  : t.status === "pending"
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${t.status === "completed"
+                                ? "bg-green-500/10 text-green-600"
+                                : t.status === "pending"
                                   ? "bg-yellow-500/10 text-yellow-600"
                                   : "bg-red-500/10 text-red-600"
-                              }`}>
+                                }`}>
                                 {t.status === "completed" ? (
                                   <CheckCircle size={10} />
                                 ) : t.status === "pending" ? (
@@ -369,9 +376,8 @@ export const AdminFinancePage = () => {
                                 {t.status}
                               </span>
                             </td>
-                            <td className={`py-4 px-4 text-right font-mono font-bold ${
-                              isDebit ? "text-red-500" : "text-green-500"
-                            }`}>
+                            <td className={`py-4 px-4 text-right font-mono font-bold ${isDebit ? "text-red-500" : "text-green-500"
+                              }`}>
                               {isDebit ? "-" : "+"}${t.amount.toFixed(2)}
                             </td>
                           </tr>
@@ -382,6 +388,29 @@ export const AdminFinancePage = () => {
                 </div>
               )}
             </div>
+            {!loading && totalPages > 1 && (
+              <div className="mt-6 flex items-center justify-between stagger-5">
+                <p className="text-sm text-brand-900/60">
+                  Page {page} of {totalPages} · {totalTransactions} transactions
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-4 py-2 rounded-lg border border-brand-900/10 text-sm font-medium text-brand-900 disabled:opacity-50 hover:bg-brand-900/5 transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="px-4 py-2 rounded-lg border border-brand-900/10 text-sm font-medium text-brand-900 disabled:opacity-50 hover:bg-brand-900/5 transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )
       )}
