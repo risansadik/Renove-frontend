@@ -210,7 +210,7 @@ export const LevelJourneyPage = () => {
               className="text-sm mb-8 max-w-sm mx-auto"
               style={{ color: "var(--fg-muted)" }}
             >
-              Answer a few questions and the AI will craft a personalized 20-level
+              Answer a few questions and the AI will craft a personalized
               recovery journey built around your life.
             </p>
             <motion.button
@@ -377,6 +377,48 @@ export const LevelJourneyPage = () => {
                 );
               })}
             </div>
+
+            {/* Generate Next Levels */}
+            {levels.length > 0 && Math.max(...levels.map((l) => l.level)) < 20 && (() => {
+              const maxLevelNum = Math.max(...levels.map((l) => l.level));
+              const isMaxLevelCompleted = levels.find((l) => l.level === maxLevelNum)?.isCompleted;
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 flex justify-center"
+                >
+                  <button
+                    disabled={!isMaxLevelCompleted}
+                    onClick={() => {
+                      if (!isMaxLevelCompleted) return;
+                      const saved = localStorage.getItem("renove_level_payload");
+                      if (!saved) {
+                        setShowOnboarding(true);
+                        return;
+                      }
+                      const payload = JSON.parse(saved);
+                      generateLevels({
+                        ...payload,
+                        startLevel: maxLevelNum + 1,
+                        endLevel: Math.min(maxLevelNum + 5, 20),
+                        regenerate: false,
+                      });
+                    }}
+                    className="btn-outline w-full rounded-2xl border-dashed transition-all"
+                    style={{
+                      borderColor: isMaxLevelCompleted ? "var(--border-strong)" : "var(--border-subtle)",
+                      color: isMaxLevelCompleted ? "var(--accent-primary)" : "var(--fg-muted)",
+                      opacity: isMaxLevelCompleted ? 1 : 0.6,
+                      cursor: isMaxLevelCompleted ? "pointer" : "not-allowed"
+                    }}
+                  >
+                    {isMaxLevelCompleted ? <Sparkles size={16} /> : <Lock size={16} />}
+                    {isMaxLevelCompleted ? "Generate Next Levels" : "Complete current levels to unlock next batch"}
+                  </button>
+                </motion.div>
+              );
+            })()}
           </motion.div>
         )}
       </div>

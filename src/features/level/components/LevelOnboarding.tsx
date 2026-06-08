@@ -81,6 +81,7 @@ export const LevelOnboarding = ({ onComplete, onClose, generating }: Props) => {
       addictionType: effectiveAddiction,
       severity: severity as "mild" | "moderate" | "severe",
       interests,
+      regenerate: true,
     });
   };
 
@@ -363,7 +364,7 @@ export const LevelOnboarding = ({ onComplete, onClose, generating }: Props) => {
                   Your world is ready to be forged.
                 </h2>
                 <p className="text-sm mb-6" style={{ color: "var(--fg-muted)" }}>
-                  The AI will now build 20 personalized levels around your journey.
+                  The AI will now build the first 5 levels of your journey.
                   This takes a few seconds.
                 </p>
                 <div
