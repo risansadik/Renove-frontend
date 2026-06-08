@@ -29,6 +29,7 @@ import { TherapistWalletPage } from "./features/therapist/TherapistWalletPage.ts
 import { useThemeStore } from "./store/use-theme-store.ts";
 import { TherapistProfilePage } from "./features/therapist/TherapistProfilePage.tsx";
 import { LevelJourneyPage } from "./features/level/LevelJourneyPage.tsx";
+import { AiCompanionPage } from "./features/user/AiCompanionPage.tsx";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -95,7 +96,7 @@ export const AppRouter = () => {
           <Route path="/dashboard" element={<ProtectedRoute role="user"><UserLayout /></ProtectedRoute>}>
             <Route index element={<UserDashboardPage />} />
             <Route path="progress" element={<UserDashboardPage />} />
-            <Route path="ai-companion" element={<UserDashboardPage />} />
+            <Route path="ai-companion" element={<AiCompanionPage />} />
             <Route path="therapists" element={<UserDashboardPage />} />
             <Route path="sessions" element={<UserDashboardPage />} />
             <Route path="wallet" element={<UserWalletPage />} />

@@ -63,21 +63,27 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
 
           <div className="flex flex-wrap gap-2 mb-6">
             {AI_PROMPTS.map((p) => (
-              <button key={p}
+              <Link
+                key={p}
+                to={`/dashboard/ai-companion?prompt=${encodeURIComponent(p)}`}
                 className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:scale-105"
                 style={{
                   background: "var(--bg-card)",
                   border: "1px solid var(--border-default)",
                   color: "var(--fg-secondary)",
-                }}>
+                }}
+              >
                 {p}
-              </button>
+              </Link>
             ))}
           </div>
 
-          <button className="btn-primary rounded-xl h-12 w-full">
+          <Link
+            to="/dashboard/ai-companion"
+            className="btn-primary rounded-xl h-12 w-full flex items-center justify-center gap-2"
+          >
             <MessageCircle size={16} /> Talk to Nova
-          </button>
+          </Link>
         </motion.div>
 
         {/* Human Experts Section */}
