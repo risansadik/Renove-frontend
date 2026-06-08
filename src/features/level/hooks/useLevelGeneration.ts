@@ -33,6 +33,7 @@ export const useLevelGeneration = (): UseLevelGenerationReturn => {
   const generateLevels = useCallback(async (payload: GenerateLevelsPayload) => {
     setGenerating(true);
     try {
+      localStorage.setItem("renove_level_payload", JSON.stringify(payload));
       const res = await levelService.generate(payload);
       setLevels(res.data.data ?? []);
       toast.success("Your journey has been forged.");

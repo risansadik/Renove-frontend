@@ -24,6 +24,8 @@ export interface GenerateLevelsPayload {
     addictionType: string;
     severity: "mild" | "moderate" | "severe";
     interests: string[];
+    startLevel?: number;
+    endLevel?: number;
     regenerate?: boolean;
 }
 

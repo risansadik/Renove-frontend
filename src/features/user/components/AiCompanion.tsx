@@ -18,7 +18,6 @@ export const AiCompanion = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Load sessions on mount
   useEffect(() => {
     chatApiService
       .getSessions()
@@ -33,13 +32,11 @@ export const AiCompanion = () => {
       .finally(() => setLoadingSessions(false));
   }, []);
 
-  // Handle incoming prompt from SupportSection quick prompts
   useEffect(() => {
     const prompt = searchParams.get("prompt");
     if (!prompt || !activeSessionId) return;
     setSearchParams({});
     setInput(prompt);
-    // auto-send after state settles
     setTimeout(() => handleSendText(prompt), 100);
   }, [activeSessionId, searchParams]);
 
@@ -105,7 +102,6 @@ export const AiCompanion = () => {
   const handleSendText = useCallback(async (text: string) => {
     if (!text.trim() || streaming) return;
 
-    // If no session exists yet, create one first
     let sessionId = activeSessionId;
     if (!sessionId) {
       try {
@@ -163,7 +159,7 @@ export const AiCompanion = () => {
         }
       }
 
-      // Update session title to first user message
+   
       if (isFirstMessage) {
         setSessions((prev) =>
           prev.map((s) =>
@@ -204,7 +200,7 @@ export const AiCompanion = () => {
     >
       {/* Sessions Sidebar */}
       <div
-        className="w-60 flex-shrink-0 flex flex-col"
+        className="w-60 shrink-0 flex flex-col"
         style={{ borderRight: "1px solid var(--border-default)" }}
       >
         {/* New Chat button */}
