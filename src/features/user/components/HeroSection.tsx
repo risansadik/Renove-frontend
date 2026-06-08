@@ -28,9 +28,10 @@ interface Props {
   data: DashboardData | null;
   isNew: boolean;
   greeting: string;
+  onJourneyClick: () => void; 
 }
 
-export const HeroSection = ({ data, isNew, greeting }: Props) => (
+export const HeroSection = ({ data, isNew, greeting , onJourneyClick}: Props) => (
   <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-24 overflow-hidden">
 
     {/* Ambient background orbs */}
@@ -157,6 +158,7 @@ export const HeroSection = ({ data, isNew, greeting }: Props) => (
         transition={{ delay: 0.5 }}
         whileHover={{ scale: 1.04, y: -3 }}
         whileTap={{ scale: 0.97 }}
+        onClick={onJourneyClick}
         className="btn-primary inline-flex w-auto px-10 h-16 text-base rounded-2xl border-glow-animate"
         style={{ fontSize: "1rem", boxShadow: "0 12px 40px var(--accent-glow)" }}
       >

@@ -28,6 +28,7 @@ import { UserProfilePage } from "./features/user/UserProfilePage.tsx";
 import { TherapistWalletPage } from "./features/therapist/TherapistWalletPage.tsx";
 import { useThemeStore } from "./store/use-theme-store.ts";
 import { TherapistProfilePage } from "./features/therapist/TherapistProfilePage.tsx";
+import { LevelJourneyPage } from "./features/level/LevelJourneyPage.tsx";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -99,6 +100,7 @@ export const AppRouter = () => {
             <Route path="sessions" element={<UserDashboardPage />} />
             <Route path="wallet" element={<UserWalletPage />} />
             <Route path="profile" element={<UserProfilePage />} />
+            <Route path="journey" element={<LevelJourneyPage />} />
           </Route>
 
           {/* ── Therapist auth ───────────────────────── */}

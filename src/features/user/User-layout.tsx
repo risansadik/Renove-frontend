@@ -65,10 +65,6 @@ export const UserLayout = () => {
               <Sparkles size={15} className="text-white" />
             </div>
             <span className="font-display font-bold text-lg" style={{ color: "var(--fg-primary)" }}>reNove</span>
-            <span className="ml-auto text-[9px] font-mono px-2 py-0.5 rounded-full"
-              style={{ color: "var(--accent-primary)", background: "var(--accent-glow)", border: "1px solid var(--border-accent)" }}>
-              Beta
-            </span>
           </div>
         </div>
 

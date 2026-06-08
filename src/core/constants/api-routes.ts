@@ -14,6 +14,9 @@ export const API_ROUTES = {
     MOOD: "/api/user/auth/mood",
     MISSION: (id: string) => `/api/user/auth/missions/${id}`,
     THERAPISTS: "/api/user/auth/therapists",
+    LEVELS_GENERATE: "/api/user/auth/levels/generate",
+    LEVELS: "/api/user/auth/levels",
+    LEVEL_COMPLETE: (id: string) => `/api/user/auth/levels/${id}/complete`,
   },
   THERAPIST: {
     REGISTER: "/api/therapist/auth/register",
@@ -34,4 +37,5 @@ export const API_ROUTES = {
     THERAPISTS: "/api/admin/therapists",
     THERAPIST_STATUS: (id: string) => `/api/admin/therapists/${id}/status`,
   },
-} as const;
+
+} as const;
