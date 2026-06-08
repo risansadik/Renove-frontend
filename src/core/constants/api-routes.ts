@@ -17,6 +17,11 @@ export const API_ROUTES = {
     LEVELS_GENERATE: "/api/user/auth/levels/generate",
     LEVELS: "/api/user/auth/levels",
     LEVEL_COMPLETE: (id: string) => `/api/user/auth/levels/${id}/complete`,
+    CHAT_SESSIONS: "/api/user/chat/sessions",
+    CHAT_SESSION: (id: string) => `/api/user/chat/sessions/${id}`,
+    CHAT_SESSION_MESSAGES: (id: string) => `/api/user/chat/sessions/${id}/messages`,
+    CHAT_MESSAGE: "/api/user/chat/message",
+
   },
   THERAPIST: {
     REGISTER: "/api/therapist/auth/register",
