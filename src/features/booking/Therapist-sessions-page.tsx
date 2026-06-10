@@ -388,12 +388,6 @@ export const TherapistSessionsPage = () => {
                             <CheckCircle size={14} />
                             Complete
                           </button>
-                          <button
-                            onClick={() => setCancelId(booking.id)}
-                            className="px-3 py-2.5 rounded-xl border border-red-500/20 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                          >
-                            Cancel
-                          </button>
                         </>
                       ) : (
                         <>

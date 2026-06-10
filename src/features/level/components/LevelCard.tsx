@@ -57,7 +57,7 @@ export const LevelCard = ({ level, index, isActive }: Props) => {
         <div className="flex items-center gap-2">
           {/* Level number badge */}
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center font-mono text-xs font-bold flex-shrink-0"
+            className="w-8 h-8 rounded-xl flex items-center justify-center font-mono text-xs font-bold shrink-0"
             style={{
               background: isActive ? cfg.color : "var(--bg-subtle)",
               color: isActive ? "var(--fg-on-primary)" : "var(--fg-muted)",
@@ -82,7 +82,7 @@ export const LevelCard = ({ level, index, isActive }: Props) => {
         </div>
 
         {/* Status icon */}
-        <div className="flex-shrink-0 ml-2">
+        <div className="shrink-0 ml-2">
           {level.isCompleted ? (
             <CheckCircle2 size={18} style={{ color: "var(--accent-secondary)" }} />
           ) : isLocked ? (

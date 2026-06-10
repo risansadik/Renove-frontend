@@ -16,7 +16,7 @@ export const AiCompanionPage = () => (
         className="flex items-center gap-4"
       >
         <div
-          className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+          className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
           style={{
             background:
               "linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))",

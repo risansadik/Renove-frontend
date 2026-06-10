@@ -146,6 +146,12 @@ export const UserSessionsPage = () => {
             const rawTherapistName = typeof booking.therapistId === 'object' ? booking.therapistId.name : 'Therapist';
             const therapistName = rawTherapistName.startsWith("Dr. ") ? rawTherapistName : `Dr. ${rawTherapistName}`;
             const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
+            const now = new Date();
+            const sessionStartTime =
+              typeof booking.slotId === "object" && booking.slotId.startTime
+                ? new Date(booking.slotId.startTime)
+                : now;
+            const hasReachedStartTime = now >= sessionStartTime;
 
             let sessionTime = "Scheduled";
             let durationText = "60 Minutes";
@@ -232,6 +238,37 @@ export const UserSessionsPage = () => {
                           <CreditCard size={16} />
                           Pay Now
                         </button>
+                        {!hasReachedStartTime && (
+                          <button
+                            onClick={() => {
+                              setBookingToCancel(booking);
+                              setIsCancelModalOpen(true);
+                            }}
+                            className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {(booking.status === "accepted" || booking.status === "confirmed") && (
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      {hasReachedStartTime ? (
+                        <button
+                          onClick={() => navigate(`/dashboard/session/${booking.id}`)}
+                          className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition-transform flex items-center gap-2"
+                        >
+                          <Video size={14} />
+                          Join Session
+                        </button>
+                      ) : (
+                        <div className="px-5 py-2.5 rounded-xl bg-amber-500/10 text-amber-500 font-bold text-[10px] border border-amber-500/20 flex items-center gap-2">
+                          <Clock size={12} />
+                          Upcoming
+                        </div>
+                      )}
+                      {!hasReachedStartTime && (
                         <button
                           onClick={() => {
                             setBookingToCancel(booking);
@@ -241,27 +278,7 @@ export const UserSessionsPage = () => {
                         >
                           Cancel
                         </button>
-                      </div>
-                    </div>
-                  )}
-                  {(booking.status === "accepted" || booking.status === "confirmed") && (
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                      <button
-                        onClick={() => navigate(`/dashboard/session/${booking.id}`)}
-                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition-transform flex items-center gap-2"
-                      >
-                        <Video size={14} />
-                        Join Session
-                      </button>
-                      <button
-                        onClick={() => {
-                          setBookingToCancel(booking);
-                          setIsCancelModalOpen(true);
-                        }}
-                        className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
-                      >
-                        Cancel
-                      </button>
+                      )}
                     </div>
                   )}
                   {booking.status === "pending" && (
@@ -269,15 +286,17 @@ export const UserSessionsPage = () => {
                       <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                         Reschedule
                       </button>
-                      <button
-                        onClick={() => {
-                          setBookingToCancel(booking);
-                          setIsCancelModalOpen(true);
-                        }}
-                        className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
-                      >
-                        Cancel
-                      </button>
+                      {!hasReachedStartTime && (
+                        <button
+                          onClick={() => {
+                            setBookingToCancel(booking);
+                            setIsCancelModalOpen(true);
+                          }}
+                          className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                        >
+                          Cancel
+                        </button>
+                      )}
                     </div>
                   )}
                   {booking.status !== "awaiting_payment" && booking.status !== "accepted" && booking.status !== "confirmed" && booking.status !== "pending" && (

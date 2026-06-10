@@ -66,7 +66,7 @@ export const AdminFinancePage = () => {
     let data: Transaction[] = [];
     let valueColumnHeader = "";
     let renderValue: (t: Transaction) => string = () => "";
-    let totalVal = 0;
+    const totalVal = 0;
 
     switch (activeModal) {
       case "revenue":
@@ -143,7 +143,11 @@ export const AdminFinancePage = () => {
   };
 
   useEffect(() => {
-    fetchStats(page);
+    const loadStats = async () => {
+      await fetchStats(page);
+    };
+
+    void loadStats();
   }, [page]);
 
   const handleUpdateCommission = async (e: React.FormEvent) => {

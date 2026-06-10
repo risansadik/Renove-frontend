@@ -11,6 +11,7 @@ export type CallStatus =
   | "connected"
   | "reconnecting"
   | "ended";
+  
 
 export const CALL_EVENTS = {
   JOIN: "call:join",
@@ -31,6 +32,22 @@ export const STATUS_CONFIG = {
   reconnecting: { label: "Connection interrupted — reconnecting…", color: "#f59e0b" },
   ended: { label: "Call ended", color: "var(--fg-muted)" },
 };
+
+type OrbConfig = {
+  size: number;
+  top: string;
+  left?: string;
+  right?: string;
+  delay: number;
+  duration: number;
+  purple: boolean;
+};
+
+export const ORB_CONFIG: OrbConfig[] = [
+  { size: 320, top: "5%", left: "10%", delay: 0, duration: 7, purple: true },
+  { size: 240, top: "55%", right: "8%", delay: 2, duration: 9, purple: false },
+  { size: 180, top: "25%", left: "55%", delay: 1, duration: 6, purple: true },
+];
 
 
 export interface User {
@@ -112,4 +129,19 @@ export interface UseWebRTCReturn {
   joinCall: (bookingId: string) => Promise<void>;
   leaveCall: () => void;
 }
+
+export const QUOTES = [
+  { text: "Every expert was once a beginner.", author: "Helen Hayes" },
+  { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "Strength doesn't come from what you can do. It comes from overcoming what you thought you couldn't.", author: "Rikki Rogers" },
+  { text: "The only way out is through.", author: "Robert Frost" },
+  { text: "Fall seven times. Stand up eight.", author: "Japanese Proverb" },
+  { text: "Your present circumstances don't determine where you go — they merely determine where you start.", author: "Nido Qubein" },
+  { text: "It always seems impossible until it is done.", author: "Nelson Mandela" },
+  { text: "Rock bottom became the solid foundation on which I rebuilt my life.", author: "J.K. Rowling" },
+  { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "The comeback is always stronger than the setback.", author: "Unknown" },
+];
 

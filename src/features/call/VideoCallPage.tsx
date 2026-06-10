@@ -12,7 +12,6 @@ import {
     Wifi,
     WifiOff,
     Loader2,
-    AlertCircle,
 } from "lucide-react";
 import { useWebRTC } from "./hooks/useWebRTC.ts";
 import { STATUS_CONFIG } from "../../domain/model/index.ts";
@@ -44,9 +43,13 @@ export const VideoCallPage = () => {
     // Join on mount
     useEffect(() => {
         if (!bookingId) return;
-        joinCall(bookingId);
-        return () => leaveCall();
-    }, [bookingId]);
+
+        void joinCall(bookingId);
+
+        return () => {
+            leaveCall();
+        };
+    }, [bookingId, joinCall, leaveCall]);
 
     // Attach local stream
     useEffect(() => {

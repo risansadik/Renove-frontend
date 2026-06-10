@@ -389,7 +389,7 @@ export const LevelOnboarding = ({ onComplete, onClose, generating }: Props) => {
             <button
               onClick={() => setStep((s) => s - 1)}
               disabled={generating}
-              className="btn-outline flex-shrink-0"
+              className="btn-outline shrink-0"
               style={{ width: "auto", paddingLeft: "1.25rem", paddingRight: "1.25rem" }}
             >
               <ArrowLeft size={16} />
@@ -433,7 +433,7 @@ export const LevelOnboarding = ({ onComplete, onClose, generating }: Props) => {
 const SummaryRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex items-start gap-2 text-sm">
     <span
-      className="font-mono text-xs pt-0.5 min-w-[80px]"
+      className="font-mono text-xs pt-0.5 min-w-20"
       style={{ color: "var(--fg-muted)" }}
     >
       {label}
