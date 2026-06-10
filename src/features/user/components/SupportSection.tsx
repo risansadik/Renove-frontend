@@ -39,7 +39,7 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
             style={{ background: "radial-gradient(circle, var(--accent-glow-secondary), transparent 70%)", filter: "blur(20px)" }} />
 
           <div className="relative z-10 flex items-start gap-5 mb-6">
-            <div className="relative flex-shrink-0">
+            <div className="relative shrink-0">
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
                 style={{ background: "linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))" }}>
                 <Brain size={28} className="text-white" />
@@ -118,7 +118,7 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
                     border: "1px solid var(--border-subtle)",
                   }}
                 >
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white shrink-0"
                     style={{ background: "linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))" }}>
                     {(t.name ?? "T")[0]}
                   </div>
@@ -126,7 +126,7 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
                     <p className="text-sm font-semibold truncate" style={{ color: "var(--fg-primary)" }}>{t.name}</p>
                     <p className="text-xs truncate" style={{ color: "var(--fg-muted)" }}>{t.specialization}</p>
                   </div>
-                  <div className="text-right flex-shrink-0">
+                  <div className="text-right shrink-0">
                     <div className="flex items-center gap-1">
                       <Star size={10} className="text-yellow-500" fill="currentColor" />
                       <span className="text-xs font-bold" style={{ color: "var(--fg-primary)" }}>4.9</span>

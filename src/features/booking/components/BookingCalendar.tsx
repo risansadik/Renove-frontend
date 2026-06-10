@@ -45,7 +45,7 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
   }, []);
 
   // Start countdown timer
-  const startTimer = useCallback((durationSeconds: number, slotId: string) => {
+  const startTimer = useCallback((durationSeconds: number) => {
     clearTimer();
     setTimeLeft(durationSeconds);
 
@@ -90,7 +90,7 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
     };
 
     fetchSlots();
-  }, [selectedDate, therapistId]);
+  }, [selectedDate, therapistId, clearTimer, unlockCurrentSlot]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -122,16 +122,21 @@ export const BookingCalendar = ({ therapistId, onSelect, isLoading }: BookingCal
       await availabilityService.lockSlot(slotId);
       lockedSlotRef.current = slotId;
       setSelectedSlotId(slotId);
-      startTimer(LOCK_DURATION_SECONDS, slotId);
+      startTimer(LOCK_DURATION_SECONDS);
       toast.success("Slot reserved for 10 minutes");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Slot is no longer available");
-      // Refresh slots to reflect updated availability
+    } catch {
       const start = startOfDay(selectedDate).toISOString();
       const end = endOfDay(selectedDate).toISOString();
-      const res = await availabilityService.getAvailableSlots(therapistId, start, end);
+
+      const res = await availabilityService.getAvailableSlots(
+        therapistId,
+        start,
+        end
+      );
+
       setSlots(res.data);
-    } finally {
+    }
+    finally {
       setLockingSlotId(null);
     }
   };

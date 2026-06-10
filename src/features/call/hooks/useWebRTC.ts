@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { socketService } from "../../../services/socket.ts";
 import { CALL_EVENTS, type CallStatus, type UseWebRTCReturn } from "../../../domain/model/index.ts";
 

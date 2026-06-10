@@ -296,7 +296,7 @@ export const LevelJourneyPage = () => {
                     <div className="flex items-center gap-3">
                       {/* Level number */}
                       <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center font-mono text-xs font-bold flex-shrink-0"
+                        className="w-9 h-9 rounded-xl flex items-center justify-center font-mono text-xs font-bold shrink-0"
                         style={{
                           background: isLevelActive
                             ? "var(--accent-primary)"

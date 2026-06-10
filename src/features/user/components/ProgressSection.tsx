@@ -55,7 +55,7 @@ export const ProgressSection = ({ data, moodSelected, moodLogging, onMood }: Pro
             whileHover={{ y: -4 }}
             className="glass-card rounded-2xl p-5 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}>
               <Icon size={22} style={{ color: accent }} className={label === "Day Streak" ? "streak-flame-flicker" : ""} />
             </div>

@@ -48,7 +48,7 @@ export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook }: Pr
 
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                 {/* Avatar */}
-                <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-display font-bold text-white flex-shrink-0 overflow-hidden"
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-display font-bold text-white shrink-0 overflow-hidden"
                   style={{ background: "linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))" }}>
                   {therapist.profileImage ? (
                     <img src={getMediaUrl(therapist.profileImage)} alt={therapist.name} className="w-full h-full object-cover" />

@@ -18,6 +18,31 @@ export const AiCompanion = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
+
+  const loadSession = async (sessionId: string) => {
+    setActiveSessionId(sessionId);
+    setLoadingMessages(true);
+
+    try {
+      const res = await chatApiService.getSessionMessages(sessionId);
+      const msgs = res.data.data ?? [];
+
+      if (msgs.length === 0) {
+        setMessages([
+          {
+            role: "assistant",
+            content:
+              "Hey! I'm Nova, your recovery companion. I'm here whenever you need to talk. How are you feeling today?",
+          },
+        ]);
+      } else {
+        setMessages(msgs);
+      }
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
   useEffect(() => {
     chatApiService
       .getSessions()
@@ -31,73 +56,6 @@ export const AiCompanion = () => {
       .catch(() => toast.error("Couldn't load conversations"))
       .finally(() => setLoadingSessions(false));
   }, []);
-
-  useEffect(() => {
-    const prompt = searchParams.get("prompt");
-    if (!prompt || !activeSessionId) return;
-    setSearchParams({});
-    setInput(prompt);
-    setTimeout(() => handleSendText(prompt), 100);
-  }, [activeSessionId, searchParams]);
-
-  const loadSession = async (sessionId: string) => {
-    setActiveSessionId(sessionId);
-    setLoadingMessages(true);
-    try {
-      const res = await chatApiService.getSessionMessages(sessionId);
-      const msgs = res.data.data ?? [];
-      if (msgs.length === 0) {
-        setMessages([
-          {
-            role: "assistant",
-            content: "Hey! I'm Nova, your recovery companion. I'm here whenever you need to talk. How are you feeling today?",
-          },
-        ]);
-      } else {
-        setMessages(msgs);
-      }
-    } catch {
-      toast.error("Couldn't load messages");
-    } finally {
-      setLoadingMessages(false);
-    }
-  };
-
-  const handleNewSession = async () => {
-    try {
-      const res = await chatApiService.createSession();
-      const session = res.data.data!;
-      setSessions((prev) => [session, ...prev]);
-      await loadSession(session.id);
-    } catch {
-      toast.error("Couldn't create new chat");
-    }
-  };
-
-  const handleDeleteSession = async (sessionId: string) => {
-    setDeletingId(sessionId);
-    try {
-      await chatApiService.deleteSession(sessionId);
-      const remaining = sessions.filter((s) => s.id !== sessionId);
-      setSessions(remaining);
-      if (activeSessionId === sessionId) {
-        if (remaining.length > 0) {
-          await loadSession(remaining[0].id);
-        } else {
-          setActiveSessionId(null);
-          setMessages([]);
-        }
-      }
-    } catch {
-      toast.error("Couldn't delete conversation");
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
 
   const handleSendText = useCallback(async (text: string) => {
     if (!text.trim() || streaming) return;
@@ -159,7 +117,7 @@ export const AiCompanion = () => {
         }
       }
 
-   
+
       if (isFirstMessage) {
         setSessions((prev) =>
           prev.map((s) =>
@@ -175,7 +133,53 @@ export const AiCompanion = () => {
     } finally {
       setStreaming(false);
     }
-  }, [input, streaming, activeSessionId, messages]);
+  }, [streaming, activeSessionId, messages]);
+
+  useEffect(() => {
+    const prompt = searchParams.get("prompt");
+    if (!prompt || !activeSessionId) return;
+    setSearchParams({});
+    setInput(prompt);
+    setTimeout(() => handleSendText(prompt), 100);
+  }, [activeSessionId, searchParams, handleSendText,
+    setSearchParams,]);
+
+  const handleNewSession = async () => {
+    try {
+      const res = await chatApiService.createSession();
+      const session = res.data.data!;
+      setSessions((prev) => [session, ...prev]);
+      await loadSession(session.id);
+    } catch {
+      toast.error("Couldn't create new chat");
+    }
+  };
+
+  const handleDeleteSession = async (sessionId: string) => {
+    setDeletingId(sessionId);
+    try {
+      await chatApiService.deleteSession(sessionId);
+      const remaining = sessions.filter((s) => s.id !== sessionId);
+      setSessions(remaining);
+      if (activeSessionId === sessionId) {
+        if (remaining.length > 0) {
+          await loadSession(remaining[0].id);
+        } else {
+          setActiveSessionId(null);
+          setMessages([]);
+        }
+      }
+    } catch {
+      toast.error("Couldn't delete conversation");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
 
   const handleSend = useCallback(() => {
     handleSendText(input);
