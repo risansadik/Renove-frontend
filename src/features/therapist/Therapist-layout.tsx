@@ -15,7 +15,7 @@ const navItems = [
   { to: "/therapist/messages", icon: MessageCircle, label: "Messages" },
   { to: "/therapist/wallet", icon: Wallet, label: "Wallet" },
   { to: "/therapist/profile", icon: User, label: "Profile" },
-  { to: "/therapist/settings", icon: Settings, label: "Settings" },
+  // { to: "/therapist/settings", icon: Settings, label: "Settings" },
 ];
 
 export const TherapistLayout = () => {

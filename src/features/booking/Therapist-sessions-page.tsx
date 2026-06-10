@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { Check, X, Clock, User, Video, Calendar, MoreVertical, MessageSquare, CreditCard, CheckCircle } from "lucide-react";
+import { Check, X, Clock, User, Video, Calendar, CreditCard, CheckCircle } from "lucide-react";
 import bookingService, { type BookingResponse } from "../../services/api/booking.service";
 import paymentService from "../../services/api/payment.service";
 import toast from "react-hot-toast";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal";
 import { PaymentTimer } from "./components/PaymentTimer";
+import { useNavigate } from "react-router-dom";
 
 export const TherapistSessionsPage = () => {
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
@@ -15,6 +16,7 @@ export const TherapistSessionsPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
+  const navigate = useNavigate();
 
   const fetchBookings = async (p: number, l: number) => {
     setIsLoading(true);
@@ -41,17 +43,17 @@ export const TherapistSessionsPage = () => {
   const [rejectionReason, setRejectionReason] = useState("");
 
   const handleStatusUpdate = async (id: string, status: string, reason?: string) => {
-      await bookingService.updateBookingStatus(id, status, reason);
-      toast.success(`Booking ${status} successfully`);
-      setRejectionId(null);
-      setRejectionReason("");
-      fetchBookings(page, limit);
+    await bookingService.updateBookingStatus(id, status, reason);
+    toast.success(`Booking ${status} successfully`);
+    setRejectionId(null);
+    setRejectionReason("");
+    fetchBookings(page, limit);
   };
 
   const handleCompleteSession = async (bookingId: string) => {
-      await paymentService.completeSession(bookingId);
-      toast.success("Session marked as completed. Funds moved to available balance.");
-      fetchBookings(page, limit);
+    await paymentService.completeSession(bookingId);
+    toast.success("Session marked as completed. Funds moved to available balance.");
+    fetchBookings(page, limit);
   };
 
   const [cancelId, setCancelId] = useState<string | null>(null);
@@ -59,12 +61,12 @@ export const TherapistSessionsPage = () => {
 
   const handleCancelBooking = async () => {
     if (!cancelId) return;
-      const loadingToast = toast.loading("Cancelling session...");
-      await bookingService.cancelBooking(cancelId, cancelReasonText || "Therapist requested cancellation");
-      toast.success("Session cancelled successfully", { id: loadingToast });
-      setCancelId(null);
-      setCancelReasonText("");
-      fetchBookings(page, limit);
+    const loadingToast = toast.loading("Cancelling session...");
+    await bookingService.cancelBooking(cancelId, cancelReasonText || "Therapist requested cancellation");
+    toast.success("Session cancelled successfully", { id: loadingToast });
+    setCancelId(null);
+    setCancelReasonText("");
+    fetchBookings(page, limit);
   };
 
 
@@ -110,11 +112,10 @@ export const TherapistSessionsPage = () => {
                 key={r}
                 type="button"
                 onClick={() => setRejectionReason(r)}
-                className={`text-[10px] px-3 py-1.5 rounded-full border transition-all ${
-                  rejectionReason === r 
-                    ? "bg-red-500 text-white border-red-500 shadow-sm" 
+                className={`text-[10px] px-3 py-1.5 rounded-full border transition-all ${rejectionReason === r
+                    ? "bg-red-500 text-white border-red-500 shadow-sm"
                     : "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500"
-                }`}
+                  }`}
               >
                 {r}
               </button>
@@ -160,11 +161,10 @@ export const TherapistSessionsPage = () => {
                   key={r}
                   type="button"
                   onClick={() => setCancelReasonText(r)}
-                  className={`text-[10px] px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
-                    cancelReasonText === r 
-                      ? "bg-red-500 text-white border-red-500 shadow-sm" 
+                  className={`text-[10px] px-3 py-1.5 rounded-full border transition-all cursor-pointer ${cancelReasonText === r
+                      ? "bg-red-500 text-white border-red-500 shadow-sm"
                       : "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500"
-                  }`}
+                    }`}
                 >
                   {r}
                 </button>
@@ -200,15 +200,15 @@ export const TherapistSessionsPage = () => {
 
         {pending.length === 0 ? (
           <div className="dash-card p-12 border-dashed border-2 flex flex-col items-center justify-center text-center text-slate-400">
-             <Clock size={32} className="mb-2 opacity-20" />
-             <p className="text-sm font-medium">No new requests at the moment</p>
+            <Clock size={32} className="mb-2 opacity-20" />
+            <p className="text-sm font-medium">No new requests at the moment</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {pending.map((booking) => {
               const patientName = typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).name : `Patient #${typeof booking.userId === 'string' ? booking.userId.slice(-4) : ''}`;
               const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
-              
+
               let sessionTime = "Scheduled";
               let durationText = "60 Min Session";
               if (typeof booking.slotId === 'object') {
@@ -252,13 +252,13 @@ export const TherapistSessionsPage = () => {
                   )}
 
                   <div className="flex gap-2 pt-2 mt-auto">
-                    <button 
+                    <button
                       onClick={() => setRejectionId(booking.id)}
                       className="flex-1 py-2.5 rounded-xl border-2 border-red-500/10 text-red-500 font-bold text-xs hover:bg-red-500/5 transition-colors flex items-center justify-center gap-2"
                     >
                       <X size={14} /> Decline
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleStatusUpdate(booking.id, "awaiting_payment")}
                       className="flex-1 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
                     >
@@ -283,7 +283,7 @@ export const TherapistSessionsPage = () => {
             {awaitingPayment.map((booking) => {
               const patientName = typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).name : `Patient #${typeof booking.userId === 'string' ? booking.userId.slice(-4) : ''}`;
               const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
-              
+
               let sessionTime = "Scheduled";
               if (typeof booking.slotId === 'object') {
                 const start = new Date(booking.slotId.startTime);
@@ -313,9 +313,9 @@ export const TherapistSessionsPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-4 self-end sm:self-center">
-                    <PaymentTimer 
-                      updatedAt={booking.updatedAt} 
-                      onExpire={() => fetchBookings(page, limit)} 
+                    <PaymentTimer
+                      updatedAt={booking.updatedAt}
+                      onExpire={() => fetchBookings(page, limit)}
                     />
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export const TherapistSessionsPage = () => {
       {/* Upcoming Section */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Confirmed Sessions</h2>
-        
+
         {upcoming.length === 0 ? (
           <p className="text-sm text-slate-500 italic">You don't have any confirmed sessions scheduled yet.</p>
         ) : (
@@ -336,7 +336,7 @@ export const TherapistSessionsPage = () => {
             {upcoming.map((booking) => {
               const patientName = typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).name : `Patient #${typeof booking.userId === 'string' ? booking.userId.slice(-4) : ''}`;
               const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
-              
+
               let sessionTime = "Scheduled";
               if (typeof booking.slotId === 'object') {
                 const start = new Date(booking.slotId.startTime);
@@ -347,77 +347,69 @@ export const TherapistSessionsPage = () => {
               return (
                 <div key={booking.id} className="dash-card p-5 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                     <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-brand-500/5 text-brand-500 border border-brand-500/10">
-                        <span className="text-[9px] font-black uppercase leading-none">{format(sessionDate, "EEE")}</span>
-                        <span className="text-lg font-black leading-none">{format(sessionDate, "d")}</span>
-                     </div>
-                     <div>
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h4 className="font-bold text-slate-900 dark:text-white">{patientName}</h4>
-                          <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-tighter">Confirmed</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
-                          <span className="flex items-center gap-1"><Clock size={12} /> {sessionTime}</span>
-                          <span className="flex items-center gap-1"><Video size={12} /> Video Call</span>
-                        </div>
-                     </div>
+                    <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-brand-500/5 text-brand-500 border border-brand-500/10">
+                      <span className="text-[9px] font-black uppercase leading-none">{format(sessionDate, "EEE")}</span>
+                      <span className="text-lg font-black leading-none">{format(sessionDate, "d")}</span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h4 className="font-bold text-slate-900 dark:text-white">{patientName}</h4>
+                        <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-tighter">Confirmed</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
+                        <span className="flex items-center gap-1"><Clock size={12} /> {sessionTime}</span>
+                        <span className="flex items-center gap-1"><Video size={12} /> Video Call</span>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 transition-colors">
-                      <MessageSquare size={18} />
-                    </button>
                     {booking.status === "confirmed" && (() => {
-                      // Logic: Show Complete button only if current time > session start time
                       const now = new Date();
-                      
-                      let sessionStartTime = now; // Fallback
-                      if (typeof booking.slotId === 'object' && booking.slotId.startTime) {
-                        sessionStartTime = new Date(booking.slotId.startTime);
-                      }
-                      
-                      return now >= sessionStartTime;
-                    })() ? (
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => handleCompleteSession(booking.id)}
-                          className="px-5 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center gap-2"
-                        >
-                          <CheckCircle size={14} />
-                          Complete Session
-                        </button>
-                        <button
-                          onClick={() => {
-                            setCancelId(booking.id);
-                          }}
-                          className="px-3 py-2.5 rounded-xl border border-red-500/20 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : booking.status === "confirmed" ? (
-                      <div className="flex items-center gap-2">
-                        <div className="px-5 py-2.5 rounded-xl bg-amber-500/10 text-amber-500 font-bold text-[10px] border border-amber-500/20 flex items-center gap-2">
-                          <Clock size={12} />
-                          Upcoming
-                        </div>
-                        <button
-                          onClick={() => {
-                            setCancelId(booking.id);
-                          }}
-                          className="px-3 py-2.5 rounded-xl border border-red-500/20 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 font-bold text-xs">
-                        Awaiting Payment
-                      </div>
-                    )}
-                    <button className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 transition-colors">
-                      <MoreVertical size={18} />
-                    </button>
+                      const sessionStartTime =
+                        typeof booking.slotId === "object" && booking.slotId.startTime
+                          ? new Date(booking.slotId.startTime)
+                          : now;
+                      const sessionReady = now >= sessionStartTime;
+
+                      return sessionReady ? (
+                        <>
+                          <button
+                            onClick={() => navigate(`/therapist/session/${booking.id}`)}
+                            className="px-5 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-xs shadow-md shadow-brand-500/20 flex items-center gap-2 hover:scale-[1.02] transition-transform"
+                          >
+                            <Video size={14} />
+                            Join Session
+                          </button>
+                          <button
+                            onClick={() => handleCompleteSession(booking.id)}
+                            className="px-5 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center gap-2"
+                          >
+                            <CheckCircle size={14} />
+                            Complete
+                          </button>
+                          <button
+                            onClick={() => setCancelId(booking.id)}
+                            className="px-3 py-2.5 rounded-xl border border-red-500/20 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="px-5 py-2.5 rounded-xl bg-amber-500/10 text-amber-500 font-bold text-[10px] border border-amber-500/20 flex items-center gap-2">
+                            <Clock size={12} />
+                            Upcoming
+                          </div>
+                          <button
+                            onClick={() => setCancelId(booking.id)}
+                            className="px-3 py-2.5 rounded-xl border border-red-500/20 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
               );
@@ -434,7 +426,7 @@ export const TherapistSessionsPage = () => {
             {pastAndCancelled.map((booking) => {
               const patientName = typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).name : `Patient #${typeof booking.userId === 'string' ? booking.userId.slice(-4) : ''}`;
               const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
-              
+
               let sessionTime = "Scheduled";
               if (typeof booking.slotId === 'object') {
                 const start = new Date(booking.slotId.startTime);
@@ -445,38 +437,37 @@ export const TherapistSessionsPage = () => {
               return (
                 <div key={booking.id} className="dash-card p-5 flex items-center justify-between gap-4 opacity-75">
                   <div className="flex items-center gap-4">
-                     <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 border border-slate-200 dark:border-white/10">
-                        <span className="text-[9px] font-black uppercase leading-none">{format(sessionDate, "EEE")}</span>
-                        <span className="text-lg font-black leading-none">{format(sessionDate, "d")}</span>
-                     </div>
-                     <div>
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h4 className="font-bold text-slate-900 dark:text-white">{patientName}</h4>
-                          <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${
-                            booking.status === "completed" 
-                              ? "bg-brand-500/10 text-brand-500" 
-                              : booking.status === "cancelled" 
-                                ? "bg-red-500/10 text-red-500" 
-                                : "bg-slate-500/10 text-slate-500"
+                    <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 border border-slate-200 dark:border-white/10">
+                      <span className="text-[9px] font-black uppercase leading-none">{format(sessionDate, "EEE")}</span>
+                      <span className="text-lg font-black leading-none">{format(sessionDate, "d")}</span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h4 className="font-bold text-slate-900 dark:text-white">{patientName}</h4>
+                        <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${booking.status === "completed"
+                            ? "bg-brand-500/10 text-brand-500"
+                            : booking.status === "cancelled"
+                              ? "bg-red-500/10 text-red-500"
+                              : "bg-slate-500/10 text-slate-500"
                           }`}>
-                            {booking.status}
-                          </span>
+                          {booking.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
+                        <span className="flex items-center gap-1"><Clock size={12} /> {sessionTime}</span>
+                      </div>
+                      {booking.status === "cancelled" && (
+                        <div className="mt-1 text-[10px] text-red-500 font-medium">
+                          <span className="font-bold uppercase mr-1">Reason:</span>
+                          {booking.cancellationReason || "No reason provided"}
+                          {booking.cancelledBy && (
+                            <span className="text-slate-400 text-[9px] ml-2">
+                              (Cancelled by {booking.cancelledBy === (typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).id : booking.userId) ? "Patient" : "You"})
+                            </span>
+                          )}
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
-                          <span className="flex items-center gap-1"><Clock size={12} /> {sessionTime}</span>
-                        </div>
-                        {booking.status === "cancelled" && (
-                          <div className="mt-1 text-[10px] text-red-500 font-medium">
-                            <span className="font-bold uppercase mr-1">Reason:</span>
-                            {booking.cancellationReason || "No reason provided"}
-                            {booking.cancelledBy && (
-                              <span className="text-slate-400 text-[9px] ml-2">
-                                (Cancelled by {booking.cancelledBy === (typeof booking.userId === 'object' && booking.userId !== null ? (booking.userId as { id: string; name: string }).id : booking.userId) ? "Patient" : "You"})
-                              </span>
-                            )}
-                          </div>
-                        )}
-                     </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

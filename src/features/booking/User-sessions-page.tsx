@@ -8,6 +8,7 @@ import { CheckoutForm } from "./components/CheckoutForm";
 import { PaymentTimer } from "./components/PaymentTimer";
 import { CancellationModal } from "./components/CancellationModal";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export const UserSessionsPage = () => {
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
@@ -22,6 +23,7 @@ export const UserSessionsPage = () => {
   } | null>(null);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState<BookingResponse | null>(null);
+  const navigate = useNavigate();
 
   // Pagination State
   const [page, setPage] = useState(1);
@@ -60,8 +62,12 @@ export const UserSessionsPage = () => {
         platformFee: res.data.platformFee ?? 0,
         amount: res.data.amount,
       });
-    } finally{
-         setSelectedBooking(null);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to initialize payment";
+      toast.error(msg);
+      setSelectedBooking(null);
+      setClientSecret(null);
+      setPaymentBreakdown(null);
     }
   };
 
@@ -72,7 +78,7 @@ export const UserSessionsPage = () => {
       await bookingService.cancelBooking(bookingToCancel.id, reason);
       toast.success("Appointment cancelled successfully", { id: loadingToast });
       fetchBookings(page, limit);
-    }finally {
+    } finally {
       setIsCancelModalOpen(false);
       setBookingToCancel(null);
     }
@@ -140,7 +146,7 @@ export const UserSessionsPage = () => {
             const rawTherapistName = typeof booking.therapistId === 'object' ? booking.therapistId.name : 'Therapist';
             const therapistName = rawTherapistName.startsWith("Dr. ") ? rawTherapistName : `Dr. ${rawTherapistName}`;
             const sessionDate = typeof booking.slotId === 'object' ? new Date(booking.slotId.startTime) : new Date(booking.createdAt);
-            
+
             let sessionTime = "Scheduled";
             let durationText = "60 Minutes";
             if (typeof booking.slotId === 'object') {
@@ -160,7 +166,7 @@ export const UserSessionsPage = () => {
                     <span className="text-[10px] font-bold uppercase leading-none">{format(sessionDate, "MMM")}</span>
                     <span className="text-xl font-bold leading-none">{format(sessionDate, "d")}</span>
                   </div>
-                  
+
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2 mb-1">
                       <span className={`px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase flex items-center gap-1 ${getStatusBadge(booking.status)}`}>
@@ -212,36 +218,19 @@ export const UserSessionsPage = () => {
                 </div>
 
                 <div className="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
-                    {booking.status === "awaiting_payment" && (
-                      <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
-                        <PaymentTimer 
-                          updatedAt={booking.updatedAt} 
-                          onExpire={() => fetchBookings(page, limit)} 
-                        />
-                        <div className="flex items-center gap-2 w-full sm:w-auto">
-                          <button 
-                            onClick={() => handlePayNow(booking)}
-                            className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
-                          >
-                            <CreditCard size={16} />
-                            Pay Now
-                          </button>
-                          <button
-                            onClick={() => {
-                              setBookingToCancel(booking);
-                              setIsCancelModalOpen(true);
-                            }}
-                            className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                    {(booking.status === "accepted" || booking.status === "confirmed") && (
+                  {booking.status === "awaiting_payment" && (
+                    <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
+                      <PaymentTimer
+                        updatedAt={booking.updatedAt}
+                        onExpire={() => fetchBookings(page, limit)}
+                      />
                       <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition-transform">
-                          Join Session
+                        <button
+                          onClick={() => handlePayNow(booking)}
+                          className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
+                        >
+                          <CreditCard size={16} />
+                          Pay Now
                         </button>
                         <button
                           onClick={() => {
@@ -253,101 +242,122 @@ export const UserSessionsPage = () => {
                           Cancel
                         </button>
                       </div>
-                    )}
-                    {booking.status === "pending" && (
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                          Reschedule
-                        </button>
-                        <button
-                          onClick={() => {
-                            setBookingToCancel(booking);
-                            setIsCancelModalOpen(true);
-                          }}
-                          className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    )}
-                    {booking.status !== "awaiting_payment" && booking.status !== "accepted" && booking.status !== "confirmed" && booking.status !== "pending" && (
-                      <button className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-brand-500 transition-colors">
-                        <MoreVertical size={20} />
+                    </div>
+                  )}
+                  {(booking.status === "accepted" || booking.status === "confirmed") && (
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <button
+                        onClick={() => navigate(`/dashboard/session/${booking.id}`)}
+                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.02] transition-transform flex items-center gap-2"
+                      >
+                        <Video size={14} />
+                        Join Session
                       </button>
-                    )}
-                  </div>
+                      <button
+                        onClick={() => {
+                          setBookingToCancel(booking);
+                          setIsCancelModalOpen(true);
+                        }}
+                        className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  {booking.status === "pending" && (
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                        Reschedule
+                      </button>
+                      <button
+                        onClick={() => {
+                          setBookingToCancel(booking);
+                          setIsCancelModalOpen(true);
+                        }}
+                        className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-500/25 text-red-500 font-semibold text-xs hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  {booking.status !== "awaiting_payment" && booking.status !== "accepted" && booking.status !== "confirmed" && booking.status !== "pending" && (
+                    <button className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-brand-500 transition-colors">
+                      <MoreVertical size={20} />
+                    </button>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        )}
-
-        {!isLoading && totalPages > 1 && (
-          <div className="mt-6 flex items-center justify-between">
-            <p className="text-sm text-slate-500">
-              Page {page} of {totalPages}
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-              >
-                Previous
-              </button>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Payment Modal */}
-        {selectedBooking && clientSecret && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto relative bg-[#100818] rounded-4xl border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300 custom-scrollbar">
-              <button 
-                onClick={() => { setSelectedBooking(null); setClientSecret(null); setPaymentBreakdown(null); }}
-                className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-400 hover:text-white transition-colors z-10"
-              >
-                <X size={20} />
-              </button>
-              
-              <div className="p-8">
-                <StripePaymentWrapper clientSecret={clientSecret}>
-                  <CheckoutForm 
-                    amount={paymentBreakdown?.amount ?? (typeof selectedBooking.therapistId === 'object' ? selectedBooking.therapistId.consultationFee : 0)} 
-                    consultationFee={paymentBreakdown?.consultationFee}
-                    platformFee={paymentBreakdown?.platformFee}
-                    commissionPercentage={paymentBreakdown?.commissionPercentage}
-                    bookingId={selectedBooking.id}
-                    onSuccess={() => {
-                      toast.success("Payment successful!");
-                      setSelectedBooking(null);
-                      setClientSecret(null);
-                      setPaymentBreakdown(null);
-                      fetchBookings(page, limit);
-                    }}
-                  />
-                </StripePaymentWrapper>
               </div>
+            );
+          })}
+        </div>
+      )}
+
+      {!isLoading && totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between">
+          <p className="text-sm text-slate-500">
+            Page {page} of {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Modal */}
+      {selectedBooking && clientSecret && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto relative bg-[#100818] rounded-4xl border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300 custom-scrollbar">
+            <button
+              onClick={() => { setSelectedBooking(null); setClientSecret(null); setPaymentBreakdown(null); }}
+              className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-400 hover:text-white transition-colors z-10"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="p-8">
+              <StripePaymentWrapper clientSecret={clientSecret}>
+                <CheckoutForm
+                  amount={paymentBreakdown?.amount ?? (typeof selectedBooking.therapistId === 'object' ? selectedBooking.therapistId.consultationFee : 0)}
+                  consultationFee={paymentBreakdown?.consultationFee}
+                  platformFee={paymentBreakdown?.platformFee}
+                  commissionPercentage={paymentBreakdown?.commissionPercentage}
+                  bookingId={selectedBooking.id}
+                  onSuccess={() => {
+                    toast.success("Payment successful!");
+                    setSelectedBooking(null);
+                    setClientSecret(null);
+                    setPaymentBreakdown(null);
+                    fetchBookings(page, limit);
+                  }}
+                />
+              </StripePaymentWrapper>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        <CancellationModal
-          isOpen={isCancelModalOpen}
-          onClose={() => {
-            setIsCancelModalOpen(false);
-            setBookingToCancel(null);
-          }}
-          onConfirm={handleCancelBooking}
-          booking={bookingToCancel}
-        />
-      </div>
-    );
-  };
+      <CancellationModal
+        isOpen={isCancelModalOpen}
+        onClose={() => {
+          setIsCancelModalOpen(false);
+          setBookingToCancel(null);
+        }}
+        onConfirm={handleCancelBooking}
+        booking={bookingToCancel}
+      />
+    </div>
+  );
+};

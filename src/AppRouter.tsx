@@ -30,6 +30,7 @@ import { useThemeStore } from "./store/use-theme-store.ts";
 import { TherapistProfilePage } from "./features/therapist/TherapistProfilePage.tsx";
 import { LevelJourneyPage } from "./features/level/LevelJourneyPage.tsx";
 import { AiCompanionPage } from "./features/user/AiCompanionPage.tsx";
+import { VideoCallPage } from "./features/call/VideoCallPage.tsx";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -102,6 +103,7 @@ export const AppRouter = () => {
             <Route path="wallet" element={<UserWalletPage />} />
             <Route path="profile" element={<UserProfilePage />} />
             <Route path="journey" element={<LevelJourneyPage />} />
+            <Route path="session/:bookingId" element={<VideoCallPage />} />
           </Route>
 
           {/* ── Therapist auth ───────────────────────── */}
@@ -122,6 +124,7 @@ export const AppRouter = () => {
             <Route path="wallet" element={<TherapistWalletPage />} />
             <Route path="profile" element={<TherapistProfilePage />} />
             <Route path="settings" element={<TherapistDashboardPage />} />
+            <Route path="session/:bookingId" element={<VideoCallPage />} />
           </Route>
 
           {/* ── Admin ────────────────────────────────── */}
