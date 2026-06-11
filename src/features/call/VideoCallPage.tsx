@@ -12,9 +12,12 @@ import {
     Wifi,
     WifiOff,
     Loader2,
+    Circle,
+    StopCircle,
 } from "lucide-react";
 import { useWebRTC } from "./hooks/useWebRTC.ts";
 import { STATUS_CONFIG } from "../../domain/model/index.ts";
+
 export const VideoCallPage = () => {
     const { bookingId } = useParams<{ bookingId: string }>();
     const navigate = useNavigate();
@@ -26,10 +29,13 @@ export const VideoCallPage = () => {
         isCameraOff,
         remoteMuted,
         remoteCameraOff,
+        isRecording,
         toggleMute,
         toggleCamera,
         joinCall,
         leaveCall,
+        startRecording,
+        stopRecording,
     } = useWebRTC();
 
     const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -40,32 +46,24 @@ export const VideoCallPage = () => {
     const [callDuration, setCallDuration] = useState(0);
     const durationTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    // Join on mount
     useEffect(() => {
         if (!bookingId) return;
-
         void joinCall(bookingId);
-
-        return () => {
-            leaveCall();
-        };
+        return () => { leaveCall(); };
     }, [bookingId, joinCall, leaveCall]);
 
-    // Attach local stream
     useEffect(() => {
         if (localVideoRef.current && localStream) {
             localVideoRef.current.srcObject = localStream;
         }
     }, [localStream]);
 
-    // Attach remote stream
     useEffect(() => {
         if (remoteVideoRef.current && remoteStream) {
             remoteVideoRef.current.srcObject = remoteStream;
         }
     }, [remoteStream]);
 
-    // Duration counter when connected
     useEffect(() => {
         if (callStatus === "connected") {
             durationTimerRef.current = setInterval(() => {
@@ -77,7 +75,6 @@ export const VideoCallPage = () => {
         };
     }, [callStatus]);
 
-    // Auto-hide controls when connected
     const handleMouseMove = () => {
         setShowControls(true);
         if (controlsTimerRef.current) clearTimeout(controlsTimerRef.current);
@@ -86,7 +83,6 @@ export const VideoCallPage = () => {
         }
     };
 
-    // Navigate away when call ends
     useEffect(() => {
         if (callStatus === "ended") {
             const timer = setTimeout(() => navigate(-1), 2500);
@@ -103,6 +99,14 @@ export const VideoCallPage = () => {
     const handleLeave = () => {
         leaveCall();
         navigate(-1);
+    };
+
+    const handleToggleRecording = () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
     };
 
     const statusCfg = STATUS_CONFIG[callStatus];
@@ -168,7 +172,6 @@ export const VideoCallPage = () => {
                     </>
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-                        {/* Ambient orbs while waiting */}
                         {["10%", "60%"].map((top, i) => (
                             <motion.div
                                 key={i}
@@ -188,7 +191,6 @@ export const VideoCallPage = () => {
                                 }}
                             />
                         ))}
-
                         {callStatus === "connecting" || callStatus === "waiting" ? (
                             <motion.div
                                 animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }}
@@ -223,8 +225,7 @@ export const VideoCallPage = () => {
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4"
                         style={{
-                            background:
-                                "linear-gradient(to bottom, rgba(7,3,12,0.8), transparent)",
+                            background: "linear-gradient(to bottom, rgba(7,3,12,0.8), transparent)",
                         }}
                     >
                         <div className="flex items-center gap-3">
@@ -246,19 +247,51 @@ export const VideoCallPage = () => {
                             </span>
                         </div>
 
-                        {callStatus === "connected" && (
-                            <div
-                                className="flex items-center gap-2 px-3 py-1 rounded-full font-mono text-sm"
-                                style={{
-                                    background: "rgba(255,255,255,0.08)",
-                                    color: "var(--fg-on-dark)",
-                                    border: "1px solid rgba(255,255,255,0.12)",
-                                }}
-                            >
-                                <Wifi size={12} style={{ color: "var(--accent-secondary)" }} />
-                                {formatDuration(callDuration)}
-                            </div>
-                        )}
+                        <div className="flex items-center gap-3">
+                            {/* Recording indicator pill */}
+                            <AnimatePresence>
+                                {isRecording && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.85 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.85 }}
+                                        className="flex items-center gap-1.5 px-3 py-1 rounded-full"
+                                        style={{
+                                            background: "rgba(239,68,68,0.15)",
+                                            border: "1px solid rgba(239,68,68,0.35)",
+                                        }}
+                                    >
+                                        {/* Pulsing dot */}
+                                        <motion.div
+                                            animate={{ opacity: [1, 0.2, 1] }}
+                                            transition={{ duration: 1.2, repeat: Infinity }}
+                                            className="w-1.5 h-1.5 rounded-full"
+                                            style={{ background: "#ef4444" }}
+                                        />
+                                        <span
+                                            className="text-[11px] font-semibold"
+                                            style={{ color: "#ef4444" }}
+                                        >
+                                            REC
+                                        </span>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            {callStatus === "connected" && (
+                                <div
+                                    className="flex items-center gap-2 px-3 py-1 rounded-full font-mono text-sm"
+                                    style={{
+                                        background: "rgba(255,255,255,0.08)",
+                                        color: "var(--fg-on-dark)",
+                                        border: "1px solid rgba(255,255,255,0.12)",
+                                    }}
+                                >
+                                    <Wifi size={12} style={{ color: "var(--accent-secondary)" }} />
+                                    {formatDuration(callDuration)}
+                                </div>
+                            )}
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -360,8 +393,7 @@ export const VideoCallPage = () => {
                         exit={{ opacity: 0, y: 20 }}
                         className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-center gap-4 px-6 pb-8 pt-12"
                         style={{
-                            background:
-                                "linear-gradient(to top, rgba(7,3,12,0.85), transparent)",
+                            background: "linear-gradient(to top, rgba(7,3,12,0.85), transparent)",
                         }}
                     >
                         {/* Mute */}
@@ -383,6 +415,31 @@ export const VideoCallPage = () => {
                                 <MicOff size={22} style={{ color: "#ef4444" }} />
                             ) : (
                                 <Mic size={22} color="#fff" />
+                            )}
+                        </motion.button>
+
+                        {/* Record */}
+                        <motion.button
+                            whileHover={{ scale: 1.08 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleToggleRecording}
+                            disabled={callStatus !== "connected"}
+                            className="w-14 h-14 rounded-full flex items-center justify-center transition-all"
+                            style={{
+                                background: isRecording
+                                    ? "rgba(239,68,68,0.2)"
+                                    : "rgba(255,255,255,0.12)",
+                                border: isRecording
+                                    ? "1px solid rgba(239,68,68,0.4)"
+                                    : "1px solid rgba(255,255,255,0.15)",
+                                opacity: callStatus !== "connected" ? 0.4 : 1,
+                                cursor: callStatus !== "connected" ? "not-allowed" : "pointer",
+                            }}
+                        >
+                            {isRecording ? (
+                                <StopCircle size={22} style={{ color: "#ef4444" }} />
+                            ) : (
+                                <Circle size={22} color="#fff" />
                             )}
                         </motion.button>
 
