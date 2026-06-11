@@ -124,10 +124,13 @@ export interface UseWebRTCReturn {
   isCameraOff: boolean;
   remoteMuted: boolean;
   remoteCameraOff: boolean;
+  isRecording: boolean;
   toggleMute: () => void;
   toggleCamera: () => void;
   joinCall: (bookingId: string) => Promise<void>;
   leaveCall: () => void;
+  startRecording: () => void;
+  stopRecording: () => void;
 }
 
 export const QUOTES = [

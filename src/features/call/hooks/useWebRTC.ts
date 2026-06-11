@@ -7,7 +7,6 @@ const ICE_SERVERS: RTCIceServer[] = [
     { urls: "stun:stun1.l.google.com:19302" },
 ];
 
-
 export const useWebRTC = (): UseWebRTCReturn => {
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -16,14 +15,19 @@ export const useWebRTC = (): UseWebRTCReturn => {
     const [isCameraOff, setIsCameraOff] = useState(false);
     const [remoteMuted, setRemoteMuted] = useState(false);
     const [remoteCameraOff, setRemoteCameraOff] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
 
     const pcRef = useRef<RTCPeerConnection | null>(null);
     const bookingIdRef = useRef<string>("");
     const isInitiatorRef = useRef<boolean>(false);
     const localStreamRef = useRef<MediaStream | null>(null);
     const remoteStreamRef = useRef<MediaStream | null>(null);
-
     const isActiveRef = useRef<boolean>(false);
+
+    // Recording refs
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const recordingChunksRef = useRef<Blob[]>([]);
+    const animFrameRef = useRef<number | null>(null);
 
     const _createPeerConnection = useCallback(
         (stream: MediaStream): RTCPeerConnection => {
@@ -68,6 +72,64 @@ export const useWebRTC = (): UseWebRTCReturn => {
         },
         []
     );
+
+    const _buildCompositeStream = useCallback((): MediaStream | null => {
+    const remote = remoteStreamRef.current;
+    if (!remote) return null;
+
+    const composite = new MediaStream();
+    remote.getTracks().forEach((track) => composite.addTrack(track));
+    return composite;
+}, []);
+
+    const _teardownRecordingResources = useCallback((): void => {
+    if (animFrameRef.current !== null) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+    }
+}, []);
+
+    const startRecording = useCallback((): void => {
+        if (mediaRecorderRef.current || isRecording) return;
+
+        const composite = _buildCompositeStream();
+        if (!composite) return;
+
+        const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")
+            ? "video/webm;codecs=vp9,opus"
+            : "video/webm";
+
+        const recorder = new MediaRecorder(composite, { mimeType });
+        recordingChunksRef.current = [];
+
+        recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) recordingChunksRef.current.push(e.data);
+        };
+
+        recorder.onstop = () => {
+            const blob = new Blob(recordingChunksRef.current, { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+            a.href = url;
+            a.download = `session-${bookingIdRef.current}-${timestamp}.webm`;
+            a.click();
+            URL.revokeObjectURL(url);
+            recordingChunksRef.current = [];
+            _teardownRecordingResources();
+        };
+
+        recorder.start(1000);
+        mediaRecorderRef.current = recorder;
+        setIsRecording(true);
+    }, [isRecording, _buildCompositeStream, _teardownRecordingResources]);
+
+    const stopRecording = useCallback((): void => {
+        if (!mediaRecorderRef.current || !isRecording) return;
+        mediaRecorderRef.current.stop();
+        mediaRecorderRef.current = null;
+        setIsRecording(false);
+    }, [isRecording]);
 
     const joinCall = useCallback(
         async (bookingId: string): Promise<void> => {
@@ -160,6 +222,14 @@ export const useWebRTC = (): UseWebRTCReturn => {
 
     const leaveCall = useCallback((): void => {
         isActiveRef.current = false;
+
+        if (mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop();
+            mediaRecorderRef.current = null;
+            setIsRecording(false);
+        }
+        _teardownRecordingResources();
+
         socketService.getSocket().emit(CALL_EVENTS.LEAVE, bookingIdRef.current);
 
         localStreamRef.current?.getTracks().forEach((t) => t.stop());
@@ -175,7 +245,7 @@ export const useWebRTC = (): UseWebRTCReturn => {
         setCallStatus("ended");
 
         socketService.disconnect();
-    }, []);
+    }, [_teardownRecordingResources]);
 
     const toggleMute = useCallback((): void => {
         if (!localStream) return;
@@ -219,7 +289,10 @@ export const useWebRTC = (): UseWebRTCReturn => {
         toggleCamera,
         joinCall,
         leaveCall,
-        remoteMuted, 
+        remoteMuted,
         remoteCameraOff,
+        isRecording,
+        startRecording,
+        stopRecording,
     };
 };
