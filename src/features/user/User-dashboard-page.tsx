@@ -176,6 +176,16 @@ export const UserDashboardPage = () => {
             therapist={selectedTherapist}
             isOpen={!!selectedTherapist}
             onClose={() => setSelectedTherapist(null)}
+            onRatingSaved={(therapistId, summary) => {
+              setTherapists((current) =>
+                current.map((therapist) =>
+                  therapist.id === therapistId ? { ...therapist, ...summary } : therapist
+                )
+              );
+              setSelectedTherapist((current) =>
+                current?.id === therapistId ? { ...current, ...summary } : current
+              );
+            }}
             onBook={() => {
               setSelectedTherapist(null);
               window.location.href = "/user/therapists";

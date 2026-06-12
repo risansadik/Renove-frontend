@@ -164,12 +164,26 @@ export interface DashboardData {
 export interface ApprovedTherapist {
   id: string;
   name: string;
+  qualification?: string;
   specialization: string[];
   experience: number;
   consultationFee: number;
   bio: string;
   avatar: string;
   profileImage?: string;
+  averageRating?: number;
+  totalRatings?: number;
+}
+
+export interface TherapistReviewStatus {
+  canReview: boolean;
+  userRating: number | null;
+}
+
+export interface TherapistRatingResult {
+  averageRating: number;
+  totalRatings: number;
+  userRating: number;
 }
 
 export const userDashboardService = {
@@ -189,6 +203,12 @@ export const userDashboardService = {
     if (search.trim()) params.set("search", search.trim());
     return apiClient.get<ApiResponse<ApprovedTherapist[]>>(`${API_ROUTES.USER.THERAPISTS}?${params.toString()}`);
   },
+
+  getTherapistReviewStatus: (therapistId: string) =>
+    apiClient.get<ApiResponse<TherapistReviewStatus>>(API_ROUTES.USER.THERAPIST_REVIEW(therapistId)),
+
+  rateTherapist: (therapistId: string, rating: number) =>
+    apiClient.post<ApiResponse<TherapistRatingResult>>(API_ROUTES.USER.THERAPIST_REVIEW(therapistId), { rating }),
 };
 
 /* ── Therapist Dashboard ───────────────────────────────── */

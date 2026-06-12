@@ -1,19 +1,72 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { X, Users, Star, Heart, Briefcase, GraduationCap, Calendar } from "lucide-react";
-import type { ApprovedTherapist } from "../../../services/api/auth.service.ts";
+import { userDashboardService, type ApprovedTherapist, type TherapistRatingResult } from "../../../services/api/auth.service.ts";
 
 interface Props {
   therapist: ApprovedTherapist | null;
   isOpen: boolean;
   onClose: () => void;
   onBook: (id: string) => void;
+  onRatingSaved?: (therapistId: string, summary: Pick<TherapistRatingResult, "averageRating" | "totalRatings">) => void;
 }
 
-export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook }: Props) => {
+export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook, onRatingSaved }: Props) => {
+  const [canReview, setCanReview] = useState(false);
+  const [userRating, setUserRating] = useState<number | null>(null);
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [savingRating, setSavingRating] = useState(false);
+
   const getMediaUrl = (path: string | undefined) => {
     if (!path) return '';
     return path.startsWith('http') ? path : `${import.meta.env.VITE_API_BASE_URL}/${path}`;
   };
+
+  useEffect(() => {
+    if (!isOpen || !therapist?.id) return;
+
+    let active = true;
+    setReviewLoading(true);
+    userDashboardService.getTherapistReviewStatus(therapist.id)
+      .then((response) => {
+        if (!active) return;
+        const status = response.data.data;
+        setCanReview(status?.canReview ?? false);
+        setUserRating(status?.userRating ?? null);
+      })
+      .finally(() => {
+        if (active) setReviewLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [isOpen, therapist?.id]);
+
+  const handleRating = async (rating: number) => {
+    if (!therapist || savingRating) return;
+
+    setSavingRating(true);
+    try {
+      const response = await userDashboardService.rateTherapist(therapist.id, rating);
+      const result = response.data.data;
+      if (!result) return;
+      setUserRating(result.userRating);
+      onRatingSaved?.(therapist.id, {
+        averageRating: result.averageRating,
+        totalRatings: result.totalRatings,
+      });
+      toast.success("Rating saved");
+    } finally {
+      setSavingRating(false);
+    }
+  };
+
+  const ratingLabel = ((therapist?.averageRating ?? 0) > 0)
+    ? `${therapist?.averageRating?.toFixed(1)}/5`
+    : "New";
 
   return (
     <AnimatePresence>
@@ -73,7 +126,7 @@ export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook }: Pr
                   <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                     {[
                       { icon: Briefcase, label: `${therapist.experience}y Exp.` },
-                      { icon: Star, label: "4.9/5" },
+                      { icon: Star, label: ratingLabel },
                       { icon: Heart, label: "120+ Clients" },
                     ].map(({ icon: Icon, label }) => (
                       <div key={label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
@@ -107,6 +160,43 @@ export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook }: Pr
                       {spec}
                     </span>
                   ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-3 flex items-center gap-2 text-base" style={{ color: "var(--fg-primary)" }}>
+                  <Star size={17} style={{ color: "var(--accent-primary)" }} /> Your Rating
+                </h3>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((rating) => {
+                      const activeRating = hoverRating ?? userRating ?? 0;
+                      return (
+                        <button
+                          key={rating}
+                          type="button"
+                          disabled={!canReview || reviewLoading || savingRating}
+                          onClick={() => handleRating(rating)}
+                          onMouseEnter={() => setHoverRating(rating)}
+                          onMouseLeave={() => setHoverRating(null)}
+                          className="w-9 h-9 flex items-center justify-center rounded-lg transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                          style={{ color: rating <= activeRating ? "#f59e0b" : "var(--fg-muted)" }}
+                          aria-label={`Rate ${rating} star${rating === 1 ? "" : "s"}`}
+                        >
+                          <Star size={22} fill={rating <= activeRating ? "currentColor" : "none"} />
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
+                    {reviewLoading
+                      ? "Checking session history..."
+                      : canReview
+                        ? userRating
+                          ? "You can update your rating anytime."
+                          : "Rate after your completed session."
+                        : "Available after you attend a completed session."}
+                  </p>
                 </div>
               </div>
             </div>

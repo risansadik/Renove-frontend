@@ -14,6 +14,8 @@ interface Therapist {
   consultationFee: number;
   profileImage?: string;
   bio: string;
+  averageRating?: number;
+  totalRatings?: number;
 }
 
 import { userDashboardService, type ApprovedTherapist } from "../../../services/api/auth.service";
@@ -51,6 +53,8 @@ export const TherapistList = () => {
           consultationFee: t.consultationFee || 0,
           profileImage: t.profileImage,
           bio: t.bio || "No bio available.",
+          averageRating: t.averageRating ?? 0,
+          totalRatings: t.totalRatings ?? 0,
         })) || [];
         setTherapists(approvedTherapists);
       } finally {
@@ -125,7 +129,7 @@ export const TherapistList = () => {
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">{therapist.name}</h3>
                     <div className="flex items-center gap-1 text-amber-500 font-bold text-sm">
                       <Star size={14} fill="currentColor" />
-                      4.9
+                      {(therapist.averageRating ?? 0) > 0 ? therapist.averageRating?.toFixed(1) : "New"}
                     </div>
                   </div>
                   <p className="text-sm font-medium text-brand-500 mb-1">{therapist.qualification}</p>
@@ -218,6 +222,18 @@ export const TherapistList = () => {
         therapist={profileTherapist}
         isOpen={!!profileTherapist}
         onClose={() => setProfileTherapist(null)}
+        onRatingSaved={(therapistId, summary) => {
+          setTherapists((current) =>
+            current.map((therapist) =>
+              therapist.id === therapistId
+                ? { ...therapist, averageRating: summary.averageRating, totalRatings: summary.totalRatings }
+                : therapist
+            )
+          );
+          setProfileTherapist((current) =>
+            current?.id === therapistId ? { ...current, ...summary } : current
+          );
+        }}
         onBook={(id) => {
           setProfileTherapist(null);
           setSelectedTherapist(therapists.find(t => t.id === id) || null);

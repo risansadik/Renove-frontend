@@ -23,6 +23,7 @@ import { UserRegisterPage } from "./features/user-auth/User-register-page.tsx";
 import { VerifyOtpPage } from "./features/user-auth/Verify-otp-page.tsx";
 import { UserLayout } from "./features/user/User-layout.tsx";
 import { UserDashboardPage } from "./features/user/User-dashboard-page.tsx";
+import { UserProgressPage } from "./features/user/UserProgressPage.tsx";
 import { UserWalletPage } from "./features/user/UserWalletPage.tsx";
 import { UserProfilePage } from "./features/user/UserProfilePage.tsx";
 import { TherapistWalletPage } from "./features/therapist/TherapistWalletPage.tsx";
@@ -100,7 +101,7 @@ export const AppRouter = () => {
           {/* ── User dashboard (layout with sidebar + logout) ─ */}
           <Route path="/dashboard" element={<ProtectedRoute role="user"><UserLayout /></ProtectedRoute>}>
             <Route index element={<UserDashboardPage />} />
-            <Route path="progress" element={<UserDashboardPage />} />
+            <Route path="progress" element={<UserProgressPage />} />
             <Route path="ai-companion" element={<AiCompanionPage />} />
             <Route path="therapists" element={<UserDashboardPage />} />
             <Route path="sessions" element={<UserDashboardPage />} />

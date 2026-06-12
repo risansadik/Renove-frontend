@@ -14,6 +14,7 @@ export const API_ROUTES = {
     MOOD: "/api/user/auth/mood",
     MISSION: (id: string) => `/api/user/auth/missions/${id}`,
     THERAPISTS: "/api/user/auth/therapists",
+    THERAPIST_REVIEW: (id: string) => `/api/user/auth/therapists/${id}/review`,
     LEVELS_GENERATE: "/api/user/auth/levels/generate",
     LEVELS: "/api/user/auth/levels",
     LEVEL_COMPLETE: (id: string) => `/api/user/auth/levels/${id}/complete`,

@@ -152,7 +152,7 @@ export const AdminReportsPage = () => {
 
         {/* Filters row */}
         <div className="flex flex-wrap gap-3 mb-5">
-          <div className="relative flex-1 min-w-[180px]">
+          <div className="relative flex-1 min-w-45">
             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--fg-muted)" }} />
             <input
               value={search}
@@ -212,7 +212,7 @@ export const AdminReportsPage = () => {
                       <span className="capitalize">{report.reporterRole}</span>
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                  <div className="flex flex-col items-end gap-1 shrink-0">
                     <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full" style={{ color: st.color, background: st.bg }}>
                       {st.label}
                     </span>
@@ -250,7 +250,7 @@ export const AdminReportsPage = () => {
       {/* Right panel: detail & actions */}
       {showPanel && selectedReport && (
         <div
-          className="w-80 flex-shrink-0 flex flex-col ml-4 rounded-2xl overflow-y-auto"
+          className="w-80 shrink-0 flex flex-col ml-4 rounded-2xl overflow-y-auto"
           style={{ background: "var(--bg-subtle)", border: "1px solid var(--border-default)" }}
         >
           {/* Panel header */}

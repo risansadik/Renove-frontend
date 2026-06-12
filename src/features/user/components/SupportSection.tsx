@@ -129,7 +129,9 @@ export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
                   <div className="text-right shrink-0">
                     <div className="flex items-center gap-1">
                       <Star size={10} className="text-yellow-500" fill="currentColor" />
-                      <span className="text-xs font-bold" style={{ color: "var(--fg-primary)" }}>4.9</span>
+                      <span className="text-xs font-bold" style={{ color: "var(--fg-primary)" }}>
+                        {(t.averageRating ?? 0) > 0 ? t.averageRating?.toFixed(1) : "New"}
+                      </span>
                     </div>
                     <p className="text-[10px]" style={{ color: "var(--fg-muted)" }}>${t.consultationFee}/hr</p>
                   </div>
