@@ -80,6 +80,8 @@ export interface Therapist {
   isVerified: boolean;
   pendingUpdates?: Partial<Therapist>;
   adminRejectionReason?: string;
+  averageRating?: number;
+  totalRatings?: number;
   createdAt: IsoDateString;
 }
 
@@ -105,6 +107,41 @@ export interface ApiResponse<T = null> {
   meta?: PaginationMeta;
   errors?: unknown;
 }
+
+export interface WalletBalanceCardProps {
+  pendingBalance: number;
+  availableBalance: number;
+  withdrawnBalance: number;
+}
+
+export interface Transaction {
+  id: string;
+  walletId: string;
+  walletType: string;
+  amount: number;
+  type: "credit" | "debit";
+  description: string;
+  status: "pending" | "completed" | "failed";
+  bookingId?: string;
+  consultationFee?: number;
+  commissionPercentage?: number;
+  platformFee?: number;
+  totalPaid?: number;
+  therapistEarnings?: number;
+  refundAmount?: number;
+  createdAt: string;
+}
+
+export interface FinanceStats {
+  totalRevenue: number;
+  totalTherapistEarnings: number;
+  totalPendingPayouts: number;
+  totalWithdrawn: number;
+  totalRefunded: number;
+  commissionPercentage: number;
+  transactions: Transaction[];
+}
+
 
 export interface AuthUserData {
   user: User;
