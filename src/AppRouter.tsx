@@ -31,6 +31,10 @@ import { TherapistProfilePage } from "./features/therapist/TherapistProfilePage.
 import { LevelJourneyPage } from "./features/level/LevelJourneyPage.tsx";
 import { AiCompanionPage } from "./features/user/AiCompanionPage.tsx";
 import { VideoCallPage } from "./features/call/VideoCallPage.tsx";
+import { ReportIssuePage } from "./features/report/ReportIssuePage.tsx";
+import { MyReportsPage } from "./features/report/MyReportsPage.tsx";
+import { ReportDetailsPage } from "./features/report/ReportDetailsPage.tsx";
+import { AdminReportsPage } from "./features/report/AdminReportsPage.tsx";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -104,6 +108,9 @@ export const AppRouter = () => {
             <Route path="profile" element={<UserProfilePage />} />
             <Route path="journey" element={<LevelJourneyPage />} />
             <Route path="session/:bookingId" element={<VideoCallPage />} />
+            <Route path="report" element={<ReportIssuePage reporterContext="user" />} />
+            <Route path="reports" element={<MyReportsPage reportPath="/dashboard/report" detailBasePath="/dashboard/reports" />} />
+            <Route path="reports/:id" element={<ReportDetailsPage backPath="/dashboard/reports" />} />
           </Route>
 
           {/* ── Therapist auth ───────────────────────── */}
@@ -125,6 +132,9 @@ export const AppRouter = () => {
             <Route path="profile" element={<TherapistProfilePage />} />
             <Route path="settings" element={<TherapistDashboardPage />} />
             <Route path="session/:bookingId" element={<VideoCallPage />} />
+            <Route path="report" element={<ReportIssuePage reporterContext="therapist" />} />
+            <Route path="reports" element={<MyReportsPage reportPath="/therapist/report" detailBasePath="/therapist/reports" />} />
+            <Route path="reports/:id" element={<ReportDetailsPage backPath="/therapist/reports" />} />
           </Route>
 
           {/* ── Admin ────────────────────────────────── */}
@@ -137,6 +147,8 @@ export const AppRouter = () => {
             <Route path="finance" element={<AdminFinancePage />} />
             <Route path="profile" element={<AdminProfilePage />} />
             <Route path="reviews" element={<AdminProfileReviewPage />} />
+            <Route path="reports" element={<AdminReportsPage />} />
+            <Route path="reports/:id" element={<ReportDetailsPage backPath="/admin/reports" />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

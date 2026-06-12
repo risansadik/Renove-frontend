@@ -7,7 +7,8 @@ import {
   LayoutDashboard, Users, UserCog, DollarSign, Settings,
   LogOut, Menu, X, FileCheck,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Flag
 } from "lucide-react";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal.tsx";
 import { ThemeToggle } from "../../components/common/ThemeToggle.tsx";
@@ -18,6 +19,7 @@ const navItems = [
   { to: "/admin/therapists", icon: UserCog, label: "Therapists" },
   { to: "/admin/reviews", icon: FileCheck, label: "Profile Reviews" },
   { to: "/admin/finance", icon: DollarSign, label: "Finance" },
+  { to: "/admin/reports", icon: Flag, label: "Reports" },
   { to: "/admin/profile", icon: Settings, label: "Admin Profile" },
 ];
 
