@@ -9,7 +9,7 @@ export interface CreateBookingData {
 
 export interface BookingResponse {
   id: string;
-  userId: string;
+  userId: string | { id: string; name: string; email?: string };
   therapistId: string | { id: string; name: string; consultationFee: number };
   slotId: string | { id: string; startTime: string; endTime: string };
   type: string;

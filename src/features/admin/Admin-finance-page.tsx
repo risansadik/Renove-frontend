@@ -15,34 +15,8 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import type { FinanceStats, Transaction } from "../../domain/model/index.ts";
 
-interface Transaction {
-  id: string;
-  walletId: string;
-  walletType: string;
-  amount: number;
-  type: "credit" | "debit";
-  description: string;
-  status: "pending" | "completed" | "failed";
-  bookingId?: string;
-  consultationFee?: number;
-  commissionPercentage?: number;
-  platformFee?: number;
-  totalPaid?: number;
-  therapistEarnings?: number;
-  refundAmount?: number;
-  createdAt: string;
-}
-
-interface FinanceStats {
-  totalRevenue: number;
-  totalTherapistEarnings: number;
-  totalPendingPayouts: number;
-  totalWithdrawn: number;
-  totalRefunded: number;
-  commissionPercentage: number;
-  transactions: Transaction[];
-}
 
 export const AdminFinancePage = () => {
   const [stats, setStats] = useState<FinanceStats | null>(null);
