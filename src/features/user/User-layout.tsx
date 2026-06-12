@@ -6,7 +6,7 @@ import { userAuthService } from "../../services/api/auth.service.ts";
 import { ConfirmationModal } from "../../components/common/Confirmation-modal.tsx";
 import {
   LayoutDashboard, Brain, CalendarDays, BarChart3, Heart,
-  LogOut, Menu, X, Sparkles, PhoneCall, Flame, Wallet, Settings
+  LogOut, Menu, X, Sparkles, PhoneCall, Flame, Wallet, Settings, Flag
 } from "lucide-react";
 import { ThemeToggle } from "../../components/common/ThemeToggle.tsx";
 
@@ -17,6 +17,7 @@ const navItems = [
   { to: "/dashboard/therapists", icon: Heart, label: "Therapists" },
   { to: "/dashboard/sessions", icon: CalendarDays, label: "Sessions" },
   { to: "/dashboard/wallet", icon: Wallet, label: "Wallet" },
+  { to: "/dashboard/reports", icon: Flag, label: "Reports" },
   { to: "/dashboard/profile", icon: Settings, label: "Settings" },
 ];
 
