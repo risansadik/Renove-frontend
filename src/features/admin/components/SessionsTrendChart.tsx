@@ -56,16 +56,26 @@ export const SessionsTrendChart = ({ data }: Props) => {
   };
 
   const barData: ChartData<"bar"> = {
-    labels: lineData.labels,
-    datasets: lineData.datasets.map((dataset) => ({
-      label: dataset.label,
-      data: dataset.data as number[],
-      backgroundColor: dataset.backgroundColor,
-      borderColor: dataset.borderColor,
-      borderWidth: dataset.borderWidth,
+  labels: points.map((point) => point.label),
+  datasets: [
+    {
+      label: "Booked",
+      data: points.map((point) => point.booked),
+      backgroundColor: "rgba(99, 102, 241, 0.18)",
+      borderColor: "#6366f1",
+      borderWidth: 1,
       borderRadius: 8,
-    })),
-  };
+    },
+    {
+      label: "Completed",
+      data: points.map((point) => point.completed),
+      backgroundColor: "rgba(16, 185, 129, 0.22)",
+      borderColor: "#10b981",
+      borderWidth: 1,
+      borderRadius: 8,
+    },
+  ],
+};
 
   const options: ChartOptions<"line"> = {
     responsive: true,

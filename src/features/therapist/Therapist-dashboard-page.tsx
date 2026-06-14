@@ -202,8 +202,8 @@ export const TherapistDashboardPage = () => {
     );
   }
 
-  const averageRating = therapist?.averageRating ?? 0;
-  const totalRatings = therapist?.totalRatings ?? 0;
+  const averageRating = data?.averageRating ?? therapist?.averageRating ?? 0;
+  const totalRatings = data?.totalRatings ?? therapist?.totalRatings ?? 0;
   const stats = [
     { label: "Today's Sessions", value: overview.todayBookings.length, icon: CalendarDays, tone: "text-brand-600 bg-brand-500/10" },
     { label: "Upcoming Sessions", value: overview.upcomingBookings.length, icon: Clock, tone: "text-indigo-600 bg-indigo-500/10" },

@@ -222,6 +222,8 @@ export interface TherapistDashboardData {
   joinedDaysAgo: number;
   sessionsToday: number;
   upcomingSessionsThisWeek: number;
+  averageRating: number;
+  totalRatings: number;
   wallet: {
     pendingBalance: number;
     availableBalance: number;
