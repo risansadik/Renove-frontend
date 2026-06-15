@@ -16,11 +16,11 @@ import { TherapistForgotPasswordPage } from "./features/therapist-auth/Therapist
 import { TherapistResetPasswordPage } from "./features/therapist-auth/Therapist-reset-password-page.tsx";
 import { TherapistLayout } from "./features/therapist/Therapist-layout.tsx";
 import { TherapistDashboardPage } from "./features/therapist/Therapist-dashboard-page.tsx";
-import { ForgotPasswordPage } from "./features/user-auth/Forgot-password-page.tsx";
-import { ResetPasswordPage } from "./features/user-auth/Reset-password-page.tsx";
-import { UserLoginPage } from "./features/user-auth/User-login-page.tsx";
-import { UserRegisterPage } from "./features/user-auth/User-register-page.tsx";
-import { VerifyOtpPage } from "./features/user-auth/Verify-otp-page.tsx";
+import { ForgotPasswordPage } from "./features/user-auth/forgot-password/pages/Forgot-password-page.tsx";
+import { ResetPasswordPage } from "./features/user-auth/reset-password/pages/Reset-password-page.tsx";
+import { UserLoginPage } from "./features/user-auth/user-login/pages/User-login-page.tsx";
+import { UserRegisterPage } from "./features/user-auth/user-register/pages/User-register-page.tsx";
+import { VerifyOtpPage } from "./features/user-auth/verify-otp/pages/Verify-otp-page.tsx";
 import { UserLayout } from "./features/user/User-layout.tsx";
 import { UserDashboardPage } from "./features/user/User-dashboard-page.tsx";
 import { UserProgressPage } from "./features/user/UserProgressPage.tsx";
