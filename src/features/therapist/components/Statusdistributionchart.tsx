@@ -69,7 +69,7 @@ export const StatusDistributionChart = ({ values }: StatusDistributionChartProps
   };
 
   return (
-    <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6">
+    <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6 h-full flex flex-col">
       <h2 className="font-semibold text-brand-900 dark:text-white mb-5">Session Status Distribution</h2>
 
       <div className="flex flex-wrap gap-4 mb-3 text-xs text-slate-500 dark:text-slate-400">
@@ -88,7 +88,7 @@ export const StatusDistributionChart = ({ values }: StatusDistributionChartProps
         })}
       </div>
 
-      <div className="relative w-full h-48">
+      <div className="relative w-full flex-1 min-h-40">
         <Doughnut
           data={data}
           options={options}
