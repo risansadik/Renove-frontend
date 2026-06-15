@@ -1,5 +1,3 @@
-// src/features/user/AiCompanionPage.tsx
-
 import { motion } from "framer-motion";
 import { Brain } from "lucide-react";
 import { AiCompanion } from "./components/AiCompanion.tsx";
