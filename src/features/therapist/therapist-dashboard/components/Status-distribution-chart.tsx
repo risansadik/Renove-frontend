@@ -1,31 +1,7 @@
 import { useState } from "react";
 import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
 import type { ChartEvent, ActiveElement, TooltipItem } from "chart.js";
-
-ChartJS.register(ArcElement, Tooltip);
-
-export type StatusGroup = "completed" | "upcoming" | "cancelled" | "missed";
-
-const STATUS_LABELS: Record<StatusGroup, string> = {
-  completed: "Completed",
-  upcoming: "Upcoming",
-  cancelled: "Cancelled",
-  missed: "Missed",
-};
-
-const STATUS_COLORS: Record<StatusGroup, { fill: string; border: string }> = {
-  completed: { fill: "#1D9E75", border: "#0F6E56" },
-  upcoming: { fill: "#378ADD", border: "#185FA5" },
-  cancelled: { fill: "#E24B4A", border: "#A32D2D" },
-  missed: { fill: "#BA7517", border: "#854F0B" },
-};
-
-const STATUS_ORDER: StatusGroup[] = ["completed", "upcoming", "cancelled", "missed"];
-
-interface StatusDistributionChartProps {
-  values: Record<StatusGroup, number>;
-}
+import { STATUS_COLORS, STATUS_LABELS, STATUS_ORDER, type StatusDistributionChartProps, type StatusGroup } from "../types/therapist-dashboard.types";
 
 export const StatusDistributionChart = ({ values }: StatusDistributionChartProps) => {
   const [activeStatus, setActiveStatus] = useState<StatusGroup | null>(null);

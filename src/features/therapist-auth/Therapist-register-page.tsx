@@ -121,6 +121,13 @@ export const TherapistRegisterPage = () => {
         }
     };
 
+    const onInvalid = (formErrors: typeof errors) => {
+        const firstError = Object.values(formErrors)[0];
+        if (firstError?.message) {
+            toast.error(firstError.message as string);
+        }
+    };
+
     return (
         <AuthLayout panel={<TherapistPanel />}>
             <div className="auth-card p-8 stagger-2">
@@ -158,7 +165,7 @@ export const TherapistRegisterPage = () => {
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit,onInvalid)}>
                     {step === 0 && (
                         <div className="flex flex-col gap-4">
                             <Input label="Full name" placeholder="Dr. Sarah Connor" error={errors.name?.message} {...register("name")} />

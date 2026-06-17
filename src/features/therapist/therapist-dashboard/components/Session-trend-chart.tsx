@@ -1,26 +1,9 @@
 import { useMemo, useState } from "react";
 import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Tooltip,
-} from "chart.js";
 import type { TooltipItem } from "chart.js";
 import { format, subDays, subWeeks, startOfWeek, isSameDay, isWithinInterval, endOfWeek } from "date-fns";
-import type { BookingResponse } from "../../../services/api/booking.service.ts";
+import type { Range, SessionTrendChartProps } from "../types/therapist-dashboard.types.ts";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip);
-
-type Range = "7d" | "30d";
-
-interface SessionTrendChartProps {
-  completedBookings: BookingResponse[];
-  getSessionStart: (booking: BookingResponse) => Date;
-}
 
 export const SessionTrendChart = ({ completedBookings, getSessionStart }: SessionTrendChartProps) => {
   const [range, setRange] = useState<Range>("7d");
