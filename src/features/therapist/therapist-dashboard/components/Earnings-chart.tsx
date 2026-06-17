@@ -1,27 +1,7 @@
 import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-} from "chart.js";
 import type { TooltipItem } from "chart.js";
 import { TrendingUp } from "lucide-react";
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
-
-const money = (value: number) => `$${Math.round(value).toLocaleString()}`;
-
-interface EarningsChartProps {
-  earningsTrend: { label: string; value: number }[];
-  thisMonthCredits: number;
-  thisYearCredits: number;
-  availableBalance: number;
-  pendingPayouts: number;
-  totalWithdrawn: number;
-  totalRefunds: number;
-}
+import { money, type EarningsChartProps } from "../types/therapist-dashboard.types";
 
 export const EarningsChart = ({
   earningsTrend,
