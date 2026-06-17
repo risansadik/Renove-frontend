@@ -23,7 +23,7 @@ import { UserRegisterPage } from "./features/user-auth/user-register/pages/User-
 import { VerifyOtpPage } from "./features/user-auth/verify-otp/pages/Verify-otp-page.tsx";
 import { UserLayout } from "./features/user/User-layout.tsx";
 import { UserDashboardPage } from "./features/user/user-dashboard/pages/User-dashboard-page.tsx";
-import { UserProgressPage } from "./features/user/UserProgressPage.tsx";
+import { UserProgressPage } from "./features/user/user-progress/pages/UserProgressPage.tsx";
 import { UserWalletPage } from "./features/user/UserWalletPage.tsx";
 import { UserProfilePage } from "./features/user/UserProfilePage.tsx";
 import { TherapistWalletPage } from "./features/therapist/TherapistWalletPage.tsx";
