@@ -1,21 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
-
-import {
-  userDashboardService,
-  type DashboardData,
-} from "../../../services/api/auth.service.ts";
-
-import bookingService, {
-  type BookingResponse,
-} from "../../../services/api/booking.service.ts";
-
-import {
-  type Goal,
-  type JournalEntry,
-} from "../../../domain/model/index.ts";
-
-import { useAuthStore, selectAuthUser } from "../../../store/use-auth-store.ts";
+import { selectAuthUser, useAuthStore } from "../../../../store/use-auth-store";
+import { userDashboardService, type DashboardData } from "../../../../services/api/auth.service";
+import type { BookingResponse } from "../../../../services/api/booking.service";
+import type { Goal, JournalEntry } from "../types/user-progress.types";
+import bookingService from "../../../../services/api/booking.service";
 
 export const useUserProgress = () => {
   const user = useAuthStore(selectAuthUser);
