@@ -10,11 +10,11 @@ import { AdminUsersPage } from "./features/admin/admin-user/pages/Admin-users-pa
 import { AdminFinancePage } from "./features/admin/admin-finance/pages/Admin-finance-page.tsx";
 import { AdminProfilePage } from "./features/admin/admin-profile/pages/AdminProfilePage.tsx";
 import { AdminProfileReviewPage } from "./features/admin/admin-profile-review/pages/AdminProfileReviewPage.tsx";
-import { TherapistLoginPage } from "./features/therapist-auth/Therapist-login-page.tsx";
-import { TherapistRegisterPage } from "./features/therapist-auth/Therapist-register-page.tsx";
-import { TherapistForgotPasswordPage } from "./features/therapist-auth/Therapist-forgot-password-page.tsx";
+import { TherapistLoginPage } from "./features/therapist-auth/login-page/pages/Therapist-login-page.tsx"; 
+import { TherapistRegisterPage } from "./features/therapist-auth/register-page/pages/Therapist-register-page.tsx";
+import { TherapistForgotPasswordPage } from "./features/therapist-auth/forgot-password/pages/Therapist-forgot-password-page.tsx";
 import { TherapistResetPasswordPage } from "./features/therapist-auth/Therapist-reset-password-page.tsx";
-import { TherapistLayout } from "./features/therapist/Therapist-layout.tsx";
+import { TherapistLayout } from "./features/therapist/therapist-layout/layout/Therapist-layout.tsx";
 import { TherapistDashboardPage } from "./features/therapist/therapist-dashboard/pages/Therapist-dashboard-page.tsx";
 import { ForgotPasswordPage } from "./features/user-auth/forgot-password/pages/Forgot-password-page.tsx";
 import { ResetPasswordPage } from "./features/user-auth/reset-password/pages/Reset-password-page.tsx";
