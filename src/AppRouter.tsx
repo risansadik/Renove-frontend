@@ -13,7 +13,7 @@ import { AdminProfileReviewPage } from "./features/admin/admin-profile-review/pa
 import { TherapistLoginPage } from "./features/therapist-auth/login-page/pages/Therapist-login-page.tsx"; 
 import { TherapistRegisterPage } from "./features/therapist-auth/register-page/pages/Therapist-register-page.tsx";
 import { TherapistForgotPasswordPage } from "./features/therapist-auth/forgot-password/pages/Therapist-forgot-password-page.tsx";
-import { TherapistResetPasswordPage } from "./features/therapist-auth/Therapist-reset-password-page.tsx";
+import { TherapistResetPasswordPage } from "./features/therapist-auth/reset-password/pages/Therapist-reset-password-page.tsx";
 import { TherapistLayout } from "./features/therapist/therapist-layout/layout/Therapist-layout.tsx";
 import { TherapistDashboardPage } from "./features/therapist/therapist-dashboard/pages/Therapist-dashboard-page.tsx";
 import { ForgotPasswordPage } from "./features/user-auth/forgot-password/pages/Forgot-password-page.tsx";
@@ -32,10 +32,10 @@ import { TherapistProfilePage } from "./features/therapist/therapist-profile/pag
 import { LevelJourneyPage } from "./features/level/LevelJourneyPage.tsx";
 import { AiCompanionPage } from "./features/user/AI-companion/pages/AiCompanionPage.tsx";
 import { VideoCallPage } from "./features/call/video-call/pages/VideoCallPage.tsx";
-import { ReportIssuePage } from "./features/report/ReportIssuePage.tsx";
-import { MyReportsPage } from "./features/report/MyReportsPage.tsx";
-import { ReportDetailsPage } from "./features/report/ReportDetailsPage.tsx";
-import { AdminReportsPage } from "./features/report/AdminReportsPage.tsx";
+import { ReportIssuePage } from "./features/report/report-issue/pages/ReportIssuePage.tsx";
+import { MyReportsPage } from "./features/report/my-reports/pages/MyReportsPage.tsx";
+import { ReportDetailsPage } from "./features/report/report-details/pages/ReportDetailsPage.tsx";
+import { AdminReportsPage } from "./features/report/admin-reports/pages/AdminReportsPage.tsx";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
