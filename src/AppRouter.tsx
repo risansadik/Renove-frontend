@@ -24,8 +24,8 @@ import { VerifyOtpPage } from "./features/user-auth/verify-otp/pages/Verify-otp-
 import { UserLayout } from "./features/user/User-layout.tsx";
 import { UserDashboardPage } from "./features/user/user-dashboard/pages/User-dashboard-page.tsx";
 import { UserProgressPage } from "./features/user/user-progress/pages/UserProgressPage.tsx";
-import { UserWalletPage } from "./features/user/UserWalletPage.tsx";
-import { UserProfilePage } from "./features/user/UserProfilePage.tsx";
+import { UserWalletPage } from "./features/user/user-wallet/pages/UserWalletPage.tsx";
+import { UserProfilePage } from "./features/user/user-profile/pages/UserProfilePage.tsx";
 import { TherapistWalletPage } from "./features/therapist/TherapistWalletPage.tsx";
 import { useThemeStore } from "./store/use-theme-store.ts";
 import { TherapistProfilePage } from "./features/therapist/TherapistProfilePage.tsx";
