@@ -1,68 +1,20 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { X, Users, Star, Heart, Briefcase, GraduationCap, Calendar } from "lucide-react";
-import { userDashboardService, type ApprovedTherapist, type TherapistRatingResult } from "../../../services/api/auth.service.ts";
+import { useTherapistDetails } from "../hooks/use-therapist-details";
+import type { TherapistDatailsProps } from "../types/user-dashboard.types";
 
-interface Props {
-  therapist: ApprovedTherapist | null;
-  isOpen: boolean;
-  onClose: () => void;
-  onBook: (id: string) => void;
-  onRatingSaved?: (therapistId: string, summary: Pick<TherapistRatingResult, "averageRating" | "totalRatings">) => void;
-}
 
-export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook, onRatingSaved }: Props) => {
-  const [canReview, setCanReview] = useState(false);
-  const [userRating, setUserRating] = useState<number | null>(null);
-  const [hoverRating, setHoverRating] = useState<number | null>(null);
-  const [reviewLoading, setReviewLoading] = useState(false);
-  const [savingRating, setSavingRating] = useState(false);
-
-  const getMediaUrl = (path: string | undefined) => {
-    if (!path) return '';
-    return path.startsWith('http') ? path : `${import.meta.env.VITE_API_BASE_URL}/${path}`;
-  };
-
-  useEffect(() => {
-    if (!isOpen || !therapist?.id) return;
-
-    let active = true;
-    setReviewLoading(true);
-    userDashboardService.getTherapistReviewStatus(therapist.id)
-      .then((response) => {
-        if (!active) return;
-        const status = response.data.data;
-        setCanReview(status?.canReview ?? false);
-        setUserRating(status?.userRating ?? null);
-      })
-      .finally(() => {
-        if (active) setReviewLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [isOpen, therapist?.id]);
-
-  const handleRating = async (rating: number) => {
-    if (!therapist || savingRating) return;
-
-    setSavingRating(true);
-    try {
-      const response = await userDashboardService.rateTherapist(therapist.id, rating);
-      const result = response.data.data;
-      if (!result) return;
-      setUserRating(result.userRating);
-      onRatingSaved?.(therapist.id, {
-        averageRating: result.averageRating,
-        totalRatings: result.totalRatings,
-      });
-      toast.success("Rating saved");
-    } finally {
-      setSavingRating(false);
-    }
-  };
+export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook, onRatingSaved }: TherapistDatailsProps) => {
+  const {
+    canReview,
+    userRating,
+    hoverRating,
+    setHoverRating,
+    reviewLoading,
+    savingRating,
+    getMediaUrl,
+    handleRating,
+  } = useTherapistDetails({ therapist, isOpen, onRatingSaved });
 
   const ratingLabel = ((therapist?.averageRating ?? 0) > 0)
     ? `${therapist?.averageRating?.toFixed(1)}/5`
@@ -102,7 +54,7 @@ export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook, onRa
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                 {/* Avatar */}
                 <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-display font-bold text-white shrink-0 overflow-hidden"
-                  style={{ background: "linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))" }}>
+                  style={{ background: "gradient-linear(135deg, var(--accent-primary), var(--accent-secondary))" }}>
                   {therapist.profileImage ? (
                     <img src={getMediaUrl(therapist.profileImage)} alt={therapist.name} className="w-full h-full object-cover" />
                   ) : (

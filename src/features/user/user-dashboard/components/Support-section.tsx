@@ -1,16 +1,11 @@
 import { motion } from "framer-motion";
 import { Brain, MessageCircle, Users, Star, Heart, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { ApprovedTherapist } from "../../../services/api/auth.service.ts";
+import type { ApprovedTherapist } from "../../../../services/api/auth.service.ts";
+import { AI_PROMPTS, type SupportSectionProps } from "../types/user-dashboard.types.ts";
 
-const AI_PROMPTS = ["I feel triggered", "Motivate me", "I need help", "Distract me"];
 
-interface Props {
-  therapists: ApprovedTherapist[];
-  onSelectTherapist: (t: ApprovedTherapist) => void;
-}
-
-export const SupportSection = ({ therapists, onSelectTherapist }: Props) => (
+export const SupportSection = ({ therapists, onSelectTherapist }: SupportSectionProps) => (
   <section className="py-24 px-4" style={{ background: "var(--bg-subtle)" }}>
     <div className="max-w-7xl mx-auto">
       {/* Header */}

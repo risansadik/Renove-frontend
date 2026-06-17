@@ -22,7 +22,7 @@ import { UserLoginPage } from "./features/user-auth/user-login/pages/User-login-
 import { UserRegisterPage } from "./features/user-auth/user-register/pages/User-register-page.tsx";
 import { VerifyOtpPage } from "./features/user-auth/verify-otp/pages/Verify-otp-page.tsx";
 import { UserLayout } from "./features/user/User-layout.tsx";
-import { UserDashboardPage } from "./features/user/User-dashboard-page.tsx";
+import { UserDashboardPage } from "./features/user/user-dashboard/pages/User-dashboard-page.tsx";
 import { UserProgressPage } from "./features/user/UserProgressPage.tsx";
 import { UserWalletPage } from "./features/user/UserWalletPage.tsx";
 import { UserProfilePage } from "./features/user/UserProfilePage.tsx";
@@ -30,7 +30,7 @@ import { TherapistWalletPage } from "./features/therapist/TherapistWalletPage.ts
 import { useThemeStore } from "./store/use-theme-store.ts";
 import { TherapistProfilePage } from "./features/therapist/TherapistProfilePage.tsx";
 import { LevelJourneyPage } from "./features/level/LevelJourneyPage.tsx";
-import { AiCompanionPage } from "./features/user/AiCompanionPage.tsx";
+import { AiCompanionPage } from "./features/user/AI-companion/pages/AiCompanionPage.tsx";
 import { VideoCallPage } from "./features/call/video-call/pages/VideoCallPage.tsx";
 import { ReportIssuePage } from "./features/report/ReportIssuePage.tsx";
 import { MyReportsPage } from "./features/report/MyReportsPage.tsx";

@@ -15,7 +15,12 @@ import {
   type JournalEntry,
 } from "../../../domain/model/index.ts";
 
+import { useAuthStore, selectAuthUser } from "../../../store/use-auth-store.ts";
+
 export const useUserProgress = () => {
+  const user = useAuthStore(selectAuthUser);
+  const userId = user?.id ?? null;
+
   const [data, setData] = useState<DashboardData | null>(null);
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +47,10 @@ export const useUserProgress = () => {
     useState<string | null>(null);
 
   const [moodLogging, setMoodLogging] = useState(false);
+
+  // Scoped storage keys, namespaced by the current user's id
+  const journalsKey = userId ? `renove_journals_${userId}` : null;
+  const goalsKey = userId ? `renove_goals_${userId}` : null;
 
   const fetchData = useCallback(async () => {
     try {
@@ -70,40 +79,44 @@ export const useUserProgress = () => {
 
   useEffect(() => {
     fetchData();
-
-    const localJournals =
-      localStorage.getItem("renove_journals");
-
-    if (localJournals) {
-      setJournals(JSON.parse(localJournals));
-    }
-
-    const localGoals =
-      localStorage.getItem("renove_goals");
-
-    if (localGoals) {
-      setGoals(JSON.parse(localGoals));
-    }
   }, [fetchData]);
+
+  useEffect(() => {
+    if (!journalsKey) {
+      setJournals([]);
+      return;
+    }
+
+    const localJournals = localStorage.getItem(journalsKey);
+    setJournals(localJournals ? JSON.parse(localJournals) : []);
+  }, [journalsKey]);
+
+  useEffect(() => {
+    if (!goalsKey) {
+      setGoals([]);
+      return;
+    }
+
+    const localGoals = localStorage.getItem(goalsKey);
+    setGoals(localGoals ? JSON.parse(localGoals) : []);
+  }, [goalsKey]);
 
   const saveJournals = (
     items: JournalEntry[]
   ) => {
     setJournals(items);
 
-    localStorage.setItem(
-      "renove_journals",
-      JSON.stringify(items)
-    );
+    if (journalsKey) {
+      localStorage.setItem(journalsKey, JSON.stringify(items));
+    }
   };
 
   const saveGoals = (items: Goal[]) => {
     setGoals(items);
 
-    localStorage.setItem(
-      "renove_goals",
-      JSON.stringify(items)
-    );
+    if (goalsKey) {
+      localStorage.setItem(goalsKey, JSON.stringify(items));
+    }
   };
 
   const handleMoodLog = async (

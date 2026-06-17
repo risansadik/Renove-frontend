@@ -1,23 +1,8 @@
 import { motion } from "framer-motion";
-import { Flame, Star, Award, Heart, Smile, Meh, Frown, Shield, Target, Clock } from "lucide-react";
-import type { DashboardData } from "../../../services/api/auth.service.ts";
+import { Flame, Star, Award, Heart, Shield, Target, Clock } from "lucide-react";
+import { MOOD_OPTIONS, type ProgressSectionProps } from "../types/user-dashboard.types";
 
-const MOOD_OPTIONS = [
-  { value: "great", icon: Smile, label: "Great" },
-  { value: "good", icon: Smile, label: "Good" },
-  { value: "okay", icon: Meh, label: "Okay" },
-  { value: "low", icon: Frown, label: "Low" },
-  { value: "crisis", icon: Frown, label: "Crisis" },
-] as const;
-
-interface Props {
-  data: DashboardData | null;
-  moodSelected: string | null;
-  moodLogging: boolean;
-  onMood: (m: string) => void;
-}
-
-export const ProgressSection = ({ data, moodSelected, moodLogging, onMood }: Props) => {
+export const ProgressSection = ({ data, moodSelected, moodLogging, onMood }: ProgressSectionProps) => {
   const doneMissions = data?.missions.filter((m) => m.done).length ?? 0;
   const totalMissions = data?.missions.length ?? 0;
   const streakDays = data?.streakDays ?? 0;

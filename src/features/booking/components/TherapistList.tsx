@@ -19,7 +19,7 @@ interface Therapist {
 }
 
 import { userDashboardService, type ApprovedTherapist } from "../../../services/api/auth.service";
-import { TherapistDetailsModal } from "../../user/components/Therapist-details-modal";
+import { TherapistDetailsModal } from "../../user/user-dashboard/components/Therapist-details-modal";
 
 export const TherapistList = () => {
   const [therapists, setTherapists] = useState<Therapist[]>([]);

@@ -1,37 +1,8 @@
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, Zap, Brain, Trophy, Shield, Star } from "lucide-react";
-import type { DashboardData } from "../../../services/api/auth.service.ts";
+import { Sparkles, ArrowRight,Trophy } from "lucide-react";
+import { HOW_IT_WORKS, ORB_POSITIONS, type HeroSectionProps } from "../types/user-dashboard.types";
 
-const HOW_IT_WORKS = [
-  { icon: Brain, label: "AI Analyzes You", desc: "Habits, triggers & patterns" },
-  { icon: Zap, label: "World Generated", desc: "A path built for your life" },
-  { icon: Star, label: "Daily Quests", desc: "Adapt as you grow" },
-  { icon: Trophy, label: "Level Up", desc: "Real progress, real rewards" },
-  { icon: Shield, label: "Expert Guides", desc: "AI + human accountability" },
-];
-
-interface OrbPosition {
-  top?: string;
-  left?: string;
-  right?: string;
-  size: number;
-  delay: number;
-}
-
-const ORB_POSITIONS: OrbPosition[] = [
-  { top: "10%", left: "5%", size: 300, delay: 0 },
-  { top: "60%", right: "5%", size: 250, delay: 2 },
-  { top: "30%", left: "40%", size: 180, delay: 1 },
-];
-
-interface Props {
-  data: DashboardData | null;
-  isNew: boolean;
-  greeting: string;
-  onJourneyClick: () => void; 
-}
-
-export const HeroSection = ({ data, isNew, greeting , onJourneyClick}: Props) => (
+export const HeroSection = ({ data, isNew, greeting , onJourneyClick}: HeroSectionProps) => (
   <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-24 overflow-hidden">
 
     {/* Ambient background orbs */}
