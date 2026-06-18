@@ -23,7 +23,7 @@ export interface JourneyOverviewTabProps {
   data: DashboardData | null;
   bookings: BookingResponse[];
   goals: Goal[];
-  journals: any[];
+  journals: JournalEntry[];
   totalSessionsDone: number;
   completedGoalsCount: number;
   moodSelected: string | null;

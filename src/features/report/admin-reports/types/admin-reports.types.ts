@@ -7,7 +7,7 @@ export interface ReportDetailsPanelProps {
   setNoteText: (val: string) => void;
   actionLoading: boolean;
   onClose: () => void;
-  onUpdateStatus: (status: any) => void;
+  onUpdateStatus: (status: ReportStatus) => void;
   onSaveNote: () => void;
 }
 
@@ -32,7 +32,7 @@ export const STATUSES = [
 
 export interface ReportsHeaderProps {
   total: number;
-  reports: any[];
+  reports: Report[];
   filterStatus: string;
   setFilterStatus: (status: ReportStatus | "") => void;
   onRefresh: () => void;
