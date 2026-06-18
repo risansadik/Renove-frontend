@@ -1,7 +1,8 @@
 import { 
   LayoutDashboard, Brain, CalendarDays, BarChart3, 
   Heart, Wallet, Settings, Flag, 
-  type LucideIcon
+  type LucideIcon,
+  MessageCircle
 } from "lucide-react";
 
 export interface IdentityBlockProps {
@@ -35,6 +36,7 @@ export const navItems = [
   { to: "/dashboard/ai-companion", icon: Brain, label: "AI Companion" },
   { to: "/dashboard/therapists", icon: Heart, label: "Therapists" },
   { to: "/dashboard/sessions", icon: CalendarDays, label: "Sessions" },
+  { to: "/dashboard/messages", icon: MessageCircle, label: "Messages" },
   { to: "/dashboard/wallet", icon: Wallet, label: "Wallet" },
   { to: "/dashboard/reports", icon: Flag, label: "Reports" },
   { to: "/dashboard/profile", icon: Settings, label: "Settings" },

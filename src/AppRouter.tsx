@@ -36,6 +36,7 @@ import { ReportIssuePage } from "./features/report/report-issue/pages/ReportIssu
 import { MyReportsPage } from "./features/report/my-reports/pages/MyReportsPage.tsx";
 import { ReportDetailsPage } from "./features/report/report-details/pages/ReportDetailsPage.tsx";
 import { AdminReportsPage } from "./features/report/admin-reports/pages/AdminReportsPage.tsx";
+import { TherapistChatPage } from "./features/therapist-chat/pages/TherapistChatPage.tsx";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -105,6 +106,7 @@ export const AppRouter = () => {
             <Route path="ai-companion" element={<AiCompanionPage />} />
             <Route path="therapists" element={<UserDashboardPage />} />
             <Route path="sessions" element={<UserDashboardPage />} />
+            <Route path="messages" element={<TherapistChatPage />} />
             <Route path="wallet" element={<UserWalletPage />} />
             <Route path="profile" element={<UserProfilePage />} />
             <Route path="journey" element={<LevelJourneyPage />} />
@@ -127,8 +129,7 @@ export const AppRouter = () => {
             <Route path="dashboard" element={<TherapistDashboardPage />} />
             <Route path="sessions" element={<TherapistDashboardPage />} />
             <Route path="availability" element={<TherapistDashboardPage />} />
-            <Route path="clients" element={<TherapistDashboardPage />} />
-            <Route path="messages" element={<TherapistDashboardPage />} />
+            <Route path="messages" element={<TherapistChatPage />} />
             <Route path="wallet" element={<TherapistWalletPage />} />
             <Route path="profile" element={<TherapistProfilePage />} />
             <Route path="settings" element={<TherapistDashboardPage />} />

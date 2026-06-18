@@ -17,11 +17,11 @@ export const AuthLayout = ({ children, panel }: AuthLayoutProps) => (
       {/* Ambient orbs */}
       <motion.div animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.4, 0.2] }}
         transition={{ duration: 8, repeat: Infinity }}
-        className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full pointer-events-none"
+        className="absolute top-[-10%] left-[-10%] w-100 h-100 rounded-full pointer-events-none"
         style={{ background: "radial-gradient(circle, rgba(107,76,122,0.5), transparent 70%)", filter: "blur(50px)" }} />
       <motion.div animate={{ scale: [1.1, 1, 1.1], opacity: [0.15, 0.3, 0.15] }}
         transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-        className="absolute bottom-[-10%] right-[-10%] w-[350px] h-[350px] rounded-full pointer-events-none"
+        className="absolute bottom-[-10%] right-[-10%] w-87.5 h-87.5 rounded-full pointer-events-none"
         style={{ background: "radial-gradient(circle, rgba(74,107,82,0.4), transparent 70%)", filter: "blur(60px)" }} />
 
       {/* Grid overlay */}
@@ -89,7 +89,7 @@ const DefaultPanel = () => (
         { n: "24/7", label: "Expert therapist access" },
       ].map(({ n, label }) => (
         <div key={n} className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: "rgba(107,76,122,0.25)", border: "1px solid rgba(107,76,122,0.4)" }}>
             <span className="text-white font-display font-bold text-sm">{n}</span>
           </div>
