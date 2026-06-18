@@ -121,7 +121,7 @@ export const useTherapistDashboard = () => {
       earningsTrend,
       activity,
     };
-  }, [bookings, transactions, data?.wallet.pendingBalance]);
+  }, [bookings, transactions, data?.wallet.pendingBalance,data?.wallet.availableBalance]);
 
   return {
     therapist,

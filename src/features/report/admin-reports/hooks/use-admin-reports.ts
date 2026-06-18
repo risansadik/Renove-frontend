@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import reportService, { type Report, type ReportStatus, type ReportCategory } from "../../../../services/api/report.service";
 
@@ -19,13 +19,13 @@ export const useAdminReports = () => {
   const limit = 10;
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
-  const fetchReports = async (p: number) => {
+  const fetchReports = useCallback(async (p: number) => {
     setLoading(true);
     try {
       const filters: { status?: ReportStatus; category?: ReportCategory } = {};
       if (filterStatus) filters.status = filterStatus;
       if (filterCategory) filters.category = filterCategory;
-      
+
       const res = await reportService.adminGetAllReports(p, limit, filters);
       if (res.data) {
         setReports(res.data.data);
@@ -36,11 +36,11 @@ export const useAdminReports = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus, filterCategory]);
 
   useEffect(() => {
     fetchReports(page);
-  }, [page, filterStatus, filterCategory]);
+  }, [page, fetchReports]);
 
   const handleSelectReport = (report: Report) => {
     setSelectedReport(report);
