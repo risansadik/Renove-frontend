@@ -41,3 +41,5 @@ export const navItems = [
   { to: "/dashboard/reports", icon: Flag, label: "Reports" },
   { to: "/dashboard/profile", icon: Settings, label: "Settings" },
 ];
+
+

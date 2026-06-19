@@ -44,4 +44,10 @@ export const API_ROUTES = {
     THERAPIST_STATUS: (id: string) => `/api/admin/therapists/${id}/status`,
   },
 
+  NOTIFICATIONS: {
+    LIST: "/api/notifications",
+    MARK_READ: (id: string) => `/api/notifications/${id}/read`,
+    MARK_ALL_READ: "/api/notifications/read-all",
+  },
+
 } as const;
