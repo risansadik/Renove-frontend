@@ -113,4 +113,33 @@ export const QUOTES = [
   { text: "The comeback is always stronger than the setback.", author: "Unknown" },
 ];
 
+export type NotificationType =
+  | "booking_request"
+  | "booking_confirmed"
+  | "booking_rejected"
+  | "booking_cancelled"
+  | "booking_completed"
+  | "session_reminder";
+
+export type NotificationRecipientRole = "user" | "therapist";
+
+export interface Notification {
+  id: string;
+  recipientId: string;
+  recipientRole: NotificationRecipientRole;
+  type: NotificationType;
+  title: string;
+  message: string;
+  isRead: boolean;
+  bookingId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const NOTIFICATION_EVENTS = {
+  JOIN_ROOM: "notification:join",
+  LEAVE_ROOM: "notification:leave",
+  NEW_NOTIFICATION: "notification:new",
+} as const;
+
 
