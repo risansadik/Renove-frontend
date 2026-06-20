@@ -15,6 +15,7 @@ export const API_ROUTES = {
     MISSION: (id: string) => `/api/user/auth/missions/${id}`,
     THERAPISTS: "/api/user/auth/therapists",
     THERAPIST_REVIEW: (id: string) => `/api/user/auth/therapists/${id}/review`,
+    THERAPIST_REVIEWS: (id: string) => `/api/user/auth/therapists/${id}/reviews`,
     LEVELS_GENERATE: "/api/user/auth/levels/generate",
     LEVELS: "/api/user/auth/levels",
     LEVEL_COMPLETE: (id: string) => `/api/user/auth/levels/${id}/complete`,
@@ -34,6 +35,7 @@ export const API_ROUTES = {
     RESET_PASSWORD: "/api/therapist/auth/reset-password",
     LOGOUT: "/api/therapist/auth/logout",
     DASHBOARD: "/api/therapist/auth/dashboard",
+    REVIEWS: "/api/therapist/auth/reviews",
   },
   ADMIN: {
     LOGIN: "/api/admin/login",
