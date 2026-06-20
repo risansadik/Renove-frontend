@@ -45,10 +45,11 @@ export const StatusDistributionChart = ({ values }: StatusDistributionChartProps
   };
 
   return (
-    <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6 h-full flex flex-col">
-      <h2 className="font-semibold text-brand-900 dark:text-white mb-5">Session Status Distribution</h2>
+    <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-4 md:p-6 min-w-0 flex flex-col">
+      <h2 className="font-semibold text-brand-900 dark:text-white mb-4">Session Status Distribution</h2>
 
-      <div className="flex flex-wrap gap-4 mb-3 text-xs text-slate-500 dark:text-slate-400">
+      {/* Legend: wrap on mobile */}
+      <div className="flex flex-wrap gap-x-3 gap-y-2 mb-4 text-xs text-slate-500 dark:text-slate-400">
         {STATUS_ORDER.map((key) => {
           const pct = Math.round((values[key] / total) * 100);
           return (
@@ -64,21 +65,22 @@ export const StatusDistributionChart = ({ values }: StatusDistributionChartProps
         })}
       </div>
 
-      <div className="relative w-full flex-1 min-h-40">
+      {/* Fixed-height chart — no overflow */}
+      <div className="relative w-full h-44 md:h-52">
         <Doughnut
           data={data}
           options={options}
-          aria-label="Doughnut chart of session status distribution: completed, upcoming, cancelled, missed. Click a segment or legend item for details."
+          aria-label="Doughnut chart of session status distribution"
           role="img"
         />
       </div>
 
-      <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-3 min-h-5">
+      <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-3 min-h-5">
         {activeStatus
           ? `${STATUS_LABELS[activeStatus]}: ${values[activeStatus]} session${values[activeStatus] === 1 ? "" : "s"} (${Math.round(
               (values[activeStatus] / total) * 100
             )}% of total)`
-          : "Click a segment or legend item for details"}
+          : "Tap a segment or legend item for details"}
       </p>
     </div>
   );

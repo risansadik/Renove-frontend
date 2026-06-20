@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { useTherapistChat } from "../hooks/use-therapist-chat";
 import { ChatThreadList } from "../components/Chat-thread-list";
@@ -7,6 +8,8 @@ import { useAuthStore, selectAuthSession } from "../../../store/use-auth-store";
 export const TherapistChatPage = () => {
   const session = useAuthStore(selectAuthSession);
   const myId = session?.profile.id ?? "";
+
+  const [mobilePanel, setMobilePanel] = useState<"list" | "chat">("list");
 
   const {
     threads,
@@ -20,15 +23,29 @@ export const TherapistChatPage = () => {
     getOtherPartyName,
   } = useTherapistChat();
 
+const handleSelectThread = async (thread: Parameters<typeof selectThread>[0]) => {
+    await selectThread(thread);
+    setMobilePanel("chat");
+  };
+
+  const handleBack = () => {
+    setMobilePanel("list");
+  };
+
   return (
     <div
-      className="h-full p-6 md:p-8"
+      className="h-full md:p-6 lg:p-8"
       style={{ background: "var(--bg-base)" }}
     >
-      <div className="max-w-6xl mx-auto h-full flex flex-col gap-6">
-        {/* Page heading */}
-        <div>
-          <h1 className="text-3xl font-bold" style={{ color: "var(--fg-primary)" }}>
+      <div className="max-w-6xl mx-auto h-full flex flex-col md:gap-6">
+
+        {/* Page heading — hidden on mobile when chat is open */}
+        <div
+          className={`px-4 pt-4 md:px-0 md:pt-0 shrink-0 ${
+            mobilePanel === "chat" ? "hidden md:block" : "block"
+          }`}
+        >
+          <h1 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--fg-primary)" }}>
             Messages
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--fg-muted)" }}>
@@ -40,24 +57,37 @@ export const TherapistChatPage = () => {
 
         {/* Chat shell */}
         <div
-          className="flex-1 flex rounded-3xl overflow-hidden"
+          className="flex-1 flex overflow-hidden md:rounded-3xl"
           style={{
             background: "var(--bg-base)",
             border: "1px solid var(--border-default)",
             minHeight: "0",
+            // On desktop use fixed height; on mobile fill remaining viewport
             height: "calc(100vh - 220px)",
           }}
         >
-          {/* Left: thread list */}
+          {/* ── LEFT: Thread list ─────────────────────────────────────── */}
+          {/*
+            Mobile:  full-width, shown only when mobilePanel === "list"
+            Desktop: fixed 288px sidebar, always visible
+          */}
           <div
-            className="w-72 shrink-0 flex flex-col"
+            className={`
+              flex flex-col shrink-0
+              ${mobilePanel === "list" ? "flex" : "hidden"}
+              md:flex w-full md:w-72
+            `}
             style={{ borderRight: "1px solid var(--border-default)" }}
           >
+            {/* Sidebar header */}
             <div
               className="px-4 py-4 shrink-0"
               style={{ borderBottom: "1px solid var(--border-default)" }}
             >
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--fg-muted)" }}>
+              <p
+                className="text-xs font-bold uppercase tracking-widest"
+                style={{ color: "var(--fg-muted)" }}
+              >
                 Conversations
               </p>
             </div>
@@ -78,14 +108,24 @@ export const TherapistChatPage = () => {
               <ChatThreadList
                 threads={threads}
                 selectedThreadId={selectedThread?.id}
-                onSelect={(t) => void selectThread(t)}
+                onSelect={(t) => void handleSelectThread(t)}
                 getOtherPartyName={getOtherPartyName}
               />
             )}
           </div>
 
-          {/* Right: chat window or empty state */}
-          <div className="flex-1 flex flex-col min-w-0">
+          {/* ── RIGHT: Chat window ────────────────────────────────────── */}
+          {/*
+            Mobile:  full-width, shown only when mobilePanel === "chat"
+            Desktop: flex-1, always visible
+          */}
+          <div
+            className={`
+              flex-col min-w-0 flex-1
+              ${mobilePanel === "chat" ? "flex" : "hidden"}
+              md:flex
+            `}
+          >
             {selectedThread ? (
               <ChatWindow
                 thread={selectedThread}
@@ -95,8 +135,10 @@ export const TherapistChatPage = () => {
                 myId={myId}
                 otherPartyName={getOtherPartyName(selectedThread)}
                 onSend={sendMessage}
+                onBack={handleBack}
               />
             ) : (
+              /* Empty state — only visible on desktop when nothing is selected */
               <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
                 <div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center"

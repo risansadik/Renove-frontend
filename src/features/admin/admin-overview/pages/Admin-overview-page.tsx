@@ -30,18 +30,17 @@ export const AdminOverviewPage = () => {
 
   return (
     <div className="space-y-8">
-      {/* Title Layout */}
+      {/* Title */}
       <div>
         <h1 className="font-display text-2xl font-bold text-brand-900 dark:text-white mb-1">Admin Dashboard</h1>
         <p className="text-brand-900/60 dark:text-slate-400 text-sm">Platform health, finance, operations, and activity at a glance.</p>
       </div>
 
-      {/* Extracted KPI Cards Panel */}
       <DashboardKpisGrid dashboard={dashboard} money={money} />
 
-      {/* Interactive Activity Trend Analytics Grid */}
-      <section className="grid xl:grid-cols-[1fr_0.85fr] gap-6">
-        <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6">
+      {/* Sessions Trend + Status — stack on mobile, side-by-side on xl */}
+      <section className="grid grid-cols-1 xl:grid-cols-[1fr_0.85fr] gap-6">
+        <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-4 md:p-6 min-w-0 overflow-hidden">
           <div className="mb-5">
             <h2 className="font-semibold text-brand-900 dark:text-white">Sessions Trend</h2>
             <p className="text-xs text-brand-900/50 dark:text-slate-500">Booked and completed sessions over time</p>
@@ -49,7 +48,7 @@ export const AdminOverviewPage = () => {
           <SessionsTrendChart data={dashboard.sessionsTrend} />
         </div>
 
-        <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6">
+        <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-4 md:p-6 min-w-0 overflow-hidden">
           <div className="mb-5">
             <h2 className="font-semibold text-brand-900 dark:text-white">Session Status Distribution</h2>
             <p className="text-xs text-brand-900/50 dark:text-slate-500">Clickable legend with counts and percentages</p>
@@ -58,8 +57,8 @@ export const AdminOverviewPage = () => {
         </div>
       </section>
 
-      {/* Revenue Section */}
-      <section className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6">
+      {/* Revenue */}
+      <section className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-4 md:p-6 min-w-0 overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
           <div>
             <h2 className="font-semibold text-brand-900 dark:text-white">Revenue Growth</h2>
@@ -70,13 +69,8 @@ export const AdminOverviewPage = () => {
         <RevenueGrowthChart data={dashboard.revenueTrend} />
       </section>
 
-      {/* Extracted Action Queues and Feeds */}
       <DashboardOperationsRow dashboard={dashboard} />
-
-      {/* Extracted Ranks, Balances, and Cohort Growth Layout */}
       <DashboardMetricsRow dashboard={dashboard} money={money} />
-
-      {/* Extracted Services Health Status Grid */}
       <DashboardHealthGrid dashboard={dashboard} />
     </div>
   );

@@ -70,13 +70,13 @@ export const SessionTrendChart = ({ completedBookings, getSessionStart }: Sessio
   };
 
   return (
-    <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6">
+    <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-4 md:p-6 min-w-0">
       <div className="flex items-center justify-between gap-3 mb-5">
-        <div>
-          <h2 className="font-semibold text-brand-900 dark:text-white">Session Analytics</h2>
+        <div className="min-w-0">
+          <h2 className="font-semibold text-brand-900 dark:text-white truncate">Session Analytics</h2>
           <p className="text-xs text-brand-900/50 dark:text-slate-500">Completed sessions over time</p>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 shrink-0">
           {(["7d", "30d"] as Range[]).map((option) => (
             <button
               key={option}
@@ -92,7 +92,8 @@ export const SessionTrendChart = ({ completedBookings, getSessionStart }: Sessio
           ))}
         </div>
       </div>
-      <div className="relative w-full h-56">
+      {/* Chart container: fixed height, no overflow */}
+      <div className="relative w-full h-48 md:h-56">
         <Line
           data={data}
           options={options}

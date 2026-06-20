@@ -10,11 +10,11 @@ export const ChatSidebar = ({
   onSelectSession,
   onDeleteSession,
 }: ChatSidebarProps) => (
-  <div className="w-60 shrink-0 flex flex-col" style={{ borderRight: "1px solid var(--border-default)" }}>
-    <div className="p-3" style={{ borderBottom: "1px solid var(--border-default)" }}>
+  <div className="w-full flex flex-col h-full" style={{ borderRight: "1px solid var(--border-default)" }}>
+    <div className="p-3 shrink-0" style={{ borderBottom: "1px solid var(--border-default)" }}>
       <button
         onClick={onNewSession}
-        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all"
+        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all active:scale-[0.98]"
         style={{ background: "var(--accent-primary)", color: "white" }}
       >
         <Plus size={15} /> New Chat
@@ -34,7 +34,7 @@ export const ChatSidebar = ({
         sessions.map((session) => (
           <div
             key={session.id}
-            className="group flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer transition-all"
+            className="group flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all active:scale-[0.98]"
             style={{
               background: activeSessionId === session.id ? "var(--accent-glow)" : "transparent",
               border: activeSessionId === session.id ? "1px solid var(--border-accent)" : "1px solid transparent",
@@ -59,7 +59,8 @@ export const ChatSidebar = ({
                 e.stopPropagation();
                 onDeleteSession(session.id);
               }}
-              className="opacity-0 group-hover:opacity-100 transition-opacity"
+              // Always visible on touch; hover-only on desktop
+              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
               style={{ color: "var(--fg-muted)" }}
             >
               {deletingId === session.id ? (

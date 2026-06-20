@@ -1,4 +1,4 @@
-import { Bot, Plus, Loader2, Send } from "lucide-react";
+import { Bot, Plus, Loader2, Send, ArrowLeft } from "lucide-react";
 import type { ChatWindowProps } from "../types/AI-companion.types";
 
 export const ChatWindow = ({
@@ -13,24 +13,45 @@ export const ChatWindow = ({
   onNewSession,
   onSend,
   onKeyDown,
-}: ChatWindowProps) => (
-  <div className="flex-1 flex flex-col min-w-0">
-    <div className="flex items-center gap-3 px-4 py-3 shrink-0" style={{ borderBottom: "1px solid var(--border-default)" }}>
-      <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "var(--accent-primary)" }}>
+  onBack,
+}: ChatWindowProps & { onBack?: () => void }) => (
+  <div className="flex-1 flex flex-col min-w-0 h-full">
+    {/* Header */}
+    <div
+      className="flex items-center gap-3 px-4 py-3 shrink-0"
+      style={{ borderBottom: "1px solid var(--border-default)" }}
+    >
+      {/* Back button — mobile only */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+          style={{ color: "var(--accent-primary)" }}
+          aria-label="Back to conversations"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      )}
+
+      <div
+        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+        style={{ background: "var(--accent-primary)" }}
+      >
         <Bot size={16} color="white" />
       </div>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold" style={{ color: "var(--fg-default)" }}>Nova</p>
         <p className="text-xs" style={{ color: "var(--fg-muted)" }}>
           {streaming ? "Typing…" : "Your recovery companion"}
         </p>
       </div>
-      <span className="flex items-center gap-1.5 text-xs font-mono" style={{ color: "var(--fg-muted)" }}>
+      <span className="flex items-center gap-1.5 text-xs font-mono shrink-0" style={{ color: "var(--fg-muted)" }}>
         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
         Online
       </span>
     </div>
 
+    {/* Messages */}
     <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
       {loadingMessages ? (
         <div className="flex-1 flex items-center justify-center">
@@ -52,7 +73,7 @@ export const ChatWindow = ({
         messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
-              className="max-w-[75%] px-4 py-2 rounded-2xl text-sm leading-relaxed"
+              className="max-w-[80%] md:max-w-[75%] px-4 py-2 rounded-2xl text-sm leading-relaxed"
               style={
                 msg.role === "user"
                   ? { background: "var(--accent-primary)", color: "white", borderBottomRightRadius: "4px" }
@@ -67,7 +88,11 @@ export const ChatWindow = ({
       <div ref={bottomRef} />
     </div>
 
-    <div className="px-4 py-3 flex items-end gap-2 shrink-0" style={{ borderTop: "1px solid var(--border-default)" }}>
+    {/* Input */}
+    <div
+      className="px-4 py-3 flex items-end gap-2 shrink-0"
+      style={{ borderTop: "1px solid var(--border-default)" }}
+    >
       <textarea
         rows={1}
         value={input}

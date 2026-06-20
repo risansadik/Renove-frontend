@@ -3,8 +3,8 @@ import { Brain } from "lucide-react";
 import { AiCompanion } from "../components/AI-companion.tsx";
 
 export const AiCompanionPage = () => (
-  <div className="min-h-full p-6 md:p-8" style={{ background: "var(--bg-base)" }}>
-    <div className="max-w-3xl mx-auto flex flex-col gap-6">
+  <div className="min-h-full p-4 md:p-6 lg:p-8" style={{ background: "var(--bg-base)" }}>
+    <div className="max-w-3xl mx-auto flex flex-col gap-4 md:gap-6">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
