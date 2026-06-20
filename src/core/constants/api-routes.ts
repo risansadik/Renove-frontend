@@ -23,6 +23,11 @@ export const API_ROUTES = {
     CHAT_SESSION: (id: string) => `/api/user/chat/sessions/${id}`,
     CHAT_SESSION_MESSAGES: (id: string) => `/api/user/chat/sessions/${id}/messages`,
     CHAT_MESSAGE: "/api/user/chat/message",
+    PROGRESS_JOURNALS: "/api/user/auth/progress/journals",
+    PROGRESS_JOURNAL: (id: string) => `/api/user/auth/progress/journals/${id}`,
+    PROGRESS_GOALS: "/api/user/auth/progress/goals",
+    PROGRESS_GOAL: (id: string) => `/api/user/auth/progress/goals/${id}`,
+    PROGRESS_GOAL_TOGGLE: (id: string) => `/api/user/auth/progress/goals/${id}/toggle`,
 
   },
   THERAPIST: {

@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
-import { selectAuthUser, useAuthStore } from "../../../../store/use-auth-store";
+import { useAuthStore, selectAuthUser } from "../../../../store/use-auth-store";
 import { userDashboardService, type DashboardData } from "../../../../services/api/auth.service";
 import type { BookingResponse } from "../../../../services/api/booking.service";
 import type { Goal, JournalEntry } from "../types/user-progress.types";
 import bookingService from "../../../../services/api/booking.service";
+import userProgressService from "../../../../services/api/user-progress.service";
 
 export const useUserProgress = () => {
   const user = useAuthStore(selectAuthUser);
-  const userId = user?.id ?? null;
 
   const [data, setData] = useState<DashboardData | null>(null);
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
@@ -19,6 +19,7 @@ export const useUserProgress = () => {
   >("overview");
 
   const [journals, setJournals] = useState<JournalEntry[]>([]);
+  const [journalsLoading, setJournalsLoading] = useState(false);
   const [newJournalTitle, setNewJournalTitle] = useState("");
   const [newJournalContent, setNewJournalContent] = useState("");
   const [newJournalMood, setNewJournalMood] = useState("great");
@@ -27,6 +28,7 @@ export const useUserProgress = () => {
     useState<JournalEntry | null>(null);
 
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [goalsLoading, setGoalsLoading] = useState(false);
   const [newGoalText, setNewGoalText] = useState("");
   const [newGoalCategory, setNewGoalCategory] =
     useState("Wellness");
@@ -36,10 +38,6 @@ export const useUserProgress = () => {
     useState<string | null>(null);
 
   const [moodLogging, setMoodLogging] = useState(false);
-
-  // Scoped storage keys, namespaced by the current user's id
-  const journalsKey = userId ? `renove_journals_${userId}` : null;
-  const goalsKey = userId ? `renove_goals_${userId}` : null;
 
   const fetchData = useCallback(async () => {
     try {
@@ -66,47 +64,42 @@ export const useUserProgress = () => {
     }
   }, []);
 
+  const fetchJournals = useCallback(async () => {
+    if (!user?.id) return;
+    setJournalsLoading(true);
+    try {
+      const res = await userProgressService.getJournals();
+      setJournals(res.data.data ?? []);
+    } catch (error) {
+      console.error("Failed to load journals", error);
+    } finally {
+      setJournalsLoading(false);
+    }
+  }, [user?.id]);
+
+  const fetchGoals = useCallback(async () => {
+    if (!user?.id) return;
+    setGoalsLoading(true);
+    try {
+      const res = await userProgressService.getGoals();
+      setGoals(res.data.data ?? []);
+    } catch (error) {
+      console.error("Failed to load goals", error);
+    } finally {
+      setGoalsLoading(false);
+    }
+  }, [user?.id]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   useEffect(() => {
-    if (!journalsKey) {
-      setJournals([]);
-      return;
+    if (user?.id) {
+      fetchJournals();
+      fetchGoals();
     }
-
-    const localJournals = localStorage.getItem(journalsKey);
-    setJournals(localJournals ? JSON.parse(localJournals) : []);
-  }, [journalsKey]);
-
-  useEffect(() => {
-    if (!goalsKey) {
-      setGoals([]);
-      return;
-    }
-
-    const localGoals = localStorage.getItem(goalsKey);
-    setGoals(localGoals ? JSON.parse(localGoals) : []);
-  }, [goalsKey]);
-
-  const saveJournals = (
-    items: JournalEntry[]
-  ) => {
-    setJournals(items);
-
-    if (journalsKey) {
-      localStorage.setItem(journalsKey, JSON.stringify(items));
-    }
-  };
-
-  const saveGoals = (items: Goal[]) => {
-    setGoals(items);
-
-    if (goalsKey) {
-      localStorage.setItem(goalsKey, JSON.stringify(items));
-    }
-  };
+  }, [user?.id, fetchJournals, fetchGoals]);
 
   const handleMoodLog = async (
     mood: string
@@ -129,7 +122,7 @@ export const useUserProgress = () => {
     }
   };
 
-  const handleCreateJournal = (
+  const handleCreateJournal = async (
     e: React.FormEvent
   ) => {
     e.preventDefault();
@@ -144,90 +137,105 @@ export const useUserProgress = () => {
       return;
     }
 
-    const entry: JournalEntry = {
-      id: Date.now().toString(),
-      title: newJournalTitle.trim(),
-      content: newJournalContent.trim(),
-      mood: newJournalMood,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const res = await userProgressService.createJournal({
+        title: newJournalTitle.trim(),
+        content: newJournalContent.trim(),
+        mood: newJournalMood,
+      });
 
-    saveJournals([entry, ...journals]);
+      const created = res.data.data;
+      if (created) {
+        setJournals((prev) => [created, ...prev]);
+      }
 
-    setNewJournalTitle("");
-    setNewJournalContent("");
+      setNewJournalTitle("");
+      setNewJournalContent("");
 
-    toast.success("Journal entry saved!");
+      toast.success("Journal entry saved!");
+    } catch {
+      toast.error("Failed to save journal entry.");
+    }
   };
 
-  const handleDeleteJournal = (
+  const handleDeleteJournal = async (
     id: string,
     e: React.MouseEvent
   ) => {
     e.stopPropagation();
 
-    const filtered = journals.filter(
-      (journal) => journal.id !== id
-    );
+    try {
+      await userProgressService.deleteJournal(id);
 
-    saveJournals(filtered);
+      setJournals((prev) =>
+        prev.filter((journal) => journal.id !== id)
+      );
 
-    if (selectedJournal?.id === id) {
-      setSelectedJournal(null);
+      if (selectedJournal?.id === id) {
+        setSelectedJournal(null);
+      }
+
+      toast.success("Journal entry deleted");
+    } catch {
+      toast.error("Failed to delete journal entry.");
     }
-
-    toast.success("Journal entry deleted");
   };
 
-  const handleCreateGoal = (
+  const handleCreateGoal = async (
     e: React.FormEvent
   ) => {
     e.preventDefault();
 
     if (!newGoalText.trim()) return;
 
-    const goal: Goal = {
-      id: Date.now().toString(),
-      text: newGoalText.trim(),
-      completed: false,
-      category: newGoalCategory,
-      targetDate: newGoalDate || undefined,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const res = await userProgressService.createGoal({
+        text: newGoalText.trim(),
+        category: newGoalCategory,
+        targetDate: newGoalDate || undefined,
+      });
 
-    saveGoals([goal, ...goals]);
+      const created = res.data.data;
+      if (created) {
+        setGoals((prev) => [created, ...prev]);
+      }
 
-    setNewGoalText("");
-    setNewGoalDate("");
+      setNewGoalText("");
+      setNewGoalDate("");
 
-    toast.success("Goal added!");
+      toast.success("Goal added!");
+    } catch {
+      toast.error("Failed to add goal.");
+    }
   };
 
-  const handleToggleGoal = (id: string) => {
-    const updatedGoals = goals.map((goal) =>
-      goal.id === id
-        ? {
-            ...goal,
-            completed: !goal.completed,
-          }
-        : goal
-    );
-
-    saveGoals(updatedGoals);
-
-    toast.success("Goal updated!");
+  const handleToggleGoal = async (id: string) => {
+    try {
+      const res = await userProgressService.toggleGoal(id);
+      const updated = res.data.data;
+      if (updated) {
+        setGoals((prev) =>
+          prev.map((goal) => (goal.id === id ? updated : goal))
+        );
+      }
+      toast.success("Goal updated!");
+    } catch {
+      toast.error("Failed to update goal.");
+    }
   };
 
-  const handleDeleteGoal = (
+  const handleDeleteGoal = async (
     id: string
   ) => {
-    const filteredGoals = goals.filter(
-      (goal) => goal.id !== id
-    );
-
-    saveGoals(filteredGoals);
-
-    toast.success("Goal removed");
+    try {
+      await userProgressService.deleteGoal(id);
+      setGoals((prev) =>
+        prev.filter((goal) => goal.id !== id)
+      );
+      toast.success("Goal removed");
+    } catch {
+      toast.error("Failed to remove goal.");
+    }
   };
 
   const totalSessionsDone =
@@ -270,6 +278,8 @@ export const useUserProgress = () => {
     data,
     bookings,
     loading,
+    journalsLoading,
+    goalsLoading,
 
     activeTab,
     setActiveTab,

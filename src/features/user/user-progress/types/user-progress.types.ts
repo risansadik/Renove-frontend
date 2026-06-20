@@ -113,7 +113,7 @@ export const MOOD_OPTIONS = [
 ] as const;
 
 export interface JournalTabProps {
-  handleCreateJournal: (e: React.FormEvent) => void;
+  handleCreateJournal: (e: React.FormEvent) => Promise<void>;
   newJournalTitle: string;
   setNewJournalTitle: (val: string) => void;
   newJournalContent: string;
@@ -124,7 +124,7 @@ export interface JournalTabProps {
   setJournalSearch: (val: string) => void;
   filteredJournals: JournalEntry[];
   setSelectedJournal: (entry: JournalEntry) => void;
-  handleDeleteJournal: (id: string, e: React.MouseEvent) => void;
+  handleDeleteJournal: (id: string, e: React.MouseEvent) => Promise<void>;
 }
 
 export interface JournalModalProps {
@@ -133,7 +133,7 @@ export interface JournalModalProps {
 }
 
 export interface GoalsTabProps {
-  handleCreateGoal: (e: React.FormEvent) => void;
+  handleCreateGoal: (e: React.FormEvent) => Promise<void>;
   newGoalText: string;
   setNewGoalText: (val: string) => void;
   newGoalCategory: string;
@@ -142,6 +142,6 @@ export interface GoalsTabProps {
   setNewGoalDate: (val: string) => void;
   goals: Goal[];
   completedGoalsCount: number;
-  handleToggleGoal: (id: string) => void;
-  handleDeleteGoal: (id: string) => void;
+  handleToggleGoal: (id: string) => Promise<void>;
+  handleDeleteGoal: (id: string) => Promise<void>;
 }
