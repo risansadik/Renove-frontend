@@ -178,12 +178,22 @@ export interface ApprovedTherapist {
 export interface TherapistReviewStatus {
   canReview: boolean;
   userRating: number | null;
+  userComment: string | null;
 }
 
 export interface TherapistRatingResult {
   averageRating: number;
   totalRatings: number;
   userRating: number;
+  userComment: string | null;
+}
+
+export interface PublicReviewItem {
+  id: string;
+  userName: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
 }
 
 export const userDashboardService = {
@@ -207,8 +217,14 @@ export const userDashboardService = {
   getTherapistReviewStatus: (therapistId: string) =>
     apiClient.get<ApiResponse<TherapistReviewStatus>>(API_ROUTES.USER.THERAPIST_REVIEW(therapistId)),
 
-  rateTherapist: (therapistId: string, rating: number) =>
-    apiClient.post<ApiResponse<TherapistRatingResult>>(API_ROUTES.USER.THERAPIST_REVIEW(therapistId), { rating }),
+  rateTherapist: (therapistId: string, rating: number, comment?: string) =>
+    apiClient.post<ApiResponse<TherapistRatingResult>>(
+      API_ROUTES.USER.THERAPIST_REVIEW(therapistId),
+      { rating, comment }
+    ),
+
+  getTherapistReviews: (therapistId: string) =>
+    apiClient.get<ApiResponse<PublicReviewItem[]>>(API_ROUTES.USER.THERAPIST_REVIEWS(therapistId)),
 };
 
 /* ── Therapist Dashboard ───────────────────────────────── */
@@ -234,5 +250,8 @@ export interface TherapistDashboardData {
 export const therapistDashboardService = {
   getDashboard: () =>
     apiClient.get<ApiResponse<TherapistDashboardData>>(API_ROUTES.THERAPIST.DASHBOARD),
+
+  getOwnReviews: () =>
+    apiClient.get<ApiResponse<PublicReviewItem[]>>(API_ROUTES.THERAPIST.REVIEWS),
 };
 

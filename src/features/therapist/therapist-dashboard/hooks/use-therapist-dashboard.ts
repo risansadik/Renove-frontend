@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { format, isSameDay, parseISO, startOfMonth, startOfYear } from "date-fns";
 import toast from "react-hot-toast";
 import { selectAuthTherapist, useAuthStore } from "../../../../store/use-auth-store";
-import { therapistDashboardService, type TherapistDashboardData } from "../../../../services/api/auth.service";
+import { therapistDashboardService, type PublicReviewItem, type TherapistDashboardData } from "../../../../services/api/auth.service";
 import type { BookingResponse } from "../../../../services/api/booking.service";
 import type { Transaction } from "../../../../services/api/wallet.service";
 import type { AvailabilityRule } from "../../../../services/api/availability.service";
@@ -17,23 +17,26 @@ export const useTherapistDashboard = () => {
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [availabilityRules, setAvailabilityRules] = useState<AvailabilityRule[]>([]);
+  const [reviews, setReviews] = useState<PublicReviewItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
 
   const fetchDashboard = async () => {
     setLoading(true);
     try {
-      const [dashboardRes, bookingsRes, walletRes, availabilityRes] = await Promise.all([
+      const [dashboardRes, bookingsRes, walletRes, availabilityRes, reviewsRes] = await Promise.all([
         therapistDashboardService.getDashboard(),
         bookingService.getTherapistBookings(1, 100),
         walletService.getWalletData(1, 20),
         availabilityService.getMyAvailabilityRules(),
+        therapistDashboardService.getOwnReviews(),
       ]);
 
       setData(dashboardRes.data.data ?? null);
       setBookings(bookingsRes.data ?? []);
       setTransactions(walletRes.data?.transactions ?? []);
       setAvailabilityRules(availabilityRes.data ?? []);
+      setReviews(reviewsRes.data.data ?? []);
     } finally {
       setLoading(false);
     }
@@ -121,12 +124,13 @@ export const useTherapistDashboard = () => {
       earningsTrend,
       activity,
     };
-  }, [bookings, transactions, data?.wallet.pendingBalance,data?.wallet.availableBalance]);
+  }, [bookings, transactions, data?.wallet.pendingBalance, data?.wallet.availableBalance]);
 
   return {
     therapist,
     data,
     availabilityRules,
+    reviews,
     loading,
     actionId,
     handleStatusUpdate,

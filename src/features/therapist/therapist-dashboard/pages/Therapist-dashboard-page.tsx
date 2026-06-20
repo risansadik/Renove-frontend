@@ -17,11 +17,12 @@ import { ClientInsights } from "../components/Client-insights";
 export const TherapistDashboardPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const {
     therapist,
     data,
     availabilityRules,
+    reviews,
     loading,
     actionId,
     handleStatusUpdate,
@@ -93,14 +94,14 @@ export const TherapistDashboardPage = () => {
       {/* Today's schedule + pending requests */}
       <section className="grid xl:grid-cols-[1.4fr_0.9fr] gap-6">
         <TodaySchedule
-          bookings={overview.todayBookings} 
-          onNavigateToSessions={() => navigate("/therapist/sessions")} 
-          onNavigateToSessionRoom={(id) => navigate(`/therapist/session/${id}`)} 
+          bookings={overview.todayBookings}
+          onNavigateToSessions={() => navigate("/therapist/sessions")}
+          onNavigateToSessionRoom={(id) => navigate(`/therapist/session/${id}`)}
         />
         <PendingRequests
-          bookings={overview.pendingBookings} 
-          actionId={actionId} 
-          onStatusUpdate={handleStatusUpdate} 
+          bookings={overview.pendingBookings}
+          actionId={actionId}
+          onStatusUpdate={handleStatusUpdate}
         />
       </section>
 
@@ -141,20 +142,70 @@ export const TherapistDashboardPage = () => {
           </div>
         </div>
 
-        <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6">
+        <div className="bg-surface-50 dark:bg-white/5 border border-brand-900/10 dark:border-white/10 rounded-2xl p-6 flex flex-col">
           <h2 className="font-semibold text-brand-900 dark:text-white mb-5">Reviews Snapshot</h2>
+
+          {/* Summary row */}
           <div className="flex items-center gap-4 mb-5">
-            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
               <Star size={28} fill="currentColor" />
             </div>
             <div>
-              <p className="text-3xl font-display font-bold text-slate-900 dark:text-white">{averageRating > 0 ? averageRating.toFixed(1) : "New"}</p>
-              <p className="text-xs text-slate-400">{totalRatings} total reviews</p>
+              <p className="text-3xl font-display font-bold text-slate-900 dark:text-white">
+                {averageRating > 0 ? averageRating.toFixed(1) : "New"}
+              </p>
+              <p className="text-xs text-slate-400">{totalRatings} total ratings</p>
             </div>
           </div>
-          <div className="rounded-2xl p-4 bg-white dark:bg-white/5 text-sm text-slate-500 dark:text-slate-400">
-            Client review text is not collected yet. Your rating average will update as eligible clients submit stars after completed sessions.
-          </div>
+
+          {/* Reviews list */}
+          {reviews.length === 0 ? (
+            <div className="rounded-2xl p-4 bg-white dark:bg-white/5 text-sm text-slate-500 dark:text-slate-400">
+              No written reviews yet. Reviews appear here after clients leave comments on completed sessions.
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3 overflow-y-auto max-h-28 pr-1">
+              {reviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="rounded-xl p-3 bg-white dark:bg-white/5 border border-brand-900/10 dark:border-white/10 flex flex-col gap-1.5 shrink-0"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center text-xs font-bold shrink-0">
+                        {review.userName[0].toUpperCase()}
+                      </div>
+                      <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                        {review.userName}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star
+                          key={s}
+                          size={11}
+                          fill={s <= review.rating ? "#f59e0b" : "none"}
+                          className={s <= review.rating ? "text-amber-500" : "text-slate-300 dark:text-slate-600"}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  {review.comment && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                      {review.comment}
+                    </p>
+                  )}
+                  <p className="text-[10px] text-slate-400">
+                    {new Date(review.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
