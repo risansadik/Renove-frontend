@@ -86,17 +86,18 @@ export const SessionsTrendChart = ({ data }: SessionsTrendChartProps) => {
   };
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="flex flex-wrap gap-2 mb-4">
         {(["daily", "weekly", "monthly"] as Mode[]).map((item) => (
           <button
             key={item}
             type="button"
             onClick={() => setMode(item)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold border ${mode === item
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border ${
+              mode === item
                 ? "bg-brand-500 text-white border-brand-500"
                 : "border-brand-900/10 text-brand-900/60 dark:text-slate-300"
-              }`}
+            }`}
           >
             {item}
           </button>
@@ -109,7 +110,8 @@ export const SessionsTrendChart = ({ data }: SessionsTrendChartProps) => {
           {chartType === "line" ? "Bar" : "Line"} view
         </button>
       </div>
-      <div className="h-72">
+      {/* Fixed height prevents chart from expanding the container */}
+      <div className="relative w-full h-52 md:h-72">
         {chartType === "line" ? (
           <Line data={lineData} options={options} />
         ) : (

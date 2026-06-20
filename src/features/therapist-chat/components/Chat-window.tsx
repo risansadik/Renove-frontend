@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { Loader2, Lock, Send } from "lucide-react";
-import { isToday, isYesterday, format } from "date-fns"; // Added date-fns helpers
+import { Loader2, Lock, Send, ArrowLeft } from "lucide-react";
+import { isToday, isYesterday, format } from "date-fns";
 import type { ChatWindowProps } from "../types/therapist-chat.types";
 import { ChatMessageBubble } from "./Chat-message-bubble";
-
 
 export const ChatWindow = ({
   thread,
@@ -13,7 +12,8 @@ export const ChatWindow = ({
   myId,
   otherPartyName,
   onSend,
-}: ChatWindowProps) => {
+  onBack, 
+}: ChatWindowProps & { onBack?: () => void }) => {
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -37,13 +37,12 @@ export const ChatWindow = ({
     }
   };
 
-  // Helper function to format the divider group name
   const getDateDividerLabel = (dateString?: Date | string): string => {
     if (!dateString) return "";
     const date = new Date(dateString);
     if (isToday(date)) return "Today";
     if (isYesterday(date)) return "Yesterday";
-    return format(date, "MMMM d, yyyy"); // e.g., "October 24, 2025"
+    return format(date, "MMMM d, yyyy");
   };
 
   const initials = otherPartyName
@@ -57,17 +56,32 @@ export const ChatWindow = ({
     <div className="flex flex-col h-full">
       {/* Header */}
       <div
-        className="flex items-center gap-3 px-5 py-4 shrink-0"
+        className="flex items-center gap-3 px-4 md:px-5 py-4 shrink-0"
         style={{ borderBottom: "1px solid var(--border-default)" }}
       >
+        {/* Back button — only on mobile */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-colors"
+            style={{ color: "var(--accent-primary)" }}
+            aria-label="Back to conversations"
+          >
+            <ArrowLeft size={20} />
+          </button>
+        )}
+
+        {/* Avatar */}
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
           style={{ background: "var(--accent-glow)", color: "var(--accent-primary)" }}
         >
           {initials}
         </div>
-        <div>
-          <p className="text-sm font-bold" style={{ color: "var(--fg-primary)" }}>
+
+        {/* Name + status */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold truncate" style={{ color: "var(--fg-primary)" }}>
             {otherPartyName}
           </p>
           <p className="text-[11px]" style={{ color: thread.isActive ? "#4a6b52" : "var(--fg-muted)" }}>
@@ -76,8 +90,8 @@ export const ChatWindow = ({
         </div>
       </div>
 
-      {/* Messages Window */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 md:px-5 py-4 flex flex-col gap-3">
         {messagesLoading ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 size={24} className="animate-spin" style={{ color: "var(--accent-primary)" }} />
@@ -93,38 +107,32 @@ export const ChatWindow = ({
           </div>
         ) : (
           messages.map((msg, index) => {
-            // ─── DATE DIVIDER LOGIC ───
             const currentMsgDateStr = msg.createdAt ? new Date(msg.createdAt).toDateString() : "";
             const prevMsg = index > 0 ? messages[index - 1] : null;
             const prevMsgDateStr = prevMsg?.createdAt ? new Date(prevMsg.createdAt).toDateString() : "";
-            
-            // Show divider if it's the first message ever, or if the calendar date changed
             const showDateDivider = currentMsgDateStr !== prevMsgDateStr;
 
             return (
               <div key={msg.id || index} className="flex flex-col gap-3 w-full">
                 {showDateDivider && (
                   <div className="flex items-center justify-center my-4 w-full relative">
-                    {/* The horizontal line background */}
-                    <div 
-                      className="absolute left-0 right-0 h-px" 
+                    <div
+                      className="absolute left-0 right-0 h-px"
                       style={{ background: "var(--border-default)", zIndex: 1 }}
                     />
-                    {/* The WhatsApp style Pill capsule */}
-                    <span 
+                    <span
                       className="text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider relative select-none"
-                      style={{ 
-                        background: "var(--bg-subtle)", 
+                      style={{
+                        background: "var(--bg-subtle)",
                         color: "var(--fg-muted)",
                         border: "1px solid var(--border-default)",
-                        zIndex: 2 
+                        zIndex: 2,
                       }}
                     >
                       {getDateDividerLabel(msg.createdAt)}
                     </span>
                   </div>
                 )}
-
                 <ChatMessageBubble
                   message={msg}
                   isMine={msg.senderId === myId}
@@ -138,7 +146,7 @@ export const ChatWindow = ({
 
       {/* Input */}
       <div
-        className="px-5 py-4 shrink-0"
+        className="px-4 md:px-5 py-4 shrink-0"
         style={{ borderTop: "1px solid var(--border-default)" }}
       >
         {thread.isActive ? (
@@ -150,7 +158,7 @@ export const ChatWindow = ({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Type a message… (Enter to send)"
+              placeholder="Type a message…"
               rows={1}
               className="flex-1 resize-none bg-transparent text-sm outline-none leading-relaxed"
               style={{ color: "var(--fg-primary)", maxHeight: "120px" }}
@@ -162,7 +170,11 @@ export const ChatWindow = ({
               style={
                 input.trim() && !sending
                   ? { background: "var(--accent-primary)", color: "#fff" }
-                  : { background: "var(--bg-base)", color: "var(--fg-muted)", border: "1px solid var(--border-default)" }
+                  : {
+                      background: "var(--bg-base)",
+                      color: "var(--fg-muted)",
+                      border: "1px solid var(--border-default)",
+                    }
               }
             >
               {sending ? (

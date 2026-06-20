@@ -47,20 +47,26 @@ export const SessionStatusChart = ({ data }: Props) => {
   };
 
   return (
-    <div className="grid md:grid-cols-[220px_1fr] gap-6 items-center">
-      <div className="h-56">
+    // Stack vertically on mobile, side-by-side on md+
+    <div className="flex flex-col md:grid md:grid-cols-[180px_1fr] gap-6 items-center min-w-0">
+      {/* Fixed height so it never grows the parent */}
+      <div className="relative w-full h-44 md:h-56 md:w-auto">
         <Doughnut data={chartData} options={options} />
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 w-full">
         {keys.map((key) => (
           <button
             key={key}
             onClick={() => setVisible((current) => ({ ...current, [key]: !current[key] }))}
-            className={`text-left rounded-xl p-3 border transition-all ${visible[key] ? "bg-white dark:bg-white/5 border-brand-900/10 dark:border-white/10" : "opacity-50 border-dashed border-brand-900/10"}`}
+            className={`text-left rounded-xl p-3 border transition-all ${
+              visible[key]
+                ? "bg-white dark:bg-white/5 border-brand-900/10 dark:border-white/10"
+                : "opacity-50 border-dashed border-brand-900/10"
+            }`}
           >
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full" style={{ background: colors[key] }} />
-              <span className="text-[10px] uppercase tracking-widest text-slate-400">{key}</span>
+              <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: colors[key] }} />
+              <span className="text-[10px] uppercase tracking-widest text-slate-400 truncate">{key}</span>
             </div>
             <p className="text-xl font-bold text-brand-900 dark:text-white mt-1">{data[key]}</p>
             <p className="text-xs text-slate-400">{Math.round((data[key] / total) * 100)}%</p>

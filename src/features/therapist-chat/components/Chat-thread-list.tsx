@@ -38,15 +38,12 @@ export const ChatThreadList = ({
                     .join("")
                     .toUpperCase()
                     .slice(0, 2);
-                // const timeAgo = thread.updatedAt
-                //     ? formatDistanceToNow(new Date(thread.updatedAt), { addSuffix: true })
-                //     : "";
 
                 return (
                     <button
                         key={thread.id}
                         onClick={() => onSelect(thread)}
-                        className="flex items-center gap-3 px-3 py-3 rounded-xl text-left w-full transition-all duration-150"
+                        className="flex items-center gap-3 px-3 py-3 rounded-xl text-left w-full transition-all duration-150 active:scale-[0.98]"
                         style={
                             isSelected
                                 ? {
@@ -70,17 +67,21 @@ export const ChatThreadList = ({
                     >
                         {/* Avatar */}
                         <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold"
+                            className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold"
                             style={
                                 isSelected
                                     ? { background: "var(--accent-primary)", color: "#fff" }
-                                    : { background: "var(--bg-base)", color: "var(--fg-muted)", border: "1px solid var(--border-default)" }
+                                    : {
+                                        background: "var(--bg-base)",
+                                        color: "var(--fg-muted)",
+                                        border: "1px solid var(--border-default)",
+                                    }
                             }
                         >
                             {initials}
                         </div>
 
-                        {/* Name + time */}
+                        {/* Name + status */}
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-2">
                                 <p
@@ -89,11 +90,6 @@ export const ChatThreadList = ({
                                 >
                                     {name}
                                 </p>
-                                {/* {timeAgo && (
-                                    <span className="text-[10px] shrink-0" style={{ color: "var(--fg-muted)" }}>
-                                        {timeAgo}
-                                    </span>
-                                )} */}
                             </div>
                             <div className="flex items-center justify-between gap-1 mt-0.5">
                                 <div className="flex items-center gap-1 min-w-0 flex-1">
@@ -110,13 +106,13 @@ export const ChatThreadList = ({
                                     </p>
                                 </div>
 
-                                {/* Unread Badge UI Integration */}
+                                {/* Unread badge */}
                                 {thread.unreadCount ? thread.unreadCount > 0 && (
                                     <span
                                         className="flex items-center justify-center text-[10px] font-bold px-1.5 min-w-4.5 h-4.5 rounded-full shrink-0 animate-in zoom-in-50 duration-200"
                                         style={{
                                             background: "var(--accent-primary, #25d366)",
-                                            color: "#fff"
+                                            color: "#fff",
                                         }}
                                     >
                                         {thread.unreadCount}
