@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Bell, Check, CheckCheck, Calendar, X } from "lucide-react";
-import type { Notification, NotificationType } from "../../../../domain/model";
+import type { Notification } from "../../../../domain/model";
 
 interface NotificationPanelProps {
   notifications: Notification[];
@@ -13,7 +13,7 @@ interface NotificationPanelProps {
   onMarkAllAsRead: () => void;
 }
 
-const iconForType = (_type: NotificationType) => <Calendar size={14} />;
+const iconForType = () => <Calendar size={14} />;
 
 const formatRelativeTime = (isoDate: string): string => {
   const diff = Date.now() - new Date(isoDate).getTime();
@@ -207,7 +207,7 @@ export const NotificationPanel = ({
                           color: "var(--accent-secondary, #4a6b52)",
                         }}
                       >
-                        {iconForType(n.type)}
+                        {iconForType()}
                       </div>
 
                       {/* Content */}
