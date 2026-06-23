@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Users, Star, Heart, Briefcase, GraduationCap, Calendar, Loader2, MessageSquare } from "lucide-react";
+import { X, Users, Star, Briefcase, GraduationCap, Calendar, Loader2, MessageSquare } from "lucide-react";
 import { useTherapistDetails } from "../hooks/use-therapist-details";
 import type { TherapistDatailsProps } from "../types/user-dashboard.types";
 import type { PublicReviewItem } from "../../../../services/api/auth.service";
@@ -85,7 +85,6 @@ export const TherapistDetailsModal = ({ therapist, isOpen, onClose, onBook, onRa
                     {[
                       { icon: Briefcase, label: `${therapist.experience}y Exp.` },
                       { icon: Star, label: ratingLabel },
-                      { icon: Heart, label: "120+ Clients" },
                     ].map(({ icon: Icon, label }) => (
                       <div key={label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
                         style={{ background: "var(--bg-card)", border: "1px solid var(--border-default)", color: "var(--fg-secondary)" }}>

@@ -27,6 +27,9 @@ export const UserDashboardPage = () => {
     greeting,
     handleMood,
     handleToggleMission,
+    emergencyOpen,
+    setEmergencyOpen,
+    openNearestTherapist,
   } = useUserDashboard();
 
   if (loading) {
@@ -90,6 +93,9 @@ export const UserDashboardPage = () => {
             moodSelected={moodSelected}
             moodLogging={moodLogging}
             onMood={handleMood}
+            emergencyOpen={emergencyOpen}
+            setEmergencyOpen={setEmergencyOpen}
+            openNearestTherapist={openNearestTherapist}
           />
           <TherapistDetailsModal
             therapist={selectedTherapist}

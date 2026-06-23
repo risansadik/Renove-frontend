@@ -1,8 +1,16 @@
-import { motion } from "framer-motion";
-import { Flame, Star, Award, Heart, Shield, Target, Clock } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Flame, Star, Award, Heart, Shield, Target, Clock, Phone, MapPin } from "lucide-react";
 import { MOOD_OPTIONS, type ProgressSectionProps } from "../types/user-dashboard.types";
 
-export const ProgressSection = ({ data, moodSelected, moodLogging, onMood }: ProgressSectionProps) => {
+export const ProgressSection = ({
+  data,
+  moodSelected,
+  moodLogging,
+  onMood,
+  emergencyOpen,
+  setEmergencyOpen,
+  openNearestTherapist,
+}: ProgressSectionProps) => {
   const doneMissions = data?.missions.filter((m) => m.done).length ?? 0;
   const totalMissions = data?.missions.length ?? 0;
   const streakDays = data?.streakDays ?? 0;
@@ -40,8 +48,10 @@ export const ProgressSection = ({ data, moodSelected, moodLogging, onMood }: Pro
             whileHover={{ y: -4 }}
             className="glass-card rounded-2xl p-5 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}>
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}
+            >
               <Icon size={22} style={{ color: accent }} className={label === "Day Streak" ? "streak-flame-flicker" : ""} />
             </div>
             <div>
@@ -81,7 +91,9 @@ export const ProgressSection = ({ data, moodSelected, moodLogging, onMood }: Pro
                   }}
                 >
                   <Icon size={20} style={{ color: sel ? "var(--accent-primary)" : "var(--fg-muted)" }} />
-                  <span className="text-[8px] font-mono" style={{ color: sel ? "var(--accent-primary)" : "var(--fg-muted)" }}>{label}</span>
+                  <span className="text-[8px] font-mono" style={{ color: sel ? "var(--accent-primary)" : "var(--fg-muted)" }}>
+                    {label}
+                  </span>
                 </button>
               );
             })}
@@ -134,28 +146,115 @@ export const ProgressSection = ({ data, moodSelected, moodLogging, onMood }: Pro
         </motion.div>
 
         {/* Emergency */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.15 }}
-          className="glass-card rounded-3xl p-7 flex flex-col"
-          style={{ borderColor: "rgba(239, 68, 68, 0.2)" }}
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <Shield size={16} className="text-red-500" />
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--fg-muted)" }}>Safe Space</span>
-          </div>
-          <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: "var(--fg-secondary)" }}>
-            Feeling overwhelmed? Access immediate human support or AI intervention instantly.
-          </p>
-          <button
-            className="w-full h-12 rounded-xl font-bold text-sm text-white transition-all hover:scale-105 hover:shadow-xl"
-            style={{ background: "linear-gradient(135deg, #dc2626, #ef4444)", boxShadow: "0 4px 20px rgba(220, 38, 38, 0.3)" }}
+        <>
+          <AnimatePresence>
+            {emergencyOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
+                onClick={() => setEmergencyOpen(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.92, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.92, opacity: 0, y: 20 }}
+                  transition={{ type: "spring", damping: 20, stiffness: 260 }}
+                  className="glass-card rounded-3xl p-8 w-full max-w-sm flex flex-col gap-4"
+                  style={{
+                    border: "1px solid rgba(239,68,68,0.35)",
+                    boxShadow: "0 0 40px rgba(220,38,38,0.2)",
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+                      <span className="text-sm font-bold uppercase tracking-widest text-red-400">
+                        Emergency Help
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setEmergencyOpen(false)}
+                      className="text-xs px-2 py-1 rounded-lg"
+                      style={{ color: "var(--fg-muted)", background: "var(--bg-card)" }}
+                    >
+                      ✕ Close
+                    </button>
+                  </div>
+
+                  <p className="text-xs leading-relaxed" style={{ color: "var(--fg-secondary)" }}>
+                    You're not alone. Reach out right now - a real person is ready to help.
+                  </p>
+
+                  {/* Crisis Hotline — tap to call */}
+                  <a
+                    href="tel:+919152987821"
+                    className="flex items-center gap-3 w-full px-4 py-3 rounded-xl font-bold text-sm text-white transition-all hover:scale-105"
+                    style={{
+                      background: "linear-gradient(135deg, #dc2626, #ef4444)",
+                      boxShadow: "0 4px 20px rgba(220,38,38,0.35)",
+                    }}
+                  >
+                    <Phone size={17} />
+                    <span>Call iCall Crisis Line</span>
+                    <span className="ml-auto font-mono text-xs opacity-80">9152987821</span>
+                  </a>
+
+                  {/* Nearest mental health help via Google Maps */}
+                  <button
+                    onClick={openNearestTherapist}
+                    className="flex items-center gap-3 w-full px-4 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105"
+                    style={{
+                      background: "var(--bg-card)",
+                      border: "1px solid rgba(239,68,68,0.3)",
+                      color: "var(--fg-primary)",
+                    }}
+                  >
+                    <MapPin size={17} className="text-red-400" />
+                    <span>Find Nearest Support Center</span>
+                  </button>
+
+                  <p className="text-[10px] text-center font-mono" style={{ color: "var(--fg-muted)" }}>
+                    iCall is a NIMHANS-affiliated crisis helpline · India
+                  </p>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.15 }}
+            className="glass-card rounded-3xl p-7 flex flex-col"
+            style={{ borderColor: "rgba(239, 68, 68, 0.2)" }}
           >
-            Activate Emergency Help
-          </button>
-        </motion.div>
+            <div className="flex items-center gap-2 mb-3">
+              <Shield size={16} className="text-red-500" />
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--fg-muted)" }}>
+                Safe Space
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: "var(--fg-secondary)" }}>
+              Feeling overwhelmed? Access immediate human support or AI intervention instantly.
+            </p>
+            <button
+              onClick={() => setEmergencyOpen(true)}
+              className="w-full h-12 rounded-xl font-bold text-sm text-white transition-all hover:scale-105 hover:shadow-xl"
+              style={{
+                background: "linear-gradient(135deg, #dc2626, #ef4444)",
+                boxShadow: "0 4px 20px rgba(220, 38, 38, 0.3)",
+              }}
+            >
+              Activate Emergency Help
+            </button>
+          </motion.div>
+        </>
       </div>
     </section>
   );

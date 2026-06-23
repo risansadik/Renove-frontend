@@ -42,7 +42,7 @@ export interface HeroSectionProps {
   data: DashboardData | null;
   isNew: boolean;
   greeting: string;
-  onJourneyClick: () => void; 
+  onJourneyClick: () => void;
 }
 
 export const MILESTONES = [
@@ -78,6 +78,9 @@ export interface ProgressSectionProps {
   moodSelected: string | null;
   moodLogging: boolean;
   onMood: (m: string) => void;
+  emergencyOpen: boolean;
+  setEmergencyOpen: (open: boolean) => void;
+  openNearestTherapist: () => void;
 }
 
 

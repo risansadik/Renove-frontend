@@ -20,6 +20,7 @@ export const useUserDashboard = () => {
   const [moodLogging, setMoodLogging] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [selectedTherapist, setSelectedTherapist] = useState<ApprovedTherapist | null>(null);
+  const [emergencyOpen, setEmergencyOpen] = useState(false);
 
   const hour = new Date().getHours();
   const greeting =
@@ -36,6 +37,34 @@ export const useUserDashboard = () => {
       });
     }
   }, [searchParams, setSearchParams]);
+
+  const openNearestTherapist = useCallback(() => {
+    if (!navigator.geolocation) {
+      window.open(
+        "https://www.google.com/maps/search/mental+health+support+center+near+me",
+        "_blank",
+        "noopener,noreferrer"
+      );
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        window.open(
+          `https://www.google.com/maps/search/mental+health+support+center/@${coords.latitude},${coords.longitude},14z`,
+          "_blank",
+          "noopener,noreferrer"
+        );
+      },
+      () => {
+        window.open(
+          "https://www.google.com/maps/search/mental+health+support+center+near+me",
+          "_blank",
+          "noopener,noreferrer"
+        );
+      },
+      { timeout: 5000 }
+    );
+  }, []);
 
   const fetchDashboard = useCallback(async () => {
     try {
@@ -114,5 +143,8 @@ export const useUserDashboard = () => {
     greeting,
     handleMood,
     handleToggleMission,
+    emergencyOpen,
+    setEmergencyOpen,
+    openNearestTherapist,
   };
 };
