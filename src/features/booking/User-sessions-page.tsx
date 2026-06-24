@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { Calendar, Clock, Video, CheckCircle2, XCircle, Timer, AlertCircle, MoreVertical, CreditCard, X } from "lucide-react";
+import { Calendar, Clock, Video, CheckCircle2, XCircle, Timer, AlertCircle, CreditCard, X } from "lucide-react";
 import bookingService, { type BookingResponse } from "../../services/api/booking.service";
 import paymentService from "../../services/api/payment.service";
 import { StripePaymentWrapper } from "./components/StripePaymentWrapper";
