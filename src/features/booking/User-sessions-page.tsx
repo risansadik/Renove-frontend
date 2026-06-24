@@ -283,6 +283,9 @@ export const UserSessionsPage = () => {
                   )}
                   {booking.status === "pending" && (
                     <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <button className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                        Reschedule
+                      </button>
                       {!hasReachedStartTime && (
                         <button
                           onClick={() => {
