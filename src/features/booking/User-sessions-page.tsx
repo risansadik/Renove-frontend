@@ -296,11 +296,6 @@ export const UserSessionsPage = () => {
                       )}
                     </div>
                   )}
-                  {booking.status !== "awaiting_payment" && booking.status !== "accepted" && booking.status !== "confirmed" && booking.status !== "pending" && (
-                    <button className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-brand-500 transition-colors">
-                      <MoreVertical size={20} />
-                    </button>
-                  )}
                 </div>
               </div>
             );
