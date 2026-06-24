@@ -37,6 +37,7 @@ import { MyReportsPage } from "./features/report/my-reports/pages/MyReportsPage.
 import { ReportDetailsPage } from "./features/report/report-details/pages/ReportDetailsPage.tsx";
 import { AdminReportsPage } from "./features/report/admin-reports/pages/AdminReportsPage.tsx";
 import { TherapistChatPage } from "./features/therapist-chat/pages/TherapistChatPage.tsx";
+import { UserSessionsPage } from "./features/booking/User-sessions-page.tsx";
 
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -105,7 +106,7 @@ export const AppRouter = () => {
             <Route path="progress" element={<UserProgressPage />} />
             <Route path="ai-companion" element={<AiCompanionPage />} />
             <Route path="therapists" element={<UserDashboardPage />} />
-            <Route path="sessions" element={<UserDashboardPage />} />
+            <Route path="sessions" element={<UserSessionsPage />} />
             <Route path="messages" element={<TherapistChatPage />} />
             <Route path="wallet" element={<UserWalletPage />} />
             <Route path="profile" element={<UserProfilePage />} />
