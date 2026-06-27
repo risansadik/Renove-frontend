@@ -15,6 +15,12 @@
   <meta name="apple-mobile-web-app-title" content="reNove" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
   <script>
+    window._installPromptEvent = null;
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      window._installPromptEvent = e;
+    });
+
     (function () {
       try {
         const theme = JSON.parse(localStorage.getItem('renove-theme'))?.state?.theme;
