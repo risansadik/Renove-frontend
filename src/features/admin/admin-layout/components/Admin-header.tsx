@@ -1,6 +1,7 @@
 import { Menu, X, ShieldCheck } from "lucide-react";
 import { ThemeToggle } from "../../../../components/common/ThemeToggle.tsx";
 import type { AdminHeaderProps } from "../types/admin-layout.types.ts";
+import { InstallPromptButton } from "../../../../components/common/Install-prompt-button.tsx";
 
 export const AdminHeader = ({ sidebarOpen, setSidebarOpen }: AdminHeaderProps) => {
   return (
@@ -23,6 +24,7 @@ export const AdminHeader = ({ sidebarOpen, setSidebarOpen }: AdminHeaderProps) =
       </button>
 
       <div className="flex items-center gap-3 ml-auto">
+        <InstallPromptButton/>
         <ThemeToggle />
         <div className="flex items-center gap-2">
           <div

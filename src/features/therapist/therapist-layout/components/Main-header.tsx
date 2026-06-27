@@ -3,6 +3,7 @@ import { ThemeToggle } from "../../../../components/common/ThemeToggle.tsx";
 import type { MainHeaderProps } from "../types/therapist-layout.types.ts";
 import { NotificationPanel } from "./Notification-panel.tsx";
 import { useNotifications } from "../hooks/use-notification.ts";
+import { InstallPromptButton } from "../../../../components/common/Install-prompt-button.tsx";
 
 export const MainHeader = ({ sidebarOpen, onMenuClick }: MainHeaderProps) => {
   const {
@@ -36,6 +37,7 @@ export const MainHeader = ({ sidebarOpen, onMenuClick }: MainHeaderProps) => {
       </button>
 
       <div className="flex items-center gap-3 ml-auto">
+        <InstallPromptButton/>
         <ThemeToggle />
 
         <NotificationPanel

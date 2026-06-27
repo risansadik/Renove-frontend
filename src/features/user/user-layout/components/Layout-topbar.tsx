@@ -3,6 +3,7 @@ import type { LayoutTopbarProps } from "../types/user-layout.types.ts";
 import { ThemeToggle } from "../../../../components/common/ThemeToggle.tsx";
 import { NotificationPanel } from "./Notification-panel.tsx";
 import { useNotifications } from "../hooks/use-notification.ts";
+import { InstallPromptButton } from "../../../../components/common/Install-prompt-button.tsx";
 
 export const LayoutTopbar = ({ sidebarOpen, setSidebarOpen }: LayoutTopbarProps) => {
   const {
@@ -36,6 +37,7 @@ export const LayoutTopbar = ({ sidebarOpen, setSidebarOpen }: LayoutTopbarProps)
       </button>
 
       <div className="flex items-center gap-3 ml-auto">
+        <InstallPromptButton/>
         <ThemeToggle />
 
         <NotificationPanel
