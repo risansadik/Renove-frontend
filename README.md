@@ -1,73 +1,107 @@
-# React + TypeScript + Vite
+# reNove - AI-Powered Addiction Recovery Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+reNove is a comprehensive, full-stack application designed to support individuals on their addiction recovery journey. The platform connects users with licensed therapists, offers AI-powered assistance, and tracks recovery progress through an intuitive, real-time interface.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### For Users (Patients)
+- **AI-Powered Recovery Assistant:** 24/7 conversational support built with Google Generative AI, LangChain, and Qdrant vector database.
+- **Therapist Matching & Booking:** Browse a verified directory of therapists, view verified ratings, and schedule sessions.
+- **Real-Time Video Sessions:** Secure, high-quality 1-on-1 video consultations using WebRTC.
+- **Progress Tracking:** Interactive dashboards and charts to monitor daily progress, milestones, and journaling.
+- **Real-Time Notifications:** Instant updates on session approvals, upcoming calls, and secure messages (Socket.io).
+- **Secure Payments:** Seamless payment processing via Stripe integration.
 
-## React Compiler
+### For Therapists
+- **Profile & Availability Management:** Control working hours and manage incoming booking requests.
+- **Session Management:** Secure video calls with patients, embedded notes, and automated session states.
+- **Wallet & Payouts:** Track earnings, view payment history, and manage Stripe payouts.
+- **Patient Progress Insights:** Review patient-shared progress and journals to prepare for sessions.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### For Administrators
+- **Comprehensive Dashboard:** Manage user accounts, verify therapist credentials, and oversee platform activity.
+- **Content & Reports Management:** Review reported content, handle disputes, and maintain platform safety.
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Frontend (User & Therapist Portals)
+- **Framework:** React 19 + Vite
+- **Styling:** Tailwind CSS + Framer Motion (Animations)
+- **State Management:** Zustand
+- **Forms & Validation:** React Hook Form + Zod
+- **Real-Time Communication:** Socket.io-Client, WebRTC
+- **Data Visualization:** Chart.js
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Backend (API & Signaling)
+- **Core:** Node.js, Express, TypeScript
+- **Architecture:** Clean Architecture + MVC (InversifyJS for Dependency Injection)
+- **Database:** MongoDB (Mongoose)
+- **Caching & Pub/Sub:** Redis
+- **Real-Time Communication:** Socket.io
+- **AI Engine:** Google Generative AI, LangChain, Qdrant (Vector DB)
+- **File Storage:** AWS S3 (via Multer)
+- **Payments:** Stripe API
+- **Background Jobs:** Node-Cron
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📂 Project Structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+reNove/
+├── backend/               # Node.js Express Backend
+│   ├── src/
+│   │   ├── application/   # Use cases and domain logic
+│   │   ├── domain/        # Entities and interfaces
+│   │   ├── infrastructure/# Database, external services, Inversify setup
+│   │   ├── presentation/  # Controllers and API routes
+│   │   └── server.ts      # App entry point
+│   └── package.json
+├── frontend/              # React Vite Frontend
+│   ├── src/
+│   │   ├── components/    # Reusable UI components
+│   │   ├── hooks/         # Custom React hooks containing business logic
+│   │   ├── pages/         # Page components mapped to routes
+│   │   ├── types/         # TypeScript type definitions
+│   │   └── utils/         # Helper functions
+│   └── package.json
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🏁 Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
+- Node.js (v18+)
+- MongoDB (Local or Atlas)
+- Redis Server
+- Qdrant Vector DB (Docker/Cloud)
+- Accounts/API Keys for: Stripe, AWS S3, Google Generative AI
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone <your-repo-url>
+   cd Renove
+   ```
+
+2. **Setup Backend:**
+   ```bash
+   cd backend
+   npm install
+   cp .env.example .env # Fill in your environment variables
+   npm run dev
+   ```
+
+3. **Setup Frontend:**
+   ```bash
+   cd ../frontend
+   npm install
+   cp .env.example .env # Fill in your environment variables
+   npm run dev
+   ```
+
+## 🏗 Architecture Notes
+- The backend strictly follows **Clean Architecture** patterns, ensuring a decoupling of the domain logic from external frameworks (Express/Mongoose). **InversifyJS** is utilized for robust constructor-based Dependency Injection across Controllers, Use Cases, and Repositories.
+- The frontend adheres to a feature-driven structure, prioritizing separation of concerns by lifting side effects and state management into custom `hooks/`.
+
+## 📜 License
+This project is licensed under the MIT License.
