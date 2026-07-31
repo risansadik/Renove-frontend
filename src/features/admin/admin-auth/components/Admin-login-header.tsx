@@ -10,7 +10,7 @@ export const AdminLoginHeader = () => {
                 <div className="w-6 h-6 rounded-lg bg-brand-500 flex items-center justify-center">
                     <Sparkles size={11} className="text-white" />
                 </div>
-                <span className="font-display font-bold text-lg text-brand-900">reNove</span>
+                <span className="font-display font-bold text-lg text-brand-900">Renove</span>
             </div>
             <p className="text-brand-900/60 text-xs tracking-widest uppercase font-mono">Admin Portal</p>
         </div>

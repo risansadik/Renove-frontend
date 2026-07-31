@@ -7,7 +7,7 @@ export const SidebarBrand = () => (
         style={{ background: "linear-gradient(135deg, #4a6b52, #7aa07e)" }}>
         <Stethoscope size={15} className="text-white" />
       </div>
-      <span className="font-display font-bold" style={{ color: "var(--fg-primary)" }}>reNove</span>
+      <span className="font-display font-bold" style={{ color: "var(--fg-primary)" }}>Renove</span>
       <span className="ml-auto text-[9px] font-mono px-2 py-0.5 rounded-full"
         style={{ color: "var(--accent-secondary)", background: "var(--accent-glow-secondary)", border: "1px solid rgba(74,107,82,0.3)" }}>
         Therapist

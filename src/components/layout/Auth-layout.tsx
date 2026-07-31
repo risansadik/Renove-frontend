@@ -34,7 +34,7 @@ export const AuthLayout = ({ children, panel }: AuthLayoutProps) => (
           style={{ background: "linear-gradient(135deg, #6b4c7a, #b89bbe)" }}>
           <Sparkles size={16} className="text-white" />
         </div>
-        <span className="font-display font-bold text-xl text-white tracking-tight">reNove</span>
+        <span className="font-display font-bold text-xl text-white tracking-tight">Renove</span>
 
       </motion.div>
 
@@ -43,7 +43,7 @@ export const AuthLayout = ({ children, panel }: AuthLayoutProps) => (
         {panel ?? <DefaultPanel />}
       </motion.div>
 
-      <div className="relative z-10 text-white/25 text-xs font-mono">© 2026 reNove. Recovery reimagined.</div>
+      <div className="relative z-10 text-white/25 text-xs font-mono">© 2026 Renove. Recovery reimagined.</div>
     </aside>
 
     {/* Right form area */}
@@ -62,7 +62,7 @@ export const AuthLayout = ({ children, panel }: AuthLayoutProps) => (
             style={{ background: "linear-gradient(135deg, #6b4c7a, #b89bbe)" }}>
             <Sparkles size={14} className="text-white" />
           </div>
-          <span className="font-display font-bold text-lg" style={{ color: "var(--fg-primary)" }}>reNove</span>
+          <span className="font-display font-bold text-lg" style={{ color: "var(--fg-primary)" }}>Renove</span>
         </div>
         {children}
       </motion.div>
