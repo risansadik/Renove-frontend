@@ -96,7 +96,7 @@ export const HeroSection = ({ data, isNew, greeting , onJourneyClick}: HeroSecti
         className="text-lg max-w-2xl mx-auto mb-4 leading-relaxed"
         style={{ color: "var(--fg-secondary)" }}
       >
-        reNove analyzes your habits, triggers, emotional patterns, and recovery goals to generate a
+        Renove analyzes your habits, triggers, emotional patterns, and recovery goals to generate a
         personalized progression system designed specifically for your healing journey.
       </motion.p>
 
