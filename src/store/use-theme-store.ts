@@ -14,6 +14,7 @@ export const useThemeStore = create<ThemeState>()(
     () => ({
       theme: "dark" as Theme,
       toggleTheme: () => {},
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       setTheme: (_theme: Theme) => {},
     }),
     {
