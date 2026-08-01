@@ -19,7 +19,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "icons.svg", "icons/*.png"],
       manifest: {
-        name: "renove - Recovery Platform",
+        name: "Renove - Recovery Platform",
         short_name: "Renove",
         description: "AI-powered addiction recovery and professional support",
         start_url: "/",
