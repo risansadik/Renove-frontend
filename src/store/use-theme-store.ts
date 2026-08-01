@@ -14,7 +14,7 @@ export const useThemeStore = create<ThemeState>()(
     () => ({
       theme: "dark" as Theme,
       toggleTheme: () => {},
-      setTheme: () => {},
+      setTheme: (_theme: Theme) => {},
     }),
     {
       name: "renove-theme",
