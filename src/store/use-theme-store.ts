@@ -13,24 +13,17 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
       theme: "dark",
-      toggleTheme: () =>
-        set((state) => {
-          const nextTheme = state.theme === "light" ? "dark" : "light";
-          document.documentElement.classList.toggle("dark", nextTheme === "dark");
-          return { theme: nextTheme };
-        }),
-      setTheme: (theme) => {
-        document.documentElement.classList.toggle("dark", theme === "dark");
-        set({ theme });
-      },
+      toggleTheme: () => {},
+      setTheme: () => {},
     }),
     {
       name: "renove-theme",
       onRehydrateStorage: () => (state) => {
-        // Initialize HTML class on load
+        // Force dark mode regardless of stored state
         if (state) {
-          document.documentElement.classList.toggle("dark", state.theme === "dark");
+          state.theme = "dark";
         }
+        document.documentElement.classList.add("dark");
       },
     }
   )

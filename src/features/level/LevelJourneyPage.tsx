@@ -430,6 +430,15 @@ export const LevelJourneyPage = () => {
             level={selectedLevel}
             isActive={levels.indexOf(selectedLevel) === activeIndex}
             onClose={() => setSelectedLevel(null)}
+            onNext={() => {
+              const currentIdx = levels.indexOf(selectedLevel);
+              const nextLevel = levels[currentIdx + 1];
+              if (nextLevel && !nextLevel.isCompleted) {
+                setSelectedLevel(nextLevel);
+              } else {
+                setSelectedLevel(null);
+              }
+            }}
             onComplete={async (id) => {
               const result = await completeLevel(id);
               return result;

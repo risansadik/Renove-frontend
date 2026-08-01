@@ -1,5 +1,5 @@
 import { Menu, X, Stethoscope } from "lucide-react";
-import { ThemeToggle } from "../../../../components/common/ThemeToggle.tsx";
+
 import type { MainHeaderProps } from "../types/therapist-layout.types.ts";
 import { NotificationPanel } from "./Notification-panel.tsx";
 import { useNotifications } from "../hooks/use-notification.ts";
@@ -19,7 +19,7 @@ export const MainHeader = ({ sidebarOpen, onMenuClick }: MainHeaderProps) => {
 
   return (
     <header
-      className="h-14 flex items-center px-6 gap-4 sticky top-0 z-10"
+      className="h-14 flex items-center px-6 gap-4 sticky top-0 z-40"
       style={{
         background: "var(--bg-glass)",
         backdropFilter: "blur(16px)",
@@ -38,7 +38,7 @@ export const MainHeader = ({ sidebarOpen, onMenuClick }: MainHeaderProps) => {
 
       <div className="flex items-center gap-3 ml-auto">
         <InstallPromptButton/>
-        <ThemeToggle />
+
 
         <NotificationPanel
           notifications={notifications}

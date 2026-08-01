@@ -37,7 +37,8 @@ import { MyReportsPage } from "./features/report/my-reports/pages/MyReportsPage.
 import { ReportDetailsPage } from "./features/report/report-details/pages/ReportDetailsPage.tsx";
 import { AdminReportsPage } from "./features/report/admin-reports/pages/AdminReportsPage.tsx";
 import { TherapistChatPage } from "./features/therapist-chat/pages/TherapistChatPage.tsx";
-
+import { LandingPage } from "./features/landing/pages/LandingPage";
+import { TherapistLandingPage } from "./features/landing/pages/TherapistLandingPage";
 const NotFoundPage = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
     <div className="text-center">
@@ -90,7 +91,7 @@ export const AppRouter = () => {
         />
 
         <Routes>
-          <Route path="/" element={<Navigate to="/user/login" replace />} />
+          <Route path="/" element={<LandingPage />} />
 
           {/* ── User auth ────────────────────────────── */}
           <Route path="/user/register" element={<GuestRoute role="user"><UserRegisterPage /></GuestRoute>} />
@@ -124,19 +125,22 @@ export const AppRouter = () => {
           <Route path="/therapist/reset-password" element={<TherapistResetPasswordPage />} />
 
           {/* ── Therapist dashboard (layout with sidebar + logout) ─ */}
-          <Route path="/therapist" element={<ProtectedRoute role="therapist"><TherapistLayout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/therapist/dashboard" replace />} />
-            <Route path="dashboard" element={<TherapistDashboardPage />} />
-            <Route path="sessions" element={<TherapistDashboardPage />} />
-            <Route path="availability" element={<TherapistDashboardPage />} />
-            <Route path="messages" element={<TherapistChatPage />} />
-            <Route path="wallet" element={<TherapistWalletPage />} />
-            <Route path="profile" element={<TherapistProfilePage />} />
-            <Route path="settings" element={<TherapistDashboardPage />} />
-            <Route path="session/:bookingId" element={<VideoCallPage />} />
-            <Route path="report" element={<ReportIssuePage reporterContext="therapist" />} />
-            <Route path="reports" element={<MyReportsPage reportPath="/therapist/report" detailBasePath="/therapist/reports" />} />
-            <Route path="reports/:id" element={<ReportDetailsPage backPath="/therapist/reports" />} />
+          {/* ── Therapist landing page ── */}
+          <Route path="/therapist" element={<TherapistLandingPage />} />
+
+          {/* ── Therapist dashboard (layout with sidebar + logout) ─ */}
+          <Route element={<ProtectedRoute role="therapist"><TherapistLayout /></ProtectedRoute>}>
+            <Route path="/therapist/dashboard" element={<TherapistDashboardPage />} />
+            <Route path="/therapist/sessions" element={<TherapistDashboardPage />} />
+            <Route path="/therapist/availability" element={<TherapistDashboardPage />} />
+            <Route path="/therapist/messages" element={<TherapistChatPage />} />
+            <Route path="/therapist/wallet" element={<TherapistWalletPage />} />
+            <Route path="/therapist/profile" element={<TherapistProfilePage />} />
+            <Route path="/therapist/settings" element={<TherapistDashboardPage />} />
+            <Route path="/therapist/session/:bookingId" element={<VideoCallPage />} />
+            <Route path="/therapist/report" element={<ReportIssuePage reporterContext="therapist" />} />
+            <Route path="/therapist/reports" element={<MyReportsPage reportPath="/therapist/report" detailBasePath="/therapist/reports" />} />
+            <Route path="/therapist/reports/:id" element={<ReportDetailsPage backPath="/therapist/reports" />} />
           </Route>
 
           {/* ── Admin ────────────────────────────────── */}

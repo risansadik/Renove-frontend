@@ -1,6 +1,6 @@
 import { Menu, X, Flame } from "lucide-react";
 import type { LayoutTopbarProps } from "../types/user-layout.types.ts";
-import { ThemeToggle } from "../../../../components/common/ThemeToggle.tsx";
+
 import { NotificationPanel } from "./Notification-panel.tsx";
 import { useNotifications } from "../hooks/use-notification.ts";
 import { InstallPromptButton } from "../../../../components/common/Install-prompt-button.tsx";
@@ -19,7 +19,7 @@ export const LayoutTopbar = ({ sidebarOpen, setSidebarOpen }: LayoutTopbarProps)
 
   return (
     <header
-      className="h-14 flex items-center px-6 gap-4 sticky top-0 z-10"
+      className="h-14 flex items-center px-6 gap-4 sticky top-0 z-40"
       style={{
         background: "var(--bg-glass)",
         backdropFilter: "blur(16px)",
@@ -38,7 +38,7 @@ export const LayoutTopbar = ({ sidebarOpen, setSidebarOpen }: LayoutTopbarProps)
 
       <div className="flex items-center gap-3 ml-auto">
         <InstallPromptButton/>
-        <ThemeToggle />
+
 
         <NotificationPanel
           notifications={notifications}

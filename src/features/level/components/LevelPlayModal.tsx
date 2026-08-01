@@ -43,12 +43,12 @@ type PlayState = "preview" | "active" | "completed" | "locked";
 
 interface Props {
   level: Level | null;
-  isActive: boolean;
   onClose: () => void;
+  onNext?: () => void;
   onComplete: (levelId: string) => Promise<Level | null>;
 }
 
-export const LevelPlayModal = ({ level, isActive, onClose, onComplete }: Props) => {
+export const LevelPlayModal = ({ level, isActive, onClose, onNext, onComplete }: Props) => {
   const [playState, setPlayState] = useState<PlayState>("preview");
   const [completing, setCompleting] = useState(false);
   const [xpAwarded, setXpAwarded] = useState(false);
@@ -66,25 +66,11 @@ export const LevelPlayModal = ({ level, isActive, onClose, onComplete }: Props) 
     }
   }, [level, isActive]);
 
-  // Countdown timer while quest is active
+  // Active state is instantly committed, no timer
   useEffect(() => {
     if (playState === "active" && level) {
-      // Timer is purely cosmetic — it gives a sense of "doing the quest now"
-      // 30s countdown representing "I commit to this today"
-      setTimeLeft(30);
-      timerRef.current = setInterval(() => {
-        setTimeLeft((t) => {
-          if (t <= 1) {
-            clearInterval(timerRef.current!);
-            return 0;
-          }
-          return t - 1;
-        });
-      }, 1000);
+      setTimeLeft(0);
     }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
   }, [playState, level]);
 
   const handleAcceptQuest = () => {
@@ -141,7 +127,7 @@ export const LevelPlayModal = ({ level, isActive, onClose, onComplete }: Props) 
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 rounded-xl transition-all"
+            className="absolute top-4 right-4 z-20 p-2 rounded-xl transition-all cursor-pointer"
             style={{ color: "var(--fg-muted)" }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.background = "var(--bg-card-hover)")
@@ -166,6 +152,7 @@ export const LevelPlayModal = ({ level, isActive, onClose, onComplete }: Props) 
                 cfg={cfg}
                 xpAwarded={xpAwarded}
                 onClose={onClose}
+                onNext={onNext}
               />
             )}
 
@@ -262,11 +249,13 @@ const CompletedState = ({
   cfg,
   xpAwarded,
   onClose,
+  onNext,
 }: {
   level: Level;
   cfg: (typeof DIFFICULTY_CONFIG)[keyof typeof DIFFICULTY_CONFIG];
   xpAwarded: boolean;
   onClose: () => void;
+  onNext?: () => void;
 }) => (
   <div className="text-center py-4">
     {/* Celebration burst */}
@@ -352,11 +341,11 @@ const CompletedState = ({
     </motion.div>
 
     <button
-      onClick={onClose}
+      onClick={onNext ?? onClose}
       className="btn-primary"
       style={{ borderRadius: "1rem" }}
     >
-      Continue journey
+      Next Level
       <ArrowRight size={16} />
     </button>
   </div>
@@ -408,7 +397,7 @@ const PreviewState = ({
         className="text-2xl leading-tight"
         style={{ fontFamily: "var(--font-display)", color: "var(--fg-primary)" }}
       >
-        {level.objective}
+        {level.world} Quest
       </h3>
     </div>
 
@@ -434,21 +423,7 @@ const PreviewState = ({
       />
     </div>
 
-    {/* Unlock requirement */}
-    {level.unlockRequirement !== "None" && (
-      <div
-        className="flex items-center gap-2 px-4 py-3 rounded-xl mb-5"
-        style={{
-          background: "var(--bg-card)",
-          border: "1px solid var(--border-subtle)",
-        }}
-      >
-        <Lock size={12} style={{ color: "var(--fg-muted)" }} />
-        <span className="text-xs" style={{ color: "var(--fg-muted)" }}>
-          {level.unlockRequirement}
-        </span>
-      </div>
-    )}
+
 
     {/* What this means in practice */}
     <div
@@ -461,12 +436,8 @@ const PreviewState = ({
       <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: cfg.color }}>
         Your quest
       </p>
-      <p className="text-sm leading-relaxed" style={{ color: "var(--fg-secondary)" }}>
-        Complete <strong style={{ color: "var(--fg-primary)" }}>{level.objective}</strong> for{" "}
-        <strong style={{ color: "var(--fg-primary)" }}>
-          {level.target} {level.unit}
-        </strong>
-        . Mark it done when you've completed today's commitment.
+      <p className="text-sm leading-relaxed" style={{ color: "var(--fg-primary)" }}>
+        {level.objective}
       </p>
     </div>
 
@@ -576,7 +547,7 @@ const ActiveState = ({
       </div>
 
       <h3
-        className="text-2xl mb-2 leading-tight"
+        className="text-xl mb-2 leading-tight"
         style={{ fontFamily: "var(--font-display)", color: "var(--fg-primary)" }}
       >
         {level.objective}

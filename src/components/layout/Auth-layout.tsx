@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
-import { ThemeToggle } from "../common/ThemeToggle.tsx";
+
 import { Sparkles } from "lucide-react";
 
 interface AuthLayoutProps {
@@ -49,7 +49,7 @@ export const AuthLayout = ({ children, panel }: AuthLayoutProps) => (
     {/* Right form area */}
     <main className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 overflow-y-auto relative"
       style={{ background: "var(--bg-base)" }}>
-      <div className="absolute top-6 right-6 z-20"><ThemeToggle /></div>
+
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
