@@ -43,6 +43,7 @@ type PlayState = "preview" | "active" | "completed" | "locked";
 
 interface Props {
   level: Level | null;
+  isActive: boolean;
   onClose: () => void;
   onNext?: () => void;
   onComplete: (levelId: string) => Promise<Level | null>;
@@ -53,7 +54,6 @@ export const LevelPlayModal = ({ level, isActive, onClose, onNext, onComplete }:
   const [completing, setCompleting] = useState(false);
   const [xpAwarded, setXpAwarded] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!level) return;

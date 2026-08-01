@@ -4,9 +4,6 @@ import { Button } from "../../../components/common/Button";
 import {
   ArrowRight,
   BrainCircuit,
-  HeartHandshake,
-  LineChart,
-  ShieldCheck,
   Sparkles,
   Video,
   CheckCircle2,
