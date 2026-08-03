@@ -5,6 +5,7 @@ import {
   type Level,
   type GenerateLevelsPayload,
 } from "../../../services/api/level.service.ts";
+import { userDashboardService } from "../../../services/api/auth.service.ts";
 
 interface UseLevelGenerationReturn {
   levels: Level[];
@@ -13,18 +14,24 @@ interface UseLevelGenerationReturn {
   fetchLevels: () => Promise<void>;
   generateLevels: (payload: GenerateLevelsPayload) => Promise<void>;
   completeLevel: (levelId: string) => Promise<Level | null>;
+  dashboardData: any;
 }
 
 export const useLevelGeneration = (): UseLevelGenerationReturn => {
   const [levels, setLevels] = useState<Level[]>([]);
+  const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
 
   const fetchLevels = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await levelService.getLevels();
-      setLevels(res.data.data ?? []);
+      const [levelsRes, dashRes] = await Promise.all([
+        levelService.getLevels(),
+        userDashboardService.getDashboard(),
+      ]);
+      setLevels(levelsRes.data.data ?? []);
+      setDashboardData(dashRes.data.data ?? null);
     } finally {
       setLoading(false);
     }
@@ -52,6 +59,7 @@ export const useLevelGeneration = (): UseLevelGenerationReturn => {
         setLevels((prev) =>
           prev.map((l) => (l.id === levelId ? { ...l, isCompleted: true } : l))
         );
+        userDashboardService.getDashboard().then(res => setDashboardData(res.data.data ?? null)).catch(() => {});
       }
       return completed;
     } catch {
@@ -60,5 +68,5 @@ export const useLevelGeneration = (): UseLevelGenerationReturn => {
     }
   }, []);
 
-  return { levels, loading, generating, fetchLevels, generateLevels, completeLevel };
+  return { levels, loading, generating, fetchLevels, generateLevels, completeLevel, dashboardData };
 };

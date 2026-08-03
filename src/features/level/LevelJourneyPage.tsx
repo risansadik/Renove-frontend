@@ -26,7 +26,7 @@ const DIFFICULTY_DOT: Record<Level["difficulty"], string> = {
 };
 
 export const LevelJourneyPage = () => {
-  const { levels, loading, generating, fetchLevels, generateLevels, completeLevel } =
+  const { levels, loading, generating, fetchLevels, generateLevels, completeLevel, dashboardData } =
     useLevelGeneration();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [filter, setFilter] = useState<DifficultyFilter>("All");
@@ -139,7 +139,7 @@ export const LevelJourneyPage = () => {
           </div>
 
           {/* XP progress strip */}
-          {levels.length > 0 && (
+          {levels.length > 0 && dashboardData && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -150,11 +150,11 @@ export const LevelJourneyPage = () => {
                 <div className="flex items-center gap-2">
                   <Trophy size={16} style={{ color: "var(--accent-primary)" }} />
                   <span className="text-sm font-bold" style={{ color: "var(--fg-primary)" }}>
-                    Total Progress
+                    Level {dashboardData?.level ?? 1} — The Path of Resurgence
                   </span>
                 </div>
                 <span className="text-xs font-mono" style={{ color: "var(--fg-muted)" }}>
-                  {completedXp.toLocaleString()} / {totalXp.toLocaleString()} XP
+                  {dashboardData?.xp ?? 0} XP
                 </span>
               </div>
               <div
@@ -163,20 +163,15 @@ export const LevelJourneyPage = () => {
               >
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${progressPct}%` }}
+                  animate={{ width: `${dashboardData?.xpPercent ?? 0}%` }}
                   transition={{ duration: 1.5, ease: "circOut", delay: 0.3 }}
                   className="xp-bar-fill h-full"
                 />
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-mono" style={{ color: "var(--fg-muted)" }}>
-                  {progressPct.toFixed(0)}% complete
+                  {100 - (dashboardData?.xpPercent ?? 0)}% to next level
                 </span>
-                {activeIndex >= 0 && (
-                  <span className="text-[10px] font-mono" style={{ color: "var(--accent-primary)" }}>
-                    ✦ Level {levels[activeIndex]?.level} active
-                  </span>
-                )}
               </div>
             </motion.div>
           )}

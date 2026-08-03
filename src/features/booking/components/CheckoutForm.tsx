@@ -19,7 +19,7 @@ interface CheckoutFormProps {
 }
 
 /**
- * Professional-grade checkout form with real-time feedback and premium reNove styling.
+ * Professional-grade checkout form with real-time feedback and premium Renove styling.
  */
 export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   onSuccess,

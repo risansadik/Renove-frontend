@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import {  Sparkles, LogOut } from "lucide-react";
+import { Sparkles, PhoneCall, LogOut } from "lucide-react";
 import type { NavigationSidebarProps } from "../types/user-layout.types";
 import { IdentityBlock } from "./Identity-block";
 
@@ -22,7 +22,7 @@ export const NavigationSidebar = ({
             style={{ background: "linear-gradient(135deg, #6b4c7a, #b89bbe)" }}>
             <Sparkles size={15} className="text-white" />
           </div>
-          <span className="font-display font-bold text-lg" style={{ color: "var(--fg-primary)" }}>reNove</span>
+          <span className="font-display font-bold text-lg" style={{ color: "var(--fg-primary)" }}>Renove</span>
         </div>
       </div>
 
@@ -38,8 +38,7 @@ export const NavigationSidebar = ({
             end={to === "/dashboard"}
             onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-                isActive ? "nav-active" : "nav-idle"
+              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${isActive ? "nav-active" : "nav-idle"
               }`
             }
             style={({ isActive }) => isActive ? {
@@ -57,9 +56,14 @@ export const NavigationSidebar = ({
         ))}
       </nav>
 
-
+      {/* Critical Utility & Panic Triggers */}
       <div className="p-3 flex flex-col gap-1.5" style={{ borderTop: "1px solid var(--border-subtle)" }}>
-        <button 
+        <a href="tel:iCall"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all"
+          style={{ color: "#ef4444", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>
+          <PhoneCall size={14} /> Emergency Help
+        </a>
+        <button
           onClick={() => setLogoutModalOpen(true)}
           className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm transition-all duration-150"
           style={{ color: "var(--fg-muted)" }}

@@ -70,7 +70,7 @@ export const JourneyOverviewTab = ({
         <div className="p-6 rounded-2xl space-y-3" style={{ background: "var(--bg-subtle)", border: "1px solid var(--border-default)" }}>
           <div className="flex justify-between items-center text-sm font-semibold">
             <span style={{ color: "var(--fg-primary)" }}>XP Progress</span>
-            <span style={{ color: "var(--accent-primary)" }}>{data.xp} XP / {data.level * 100} XP</span>
+            <span style={{ color: "var(--accent-primary)" }}>{data.xp} XP / {data.level * 500} XP</span>
           </div>
           <div className="h-3 rounded-full overflow-hidden" style={{ background: "var(--border-subtle)" }}>
             <div
