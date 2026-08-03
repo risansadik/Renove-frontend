@@ -46,12 +46,7 @@ export const LevelJourneyPage = () => {
   const filtered =
     filter === "All" ? levels : levels.filter((l) => l.difficulty === filter);
 
-  const totalXp = levels.reduce((sum, l) => sum + l.xp, 0);
-  const completedXp = levels
-    .filter((l) => l.isCompleted)
-    .reduce((sum, l) => sum + l.xp, 0);
   const completedCount = levels.filter((l) => l.isCompleted).length;
-  const progressPct = totalXp > 0 ? (completedXp / totalXp) * 100 : 0;
 
   // ── Loading ──────────────────────────────────────────
   if (loading) {
